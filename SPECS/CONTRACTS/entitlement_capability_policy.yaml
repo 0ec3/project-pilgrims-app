@@ -1,0 +1,124 @@
+version: 1
+owner_spec: SPECS/24_FEATURE_ACCOUNT_SUBSCRIPTIONS_ENTITLEMENTS_AND_SETTINGS.md
+related_specs:
+  - SPECS/03_PRODUCT_CHARTER_AND_SCOPE.md
+  - SPECS/18_FEATURE_RITUALS_RIC_AND_RELIGIOUS_CONTENT.md
+  - SPECS/19_FEATURE_MAPS_SAVE_MY_GATE_AND_3_D_WAYFINDING.md
+  - SPECS/20_FEATURE_GROUP_HUB_CHECKINS_REGROUP_AND_SHARED_COORDINATION.md
+  - SPECS/21_FEATURE_PLANNER_REMINDERS_WALLET_NOTES_AND_BOOKMARKS.md
+  - SPECS/22_FEATURE_PHRASEBOOK_EMERGENCY_SAFETY_AND_ASSISTIVE_TOOLS.md
+  - SPECS/23_FEATURE_OFFLINE_PACKS_AUDIO_AND_CONTENT_DISTRIBUTION.md
+  - SPECS/29_SECURITY_PRIVACY_COMPLIANCE_AND_RISK_REGISTER.md
+rule: >-
+  Supporter may unlock convenience, enrichment, automation, and richer offline assets.
+  It must never gate ritual correctness, RIC, baseline recovery/navigation, essential safety,
+  emergency cards, phrase text, medical profile basics, or basic group coordination.
+capabilities:
+  ritual.guidance.text:
+    criticality: correctness
+    guest_allowed: true
+    free_allowed: true
+    supporter_allowed: true
+    never_gate: true
+    offline_required: true
+  ritual.ric.basic:
+    criticality: correctness
+    guest_allowed: true
+    free_allowed: true
+    supporter_allowed: true
+    never_gate: true
+    offline_required: true
+  maps.save_my_gate:
+    criticality: recovery
+    guest_allowed: true
+    free_allowed: true
+    supporter_allowed: true
+    never_gate: true
+    offline_required: true
+  maps.basic_recall_and_text_guidance:
+    criticality: recovery
+    guest_allowed: true
+    free_allowed: true
+    supporter_allowed: true
+    never_gate: true
+    offline_required: true
+  group.join_and_manual_coordination:
+    criticality: coordination
+    guest_allowed: false
+    free_allowed: true
+    supporter_allowed: true
+    never_gate: true
+    auth_required: true
+    server_trust_required: true
+  group.live_board:
+    criticality: coordination_enrichment
+    guest_allowed: false
+    free_allowed: false
+    supporter_allowed: true
+    entitlement_key: GROUP_LIVE_BOARD
+    auth_required: true
+    server_trust_required: true
+  phrasebook.text_and_big_text_cards:
+    criticality: emergency_assistive
+    guest_allowed: true
+    free_allowed: true
+    supporter_allowed: true
+    never_gate: true
+    offline_required: true
+  emergency.cards_and_safety_basics:
+    criticality: emergency
+    guest_allowed: true
+    free_allowed: true
+    supporter_allowed: true
+    never_gate: true
+    offline_required: true
+  medical_profile.local_basic:
+    criticality: restricted_private_support
+    guest_allowed: true
+    free_allowed: true
+    supporter_allowed: true
+    never_gate: true
+    local_only: true
+  planner.basic_items_and_local_reminders:
+    criticality: organization_basic
+    guest_allowed: true
+    free_allowed: true
+    supporter_allowed: true
+    never_gate: true
+    local_only: true
+  notes_bookmarks.basic:
+    criticality: organization_basic
+    guest_allowed: true
+    free_allowed: true
+    supporter_allowed: true
+    never_gate: true
+    local_only: true
+  notes_bookmarks.extended:
+    criticality: convenience
+    guest_allowed: false
+    free_allowed: false
+    supporter_allowed: true
+    entitlement_key: NOTES_BOOKMARKS_EXTENDED
+    downgrade_behavior: existing_rich_content_readable_editing_restricted
+  packs.auto_download:
+    criticality: convenience
+    guest_allowed: false
+    free_allowed: false
+    supporter_allowed: true
+    entitlement_key: PACK_AUTO_DOWNLOAD
+  audio.offline_playback:
+    criticality: enrichment
+    guest_allowed: false
+    free_allowed: false
+    supporter_allowed: true
+    entitlement_key: AUDIO_OFFLINE
+  planner.smart_suggestions:
+    criticality: convenience
+    guest_allowed: false
+    free_allowed: false
+    supporter_allowed: true
+    entitlement_key: SMART_PLANNER
+validation_rules:
+  - Client code must not invent capabilities or entitlement keys not listed here or in a synchronized update to file 24.
+  - Any capability marked never_gate must have release tests for guest/free access where technically applicable.
+  - Any Supporter lock state must explain preserved free access and avoid implying correctness or safety is withheld.
