@@ -4,10 +4,11 @@
 - **Type:** Normative runtime and delivery contract document
 - **Priority:** Highest
 - **Audience:** Flutter engineers, backend engineers, mobile tech lead, QA, release engineers, AI coding agents, reviewer agents
-- **Purpose:** Define the canonical offline-first behavior of the app, the lifecycle of downloadable packs, the sync model for local and server-backed data, asset delivery abstractions, caching rules, storage policy, failure handling, and verification requirements.
+- **Purpose:** Define canonical offline-first behavior, downloadable pack lifecycle, sync model, asset delivery abstraction, caching rules, storage policy, failure handling, verification requirements, and signed trust-chain expectations.
 - **Authority level:** This file is the canonical source of truth for offline behavior, pack lifecycle, sync semantics, asset-delivery abstraction, and cache policy. Feature modules, API clients, pack managers, and tests must not contradict this file.
-- **Primary dependencies:** `01-README-AND-MASTER-INDEX.md`, `03-PRODUCT-CHARTER-AND-SCOPE.md`, `06-SYSTEM-ARCHITECTURE.md`, `07-FLUTTER-APP-ARCHITECTURE-AND-MODULE-BOUNDARIES.md`, `13-DATA-MODEL-RLS-INVARIANTS-AND-MIGRATIONS.md`, `14-API-REALTIME-AND-INTEGRATION-CONTRACTS.md`
-- **Related files:** `10`, `11`, `12`, `16`, `17`, `18`–`25`, `27`, `28`, `29`, `30`
+- **Last-updated-by:** AI-assisted quality-first hardening pass (validated 2026-06-11)
+- **Primary dependencies:** `01`, `03`, `06`, `07`, `13`, `14`, `23`, `26`, `29`, `30`, `31`, `CONTRACTS/content_pack_trust_chain_contract.yaml`
+- **Related files:** `10`, `11`, `12`, `16`, `17`, `18`–`25`, `27`, `28`
 
 ---
 
@@ -19,39 +20,29 @@ That requirement creates architectural complexity in five areas:
 - what data must be available locally,
 - what data may be stale but usable,
 - what data must remain server-backed,
-- how large assets are discovered, downloaded, verified, stored, and purged,
+- how large assets are discovered, downloaded, authenticated, verified, stored, activated, and purged,
 - how the app reconciles local state with remote truth when connectivity returns.
 
-This file exists to prevent drift between mobile implementation, backend contracts, pack distribution, caching behavior, and feature expectations.
-
-It defines:
-- offline-first behavior categories,
-- canonical pack types and lifecycle,
-- sync policies for reads and writes,
-- asset delivery abstraction,
-- cache categories and expiration rules,
-- storage rules,
-- user-visible failure and recovery behavior,
-- release and QA requirements for offline correctness.
+This file prevents drift between mobile implementation, backend contracts, pack distribution, caching behavior, and feature expectations.
 
 ---
 
 # 2. Offline-first principles
 
 ## 2.1 Essential value must survive network loss
-The user must still be able to access the app’s essential pilgrimage value when the network is unavailable.
+The user must still be able to access essential pilgrimage value when the network is unavailable.
 
 ## 2.2 Local operational truth drives runtime UX
 For offline-capable features, the device-local store is the operational source of truth during runtime.
 
 ## 2.3 Server truth still exists for protected domains
-Entitlements, group membership, and other trusted shared state remain server-governed, even if the client caches snapshots for continuity.
+Entitlements, group membership, group creation/join/check-in writes, account deletion/export requests, and other trusted shared state remain server-governed even if the client caches snapshots for continuity.
 
 ## 2.4 Staleness must be safe, not invisible
-If the app uses cached or stale data, it must do so in ways that do not mislead the user about protected, time-sensitive, or safety-sensitive state.
+If the app uses cached or stale data, it must do so in ways that do not mislead the user about protected, time-sensitive, safety-sensitive, or trust-sensitive state.
 
 ## 2.5 Asset delivery must be abstracted
-The app’s contract is manifest-driven packs with integrity verification and local inventory state. Platform-specific download mechanisms are implementation details beneath that abstraction.
+The app’s contract is manifest-driven packs with authenticated manifest/artifact trust-chain verification and local inventory state. Platform-specific download mechanisms are implementation details beneath that abstraction.
 
 ## 2.6 Fallback behavior is part of success
 A feature is not truly complete if it only works under ideal network and storage conditions.
@@ -66,40 +57,44 @@ Every feature or data domain must be classified into one of these tiers.
 Must work meaningfully with no network if the app has been opened at least once and required local data exists.
 
 Examples:
-- ritual guidance using cached/published content
-- RIC / resolver using local rule content
-- phrasebook and emergency tools
-- saved anchors / Save My Gate recall
-- previously downloaded map packs and audio packs
-- local planner, reminders, notes, bookmarks
-- medical profile and emergency information
+- ritual guidance using cached/published content,
+- RIC/resolver using local rule content,
+- phrasebook and emergency tools,
+- saved anchors / Save My Gate recall,
+- previously installed map packs and audio packs,
+- local planner, reminders, notes, bookmarks,
+- medical profile and emergency information.
 
 ## 3.2 Tier B — Offline-capable with cached snapshot
 Can remain useful offline using last-good cached data, but freshness may degrade.
 
 Examples:
-- flags and season configuration
-- pack manifest snapshot
-- cached entitlement snapshot for UX continuity only
-- last seen group live-board summary if product later surfaces it as stale data
+- flags and season configuration,
+- pack manifest snapshot,
+- cached entitlement snapshot for UX continuity only,
+- last seen group summary if product surfaces it as stale data,
+- deletion/export request status if clearly marked stale.
 
 ## 3.3 Tier C — Online-required trusted operation
 Requires network and trusted backend interaction for correctness.
 
 Examples:
-- joining a group
-- sending server-backed group check-ins
-- purchase validation and restore
-- refreshing authoritative entitlement state
-- subscribing to private realtime channels
+- creating a group,
+- joining a group,
+- sending server-backed group check-ins,
+- creating regroup pins,
+- purchase validation and restore,
+- refreshing authoritative entitlement state,
+- account deletion/export requests,
+- subscribing to private realtime channels.
 
 ## 3.4 Tier D — Rich enhancement, optional when online
 Improves the experience but must not be required for baseline value.
 
 Examples:
-- live board realtime updates
-- recommended pack suggestions from server-backed context
-- high-fidelity map assets not yet downloaded
+- live board realtime updates,
+- recommended pack suggestions from server-backed context,
+- high-fidelity map assets not yet downloaded.
 
 ---
 
@@ -108,7 +103,7 @@ Examples:
 ## 4.1 Rituals and RIC
 - Must work offline using local content and rules.
 - Must not require live network for core correctness guidance.
-- May show freshness metadata for content version if relevant.
+- May show freshness/content-version metadata.
 
 ## 4.2 Maps and Save My Gate
 - Saved anchors must work offline.
@@ -118,21 +113,24 @@ Examples:
 
 ## 4.3 Group coordination
 - Group snapshots may be viewed from last-known state if the UX explicitly marks them as stale and only if this does not create dangerous misunderstanding.
-- Active writes such as join/check-in require online trusted paths.
+- Active trusted writes such as create, join, check-in, regroup creation, or deletion/export requests require online trusted paths.
 - Manual fallback paths such as text-based regrouping and SMS-friendly copy remain available.
+- The client must not silently queue trusted group writes in a way that later surprises the user.
 
 ## 4.4 Planner, notes, bookmarks, wallet
 - Must remain fully usable offline because they are local-first features.
+- No hidden sync or upload is allowed by default.
 
 ## 4.5 Entitlements
 - The app may use last-known entitlement snapshots for short-lived UX continuity.
-- Protected purchase truth remains server authoritative.
+- Protected purchase truth remains server-authoritative.
 - Expired or unverifiable entitlements must fail safe rather than drift into indefinite optimistic access.
 
 ## 4.6 Packs and downloadable content
-- Previously installed packs must remain usable offline.
+- Previously installed packs must remain usable offline if their local trust state remains valid.
 - New pack discovery may rely on cached manifest if offline.
 - New downloads require connectivity.
+- Activation requires manifest/artifact trust-chain checks, not checksum alone.
 
 ---
 
@@ -149,24 +147,28 @@ Geographic, structural, or wayfinding-related asset bundles.
 Offline audio guidance or phrase/audio support bundles.
 
 ### `CONTENT`
-Optional future category for larger structured content bundles if justified.
+Structured content bundles where approved by content governance.
 
 ### `MEDIA`
 Optional future category for non-audio rich assets if justified.
 
 ## 5.3 Pack identity rules
 Every pack must have:
-- stable `pack_id`
-- type
-- version
-- checksum
-- artifact location
-- size metadata
-- entitlement requirement flag
-- optional language or area-of-interest metadata
+- stable `pack_id`,
+- type/category,
+- version,
+- checksum,
+- artifact location/delivery reference,
+- size metadata,
+- entitlement requirement flag where applicable,
+- optional language or area-of-interest metadata,
+- trust-chain fields required by `CONTRACTS/content_pack_trust_chain_contract.yaml`.
 
 ## 5.4 Pack immutability rule
 A published pack version is immutable. If content changes, publish a new version rather than mutating the existing artifact in place.
+
+## 5.5 No executable-code rule
+Pack artifacts must never contain executable code or runtime logic that bypasses app review, content governance, or release controls.
 
 ---
 
@@ -188,13 +190,13 @@ Pack exists in the manifest but is not present locally.
 Bytes are being fetched or resumed.
 
 ### `VERIFYING`
-The artifact is fully present but is not yet trusted until integrity checks pass.
+The artifact is fully present but is not yet trusted until integrity, authenticity, compatibility, and storage-completeness checks pass.
 
 ### `INSTALLED`
-The pack is verified, locally registered, and available for runtime use.
+The pack is verified, trusted, locally registered, and available for runtime use.
 
 ### `FAILED`
-Download or verification failed. The pack must not be used.
+Download, trust-chain verification, compatibility check, or storage check failed. The pack must not be used.
 
 ### `PURGED`
 The pack was previously installed but has been removed from local storage.
@@ -214,6 +216,7 @@ Allowed transitions:
 - `DOWNLOADING -> INSTALLED` without verification
 - `FAILED -> INSTALLED` without successful retry + verification
 - `PURGED -> INSTALLED` without re-download or validated local recovery
+- any transition to `INSTALLED` without signature, checksum, compatibility, and storage-completeness success where trust-chain metadata is required
 
 ---
 
@@ -226,12 +229,30 @@ The pack manifest is the canonical discovery surface for downloadable packs.
 The client must not hardcode pack URLs or assume artifact availability outside the manifest contract.
 
 ## 7.3 Manifest cache behavior
-- last-good manifest may be reused offline
-- manifest freshness comes from ETag/cache validation via `/v1/packs/manifest`
-- missing network must not erase previously known pack catalog state
+- last-good manifest may be reused offline,
+- manifest freshness comes from ETag/cache validation via `/v1/packs/manifest`,
+- missing network must not erase previously known pack catalog state.
 
 ## 7.4 Safe stale-manifest rule
 Using a cached manifest offline is allowed for browsing previously known packs, but the app must not falsely imply it knows the latest available versions.
+
+## 7.5 Required manifest trust fields
+Manifest metadata must align with file `14` and `CONTRACTS/content_pack_trust_chain_contract.yaml`.
+
+Required fields include:
+- `manifest_id`,
+- `manifest_version`,
+- `generated_at`,
+- `signing_key_id`,
+- `signing_algorithm`,
+- `manifest_signature`,
+- `revoked_key_ids`,
+- `min_app_version`,
+- pack entries with artifact signatures and checksums.
+
+## 7.6 Manifest verification rule
+The client must verify the manifest signature before trusting pack entries for new activation.
+If signature verification fails, the client must preserve last-known-good local state and show safe failure or stale state.
 
 ---
 
@@ -242,6 +263,7 @@ The app’s contract is built around:
 - manifest discovery,
 - authenticated or public artifact retrieval as documented,
 - checksum verification,
+- signature verification,
 - local inventory state,
 - runtime availability checks.
 
@@ -262,29 +284,52 @@ Feature modules must not care whether a pack arrived via one platform mechanism 
 
 ---
 
-# 9. Integrity and trust model for packs
+# 9. Integrity, authenticity, and trust model for packs
 
 ## 9.1 Verification requirement
-A pack must not be marked installed until integrity verification succeeds.
+A pack must not be marked installed until trust-chain verification succeeds.
 
 ## 9.2 Minimum verification data
-- expected `pack_id`
-- expected `version`
-- expected `checksum_sha256`
-- expected artifact size if supplied
+- expected `pack_id`,
+- expected `version`,
+- expected `checksum_sha256`,
+- expected artifact size if supplied,
+- `artifact_signature`,
+- `signing_key_id`,
+- `signed_at`,
+- `signing_algorithm`,
+- compatibility fields.
 
-## 9.3 Verification outcomes
+## 9.3 Verification checks
+Verification must include:
+1. manifest signature check,
+2. artifact checksum check,
+3. artifact signature check,
+4. signing-key validity/revocation check,
+5. schema/app compatibility check,
+6. storage-completeness check.
+
+## 9.4 Verification outcomes
 ### Success
 Mark pack `INSTALLED`, update local inventory, expose to runtime.
 
 ### Failure
 Mark `FAILED`, preserve error code, do not expose pack as usable.
 
-## 9.4 Partial download rule
+## 9.5 Partial download rule
 Partially downloaded files must not be treated as installed or visible to feature runtime except through explicit in-progress UI.
 
-## 9.5 Recovery rule
+## 9.6 Recovery rule
 Failed or partial artifacts must be recoverable through retry/resume or clean restart.
+
+## 9.7 Last-known-good rule
+A failed candidate pack must not replace the current last-known-good installed pack.
+
+## 9.8 Anti-rollback rule
+Activation pointers may move backward only through an explicit signed rollback action with reason and release/incident reference.
+
+## 9.9 Key rotation rule
+Signing-key rotation must have documented overlap, revoked-key handling, and release evidence before production activation.
 
 ---
 
@@ -292,11 +337,11 @@ Failed or partial artifacts must be recoverable through retry/resume or clean re
 
 ## 10.1 Storage categories
 The app uses these local storage categories:
-- local structured database
-- app preferences / small key-value state
-- secure local storage for sensitive items
-- app-private file storage for pack artifacts
-- temporary cache storage
+- local structured database,
+- app preferences / small key-value state,
+- secure local storage for sensitive items,
+- app-private file storage for pack artifacts,
+- temporary cache storage.
 
 ## 10.2 App-private storage rule
 Downloaded packs and offline assets must live in app-private storage, not casual shared storage by default.
@@ -305,15 +350,15 @@ Downloaded packs and offline assets must live in app-private storage, not casual
 Emergency/medical data must use stronger local protection and must not be stored in broad shared file paths.
 
 ## 10.4 Cache-vs-persistent rule
-- packs and user-private data are persistent
-- temporary transport/cache artifacts may be purgeable
-- app must distinguish between “installed asset” and “transport cache file”
+- packs and user-private data are persistent,
+- temporary transport/cache artifacts may be purgeable,
+- app must distinguish between “installed asset” and “transport cache file.”
 
 ## 10.5 Storage-pressure rule
 The app must handle low-storage conditions gracefully by:
-- warning before large downloads when possible
-- refusing downloads safely when capacity is insufficient
-- allowing explicit purge of non-essential packs
+- warning before large downloads when possible,
+- refusing downloads safely when capacity is insufficient,
+- allowing explicit purge of non-essential packs.
 
 ## 10.6 Backup rule
 Local data types must be intentionally classified for backup behavior.
@@ -325,544 +370,146 @@ Sensitive or bulky transient artifacts should not be accidentally backed up if t
 
 ## 11.1 Local database
 The local structured store is the runtime source of truth for:
-- planner items
-- notes and bookmarks
-- saved anchors
-- ritual sessions
-- RIC findings
-- pack inventory records
-- last-good control-plane cache
+- planner items,
+- notes and bookmarks,
+- saved anchors,
+- ritual sessions,
+- RIC findings,
+- pack inventory records,
+- last-good control-plane cache.
 
 ## 11.2 Preferences / key-value store
 Use for:
-- small UI settings
-- dismissals
-- last selected filters or local UI preferences
-- non-relational lightweight state
+- small UI settings,
+- dismissals,
+- last selected filters or local UI preferences.
 
-## 11.3 Secure local storage
+## 11.3 Secure storage
 Use for:
-- encryption keys or protected secrets
-- sensitive medical-profile encryption references
-- minimal secure session-related metadata when needed
+- tokens/session material as approved by file `29`,
+- sensitive local protection keys where needed.
 
-## 11.4 File storage
+## 11.4 App-private file storage
 Use for:
-- installed packs
-- downloaded media bundles
-- optional exported artifacts if supported later
+- downloaded packs,
+- media/audio/map artifacts,
+- local files not intended for broad shared storage.
 
 ---
 
-# 12. Sync model overview
+# 12. Sync and refresh rules
 
-## 12.1 Sync philosophy
-Not all data syncs.
+## 12.1 Pull refresh
+The app may refresh:
+- flags,
+- pack manifest,
+- entitlements,
+- group summaries,
+- deletion/export status where applicable.
 
-The system distinguishes between:
-- local-only data
-- cached remote snapshots
-- remote-authoritative data with local cache
-- write-through or queued online actions
+## 12.2 Push/write behavior
+Trusted writes require online server acknowledgement:
+- group creation,
+- group join,
+- group check-in,
+- regroup pin creation,
+- purchase validation/restore,
+- account deletion/export requests.
 
-## 12.2 Sync categories
-### Category A — No sync
-Examples:
-- notes
-- bookmarks
-- saved anchors
-- planner items
-- medical profile
-- local ritual sessions
+## 12.3 No fake-success rule
+The client must not pretend a trusted server write succeeded if it did not complete.
 
-### Category B — Snapshot refresh
-Examples:
-- flags
-- pack manifest
-- entitlement snapshot
-- optional group snapshot views
-
-### Category C — Online write with optional local queueing
-Examples:
-- check-ins
-- join requests
-- purchase validate/restore requests
-
-### Category D — Realtime enhancement
-Examples:
-- live board updates
-- regroup pin updates
+## 12.4 Offline queue caution
+Offline queues may be used only for low-risk local telemetry or explicitly approved flows. Trusted group/account/purchase writes must not be silently queued by default.
 
 ---
 
-# 13. Read policies
+# 13. User-visible failure behavior
 
-## 13.1 Local-first read policy
-For offline-capable features, the UI should read local state first and refresh from network only where necessary or available.
+## 13.1 Failure copy principles
+Failure copy must tell the user:
+- what happened,
+- whether anything was saved locally,
+- whether trusted server action completed,
+- what they can still do.
 
-## 13.2 Snapshot refresh policy
-For control-plane reads such as flags and manifest:
-- use local cached snapshot immediately
-- revalidate using ETag when connectivity exists
-- replace local snapshot only when the server representation changes
+## 13.2 Pack failure states
+Pack failure states must distinguish:
+- network failed,
+- low storage,
+- checksum failed,
+- signature failed,
+- revoked signing key,
+- app version incompatible,
+- manifest stale/unavailable,
+- server unavailable,
+- user cancelled.
 
-## 13.3 Protected read policy
-For server-governed reads such as entitlements or group live board:
-- cached snapshot may be shown for continuity if explicitly safe
-- freshness must be handled carefully
-- fresh server read should replace stale state when connectivity and auth permit
-
-## 13.4 Missing-local-data rule
-If required local data does not exist, the app must present a clear unavailable/offline message rather than pretending data is present.
-
----
-
-# 14. Write policies
-
-## 14.1 Write categories
-### Local write only
-Write directly to local store and succeed immediately.
-
-Examples:
-- notes
-- bookmarks
-- planner items
-- ritual progress
-- saved gate/anchor
-
-### Online trusted write
-Requires network and trusted server response.
-
-Examples:
-- group join
-- group check-in
-- regroup pin creation
-- purchase validation/restore
-
-## 14.2 Queueing policy
-Not every online-required write should be silently queued.
-
-### Queue allowed only when
-- duplicate/retry semantics are well-defined
-- delayed execution does not create dangerous misunderstanding
-- the UI can clearly represent “pending” vs “confirmed” state
-
-### Queue discouraged or forbidden when
-- the user expects immediate trusted confirmation
-- membership or entitlement truth is the purpose of the write
-- replay risk is high and confusing
-
-## 14.3 Current queueing decision
-### Allowed local queueing
-- analytics event buffering
-- optional retry bookkeeping for failed pack metadata fetches
-
-### Do not silently queue for later send in v1
-- group join
-- purchase validate
-- purchase restore
-
-### Optional future queued retry with explicit UX
-- group check-ins, only if the product later wants explicit pending-send behavior and the UX makes it obvious
+## 13.3 Safety rule
+A failed pack or manifest must never remove existing essential baseline value.
 
 ---
 
-# 15. Conflict and reconciliation policy
+# 14. Testing and release evidence
 
-## 15.1 Local-only data
-No server reconciliation needed.
+## 14.1 Required test coverage
+Tests must cover:
+- no-network startup,
+- offline ritual/RIC access,
+- offline saved gate recall,
+- stale group state display,
+- group trusted write unavailable offline,
+- entitlement stale state,
+- pack install success,
+- interrupted download recovery,
+- low-storage failure,
+- checksum failure,
+- signature failure,
+- revoked-key failure,
+- incompatible version failure,
+- purge behavior,
+- last-known-good preservation.
 
-## 15.2 Cached remote snapshots
-Newest trusted server snapshot replaces old snapshot.
+## 14.2 Physical-device proof
+Physical-device proof is required for:
+- install/restart/purge/download flows,
+- low storage behavior where practical,
+- background/foreground download behavior where platform-specific,
+- offline after app restart,
+- pack activation and failure states.
 
-## 15.3 Remote-authoritative data
-Server state wins. Client cache is updated to match server truth.
-
-## 15.4 Protected stale-state rule
-If a cached entitlement or group state conflicts with the fresh server state, the fresh server state wins immediately.
-
-## 15.5 UI reconciliation rule
-When protected state changes, the UI must update gracefully and not leave dangling access illusions.
-
----
-
-# 16. Cache categories
-
-## 16.1 Control-plane cache
-Examples:
-- flags
-- pack manifest
-
-Characteristics:
-- ETag-driven
-- last-good snapshot usable offline
-- small payloads
-
-## 16.2 Runtime data cache
-Examples:
-- cached entitlement snapshot
-- cached group live-board snapshot if used
-- local map search indexes if available
-
-Characteristics:
-- app-private
-- purpose-specific freshness rules
-- not always safe for long-term stale reuse
-
-## 16.3 Artifact cache / installed assets
-Examples:
-- pack files
-- downloaded audio
-- optional offline map layers
-
-Characteristics:
-- large
-- versioned
-- integrity-verified
-- purgeable
-
-## 16.4 Temporary transport cache
-Examples:
-- partial downloads
-- resumable chunk metadata
-- temporary extraction directories
-
-Characteristics:
-- internal-only
-- not a source of truth
-- safe to clear when necessary
+## 14.3 Trust-chain evidence
+Release evidence must show that contract validation against `CONTRACTS/content_pack_trust_chain_contract.yaml` passed for changed pack/content delivery behavior.
 
 ---
 
-# 17. Cache policy rules
+# 15. Definition of done
 
-## 17.1 Last-good cache rule
-For flags and manifest, the last successful payload plus ETag should be stored and reused until replaced or purged.
-
-## 17.2 Explicit freshness metadata rule
-Cached snapshots should carry timestamps or freshness metadata so the app can reason about age.
-
-## 17.3 Cache invalidation rule
-Immutable or versioned artifacts should be replaced by new versions rather than mutated in place.
-
-## 17.4 Sensitive-state rule
-Cached protected state must not be displayed in a way that implies current trusted validity when the app cannot verify freshness and the distinction matters.
-
-## 17.5 Manual refresh rule
-Where meaningful, the app may allow the user to explicitly retry or refresh server-backed state.
+This offline/pack system is ready when:
+- offline capability tiers are assigned,
+- trusted writes degrade honestly offline,
+- pack lifecycle follows the allowed state machine,
+- manifest discovery is canonical,
+- checksum and signature verification are implemented,
+- candidate failures preserve last-known-good state,
+- storage pressure and purge behavior are safe,
+- stale states are visible and accessible,
+- tests cover degraded states,
+- release evidence satisfies file `28`.
 
 ---
 
-# 18. Recommended cache TTL guidance
+# 16. AI-agent checklist
 
-These values are initial defaults and may be tuned with controlled change.
-
-## 18.1 `flags`
-- local cache usable immediately
-- HTTP `max-age`: 5 minutes
-- stale snapshot acceptable for offline continuity until replaced
-
-## 18.2 `packs_manifest`
-- local cache usable immediately
-- HTTP `max-age`: 30 minutes
-- stale snapshot acceptable for browsing known packs offline
-
-## 18.3 `entitlements_snapshot`
-- no public-cache semantics
-- local snapshot for UX continuity only
-- should be refreshed on app start, restore flow, or purchase-related transitions when online
-
-## 18.4 `group_live_board_snapshot`
-- product-specific short freshness window
-- display stale indicators if offline or delayed
+Before editing offline, sync, cache, or pack code, an AI agent must:
+1. Read files `13`, `14`, `15`, `23`, `26`, `29`, `30`, and `31`.
+2. Read `CONTRACTS/content_pack_trust_chain_contract.yaml`.
+3. Confirm the offline tier and trusted-write behavior.
+4. Confirm whether data is local-only, cached remote, or server truth.
+5. Confirm pack lifecycle transitions.
+6. Never mark a pack installed without all required trust-chain checks.
+7. Update tests and release evidence for changed offline or pack behavior.
 
 ---
 
-# 19. User-visible offline and pack UX rules
-
-## 19.1 Offline messaging rule
-The app must clearly distinguish between:
-- fully available offline value
-- unavailable because not downloaded yet
-- unavailable because server confirmation is required
-- stale but viewable cached data
-
-## 19.2 Pack UX rule
-For every pack, the UI should be able to show:
-- not installed
-- downloading with progress if available
-- verifying
-- installed
-- failed with retry path
-- purged
-- locked by entitlement if applicable
-
-## 19.3 No false confidence rule
-The app must not present a pack as ready before verification completes.
-
-## 19.4 Upgrade-boundary rule
-If a pack is gated by supporter entitlement, the lock state must remain ethically clear and must not suggest that free users lose essential pilgrimage correctness or safety.
-
----
-
-# 20. Network-awareness policy
-
-## 20.1 Connectivity as hint, not truth
-Connectivity status may be used as a UX hint, but the app must still handle real request failure even when the OS thinks the network is available.
-
-## 20.2 Battery and data-awareness policy
-Where appropriate, large pack downloads may respect user/network conditions such as Wi-Fi preference or low battery mode if the product surfaces those settings.
-
-## 20.3 Large-download recommendation rule
-Large optional packs should encourage but not require more favorable network conditions.
-
----
-
-# 21. Background behavior rules
-
-## 21.1 Background download rule
-Background download behavior should be platform-capable but abstracted. The product contract must not depend on identical platform mechanics.
-
-## 21.2 Background sync rule
-Do not assume unlimited background execution for freshness. The app should tolerate foreground refresh as the primary guaranteed path.
-
-## 21.3 Reminder rule
-Local reminders must work from local scheduled state and not depend on the app being online at trigger time.
-
----
-
-# 22. Failure classes and required behavior
-
-## 22.1 No network
-- use local data where available
-- show stale or offline state where appropriate
-- do not attempt protected writes as if successful
-
-## 22.2 Flaky network
-- retry safe reads where reasonable
-- preserve local UX continuity
-- use idempotency for retry-prone protected writes
-
-## 22.3 Pack download interrupted
-- preserve partial state if resumable
-- allow retry/resume
-- never expose partially downloaded pack as installed
-
-## 22.4 Checksum mismatch
-- mark pack `FAILED`
-- keep detailed error code
-- require retry or redownload
-
-## 22.5 Low storage
-- refuse installation safely
-- provide user-facing storage explanation
-- offer purge path for optional packs
-
-## 22.6 Auth expired
-- stop protected reads/writes
-- preserve local-only features
-- prompt safe re-auth flow when needed
-
-## 22.7 Manifest stale or unavailable
-- use last-good snapshot if present
-- show manifest freshness if needed for support/debug UX
-
-## 22.8 Entitlement refresh unavailable
-- use last-known local snapshot only for continuity
-- avoid falsely confirming new access or post-expiry certainty without server verification
-
----
-
-# 23. Sync and pack manager responsibilities
-
-## 23.1 Pack manager responsibilities
-- fetch manifest
-- compare versions
-- schedule downloads
-- track progress
-- verify checksums
-- register install state
-- expose purge and retry operations
-- surface user-readable failure states
-
-## 23.2 Sync coordinator responsibilities
-- decide when to refresh cached snapshots
-- coordinate online protected reads
-- manage safe retries
-- avoid duplicate writes
-- reconcile local cache with server truth
-
-## 23.3 Repository responsibilities
-Feature repositories should consume sync and pack manager abstractions rather than implementing custom fetch/cache logic in feature modules.
-
----
-
-# 24. Security and privacy rules
-
-## 24.1 Pack security rule
-Pack verification data must come from trusted manifest contracts. Do not trust file names or local paths as proof of integrity.
-
-## 24.2 Private data rule
-Local private support data must not be silently uploaded or mirrored to the server without an approved contract change.
-
-## 24.3 Sensitive local storage rule
-Medical or sensitive emergency data must remain protected locally and excluded from casual logging and analytics.
-
-## 24.4 Cache logging rule
-Logs and analytics must not leak sensitive local payloads, pack URLs with embedded secrets, or private content values.
-
----
-
-# 25. Performance and efficiency rules
-
-## 25.1 Lean base-app rule
-Do not bundle rich offline assets that should be delivered as optional packs.
-
-## 25.2 Local-read performance rule
-Primary offline-capable screens should load from local data without waiting on network requests.
-
-## 25.3 Download-efficiency rule
-Prefer resumable and CDN-friendly transfer patterns for large assets.
-
-## 25.4 Purgeability rule
-Optional rich assets must be purgeable so device storage pressure does not trap the user.
-
----
-
-# 26. Testing requirements
-
-## 26.1 Required unit tests
-- pack state machine transitions
-- checksum verification logic
-- stale snapshot selection rules
-- protected-vs-local read routing
-- retry and error translation logic
-
-## 26.2 Required integration tests
-- flags ETag 200/304 behavior
-- manifest ETag 200/304 behavior
-- pack install success and checksum failure
-- local-first read on no network
-- failed protected writes under offline conditions
-- entitlement refresh fallback behavior
-
-## 26.3 Required device tests
-- airplane mode behavior
-- interrupted downloads
-- low-storage failure path
-- app relaunch during download/verification
-- installed pack persistence across restart
-- local reminders firing offline
-
-## 26.4 Required manual release checks
-- fresh install with no network after initial sync
-- stale manifest browsing
-- using maps with only fallback assets
-- opening emergency tools fully offline
-- purging and reinstalling optional packs
-
----
-
-# 27. Data and contract alignment rules
-
-## 27.1 Alignment with file `13`
-Pack inventory, local snapshots, ritual sessions, notes, planner items, and medical profile persistence must remain consistent with the canonical local model.
-
-## 27.2 Alignment with file `14`
-Flags and manifest fetch behavior, ETag use, idempotency, and protected online writes must remain consistent with the API contract.
-
-## 27.3 Alignment with file `16`
-Offline map packs and fallback wayfinding behavior must remain consistent with the map subsystem architecture.
-
-## 27.4 Alignment with feature-family files
-Feature files must not redefine offline or pack semantics independently.
-
----
-
-# 28. Recommendations adopted into this policy
-
-## 28.1 Recommendation — local-first source of truth for offline-capable reads
-The app now formally treats local persistence as the operational source of truth for offline-capable runtime behavior.
-
-## 28.2 Recommendation — manifest + integrity + pack-manager abstraction
-The pack system is now formally defined around manifest discovery, checksum verification, and a platform-independent pack-manager abstraction.
-
-## 28.3 Recommendation — do not over-queue trusted writes
-Protected actions such as group join and purchase restore are intentionally not silently queued in v1 because delayed replay would create misleading states.
-
-## 28.4 Recommendation — fallback behavior is a first-class product success metric
-The app is considered correct only when it degrades clearly and safely under offline or low-resource conditions.
-
-## 28.5 Recommendation — stale protected state must be handled conservatively
-Entitlement and group states may be cached, but must not be presented as current truth when freshness matters and the server cannot be reached.
-
----
-
-# 29. Anti-patterns forbidden by this policy
-
-The following are forbidden unless explicitly approved.
-
-## 29.1 Requiring network for essential ritual or emergency value
-Forbidden.
-
-## 29.2 Treating a partially downloaded pack as available
-Forbidden.
-
-## 29.3 Marking a pack installed without checksum verification
-Forbidden.
-
-## 29.4 Hardcoding pack URLs in feature modules
-Forbidden.
-
-## 29.5 Letting every feature invent its own cache logic
-Forbidden.
-
-## 29.6 Silently uploading local private support data to the server
-Forbidden.
-
-## 29.7 Treating stale protected state as guaranteed current truth
-Forbidden.
-
-## 29.8 Hiding offline limitations in misleading UI
-Forbidden.
-
----
-
-# 30. When this file must be updated
-
-This file must be updated whenever any of the following changes:
-- offline capability classification
-- pack categories or pack lifecycle
-- manifest semantics
-- integrity verification rules
-- storage paths or storage policy
-- sync category or retry policy
-- queueing policy for protected writes
-- cache TTLs or cache invalidation rules
-- background delivery assumptions
-- offline UX state semantics
-- alignment with map pack behavior or API cache behavior
-
-If any of these evolve but this file is not updated, mobile behavior, backend contracts, QA, and release verification will drift quickly.
-
----
-
-# 31. Summary
-
-This file defines the canonical offline-first runtime policy for Pilgrims Mobile App.
-
-It establishes:
-- what must work offline
-- what may work from cached snapshots
-- what must remain server-backed
-- how packs are discovered, downloaded, verified, installed, and purged
-- how sync and cache behavior are categorized
-- how stale state and failure modes must be handled
-- how offline correctness is tested and released
-
-Its purpose is to ensure that the app remains:
-- useful under poor connectivity
-- honest about freshness and trust
-- efficient in asset delivery
-- and safe for long-term AI-assisted development without offline behavior drifting across modules.
-
+End of file.
