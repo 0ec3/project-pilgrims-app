@@ -1,0 +1,40 @@
+version: 1
+owner_spec: SPECS/22_FEATURE_PHRASEBOOK_EMERGENCY_SAFETY_AND_ASSISTIVE_TOOLS.md
+related_specs:
+  - SPECS/26_CONTENT_MODEL_SCHOLAR_REVIEW_AND_PUBLISHING_WORKFLOW.md
+  - SPECS/28_REAL_WORLD_VERIFICATION_RELEASE_GATES_AND_EVIDENCE.md
+  - SPECS/30_DELIVERY_RUNBOOK_INCIDENTS_ROLLBACK_AND_OPERATIONS.md
+purpose: >-
+  Define the minimum governed metadata required before safety advisories,
+  emergency numbers, official handoff notes, or region-sensitive assistance copy
+  can be published, cached, or shown as current.
+required_fields:
+  advisory_id: string
+  jurisdiction: string
+  locale: string
+  advisory_type: safety_banner | emergency_number | official_handoff | safety_tip | seasonal_notice
+  source_id: string
+  source_name: string
+  source_authority_type: official | operator | scholar_governed | internal_safety_review
+  verified_at: timestamptz
+  expires_at: timestamptz
+  owner: string
+  severity: info | caution | urgent | critical
+  offline_fallback_copy: string
+  stale_behavior: hide | show_stale_label | replace_with_fallback
+  publish_blocking_if_expired: boolean
+optional_fields:
+  source_url_or_reference: string
+  geo_scope: string
+  review_ticket_ref: string
+  supersedes_advisory_id: string
+  activation_pointer: string
+rules:
+  - Any expired advisory marked publish_blocking_if_expired must fail publication validation.
+  - Offline cached advisory content must show stale handling where the distinction matters.
+  - Safety advisories must never block ritual or recovery tasks.
+  - Emergency numbers and official handoff notes must identify jurisdiction and verification date in internal metadata.
+  - Critical advisories require an owner and rollback/correction path before activation.
+validation_rules:
+  - Freshness checks must be part of release evidence for any changed safety or emergency content.
+  - Content review must verify that fallback copy does not overstate authority or certainty.
