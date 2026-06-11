@@ -4,16 +4,17 @@
 - **Type:** Normative feature-family specification
 - **Priority:** Highest
 - **Audience:** Founder, product lead, backend engineers, Flutter engineers, design lead, QA, AI coding agents, reviewer agents, release agents
-- **Purpose:** Define the canonical feature contract for account access, authentication gating, subscriptions, purchase validation and restore behavior, entitlement truth, downgrade/refund handling, settings ownership, local preference behavior, and release-readiness expectations.
-- **Authority level:** This file is the canonical source of truth for account-facing product behavior, subscription UX, entitlement-driven lock states, restore flows, and settings ownership. If implementation, UI, or tests diverge from this file, this file wins unless a higher-level normative contract or approved decision record explicitly changes it.
-- **Primary dependencies:** `01-README-AND-MASTER-INDEX.md`, `03-PRODUCT-CHARTER-AND-SCOPE.md`, `04-DECISIONS-GLOSSARY-AND-CHANGE-CONTROL.md`, `07-FLUTTER-APP-ARCHITECTURE-AND-MODULE-BOUNDARIES.md`, `08-DESIGN-SYSTEM-THEMES-TOKENS-AND-COMPONENTS.md`, `09-PLATFORM-SPEC-IOS-LIQUID-GLASS-ANDROID-ADAPTATION-AND-NATIVE-BRIDGES.md`, `10-PERSONAS-IA-USER-JOURNEYS-AND-TASK-FLOWS.md`, `11-SCREENS-STATES-NAVIGATION-AND-UI-BLUEPRINTS.md`, `12-COPY-LOCALIZATION-RTL-AND-ACCESSIBILITY.md`, `13-DATA-MODEL-RLS-INVARIANTS-AND-MIGRATIONS.md`, `14-API-REALTIME-AND-INTEGRATION-CONTRACTS.md`, `15-OFFLINE-PACKS-SYNC-ASSET-DELIVERY-AND-CACHE-POLICY.md`, `17-ANALYTICS-OBSERVABILITY-AND-PERFORMANCE-BUDGETS.md`
-- **Related files:** `18`, `19`, `20`, `21`, `22`, `23`, `25`, `27`, `28`, `29`, `30`
+- **Purpose:** Define the canonical feature contract for account access, authentication gating, subscriptions, purchase validation and restore behavior, entitlement truth, downgrade/refund handling, Settings ownership, Privacy & Data behavior, local preference behavior, and release-readiness expectations.
+- **Authority level:** This file is the canonical source of truth for account-facing product behavior, subscription UX, entitlement-driven lock states, restore flows, Settings ownership, and Privacy & Data UX. File `14` owns API contracts. File `29` owns privacy/security/compliance boundaries. File `31` and `CONTRACTS/entitlement_capability_policy.yaml` harden entitlement policy.
+- **Last-updated-by:** AI-assisted quality-first hardening pass (validated 2026-06-11)
+- **Primary dependencies:** `01`, `03`, `04`, `07`, `08`, `09`, `10`, `11`, `12`, `13`, `14`, `15`, `17`, `29`, `31`, `CONTRACTS/entitlement_capability_policy.yaml`, `CONTRACTS/screen_feature_traceability.yaml`
+- **Related files:** `18`, `19`, `20`, `21`, `22`, `23`, `25`, `27`, `28`, `30`
 
 ---
 
 # 1. Purpose of this file
 
-This file exists because account/auth, subscription behavior, entitlement enforcement, and settings are trust-boundary features.
+This file exists because account/auth, subscription behavior, entitlement enforcement, Privacy & Data controls, and Settings are trust-boundary features.
 
 If this feature family is vague, teams and AI agents create especially dangerous problems:
 - account creation gets forced too early and harms first-use value,
@@ -23,14 +24,16 @@ If this feature family is vague, teams and AI agents create especially dangerous
 - platform store differences are ignored and the product promises impossible parity,
 - local settings are scattered across many modules without ownership,
 - sensitive protected state is shown as current when it is only cached,
+- deletion/export/retention flows become hidden or inconsistent,
 - sacred or safety-critical flows become polluted by poorly placed upgrade prompts.
 
-This file prevents those failures by defining:
-- what this feature family is responsible for,
-- what the user can and cannot expect from account and subscription behavior,
+This file defines:
+- account gate behavior,
+- what users can and cannot expect from account and subscription behavior,
 - how sign-in gating works,
 - how purchases, restore, downgrade, and refund handling work,
 - how entitlement truth is obtained and cached,
+- how Privacy & Data surfaces behave,
 - what Settings owns,
 - how other feature families must depend on this module.
 
@@ -44,16 +47,18 @@ This feature family exists to help the user:
 - understand and manage Supporter status clearly,
 - restore purchases safely,
 - keep preferences and app behavior understandable,
-- trust what is free, what is paid, and what remains available offline.
+- manage privacy/data actions without hunting or support-only ambiguity,
+- trust what is free, what is paid, what is local-only, and what remains available offline.
 
 ## 2.2 Main user value statement
-A pilgrim should be able to open account and settings surfaces and quickly answer questions like:
+A pilgrim should be able to open account and settings surfaces and quickly answer:
 - Do I need to sign in for this?
 - Am I a Supporter right now?
 - Why is this feature locked or unavailable?
 - How do I restore my purchase on this device?
 - What app preferences can I safely control?
-- How do I manage subscriptions or privacy-related settings without getting lost?
+- What data is local-only versus server-backed?
+- How do I request deletion or export without getting lost?
 
 ## 2.3 Feature-level promise
 This feature family must feel:
@@ -62,6 +67,7 @@ This feature family must feel:
 - low-friction,
 - explicit about protected versus local state,
 - ethically monetized,
+- privacy-clear,
 - platform-aware without becoming fragmented.
 
 ---
@@ -78,7 +84,11 @@ This feature family includes:
 - trusted entitlement refresh behavior,
 - downgrade, cancel, and refund reflection behavior,
 - lock-state and upgrade messaging rules,
-- settings-root information architecture,
+- Settings Root information architecture,
+- Privacy & Data flow,
+- deletion request/status UX,
+- data export request UX,
+- retention-summary UX,
 - local preference ownership and persistence rules,
 - permission-summary and system-settings redirection surfaces,
 - sign-out and re-auth behavior for protected features.
@@ -99,20 +109,33 @@ File `13` defines the canonical server-side data model for `profiles`, `user_ent
 This file does not redefine those persistence truths. It defines the user-facing and runtime behavior built on top of them.
 
 ## 3.4 Boundary with file `14`
-File `14` defines the HTTP contracts for `GET /v1/entitlements`, `POST /v1/purchases/validate`, and `POST /v1/purchases/restore`.
+File `14` defines HTTP contracts for:
+- `GET /v1/entitlements`,
+- `POST /v1/purchases/validate`,
+- `POST /v1/purchases/restore`,
+- `POST /v1/account/deletion-request`,
+- `GET /v1/account/deletion-status`,
+- `POST /v1/privacy/export-request`,
+- `GET /v1/privacy/retention-summary`.
+
 This file defines how those APIs are used in product behavior and how users experience them.
 
 ## 3.5 Boundary with file `15`
-File `15` defines the offline snapshot and refresh policy for entitlements and other protected state.
+File `15` defines offline snapshot and refresh policy for entitlements and other protected state.
 This file applies those rules to account and settings UX.
 
 ## 3.6 Boundary with files `18`–`23`
 Other feature families do not own entitlement truth.
-They may react to entitlements or settings, but the authoritative meaning of gates, restore behavior, and account gating belongs here.
+They may react to entitlements or settings, but authoritative meaning of gates, restore behavior, and account gating belongs here.
 
 ## 3.7 Boundary with file `29`
-Deep privacy, compliance, and risk controls belong to file `29`.
-This file only defines the feature-facing privacy and user-trust behavior required at runtime.
+Deep privacy, compliance, retention, deletion, incident, SDK, and risk controls belong to file `29`.
+This file defines the feature-facing privacy and user-trust behavior required at runtime.
+
+## 3.8 Boundary with machine-readable contracts
+Implementation must validate account and entitlement behavior against:
+- `CONTRACTS/entitlement_capability_policy.yaml`,
+- `CONTRACTS/screen_feature_traceability.yaml`.
 
 ---
 
@@ -129,32 +152,37 @@ Supporter must never gate:
 - baseline map recovery,
 - phrase text,
 - emergency tools,
+- medical profile basics,
 - basic group join and manual coordination fallback.
 
 ## 4.3 Server-truth entitlement rule
 The client may cache entitlement snapshots for continuity, but the server remains authoritative.
 The app must not invent, extend, or silently assume Supporter access.
 
-## 4.4 Ethical upgrade placement rule
-Upgrade messaging must never interrupt ritual-critical, emergency, or recovery-critical tasks.
+## 4.4 Capability-policy rule
+Feature gates must validate against `CONTRACTS/entitlement_capability_policy.yaml`.
+No feature may add, rename, or reinterpret entitlement keys without updating this file, file `14`, affected feature specs, and the contract artifact together.
 
-## 4.5 Platform-difference honesty rule
+## 4.5 Ethical upgrade placement rule
+Upgrade messaging must never interrupt ritual-critical, emergency, medical, group recovery, or urgent orientation tasks.
+
+## 4.6 Platform-difference honesty rule
 The product-level meaning of `FREE` and `SUPPORTER` must remain shared, but store, restore, and family-related behavior may differ by platform.
-Do not promise identical store behavior where the platforms do not offer it.
+Do not promise identical store behavior where platforms do not offer it.
 
-## 4.6 Settings are not a junk drawer rule
+## 4.7 Settings are not a junk drawer rule
 Settings must expose clear account, preference, privacy, and app-management options without becoming a dumping ground for unrelated feature configuration.
 
-## 4.7 Protected-state honesty rule
-If entitlement or account state is stale, unverified, or offline-only, the UI must reflect that clearly where the distinction matters.
+## 4.8 Protected-state honesty rule
+If entitlement, account, deletion, export, or privacy state is stale, unverified, offline-only, or local-only, the UI must reflect that clearly where the distinction matters.
 
-## 4.8 Calm copy rule
-Account and subscription copy must stay calm, grateful, and respectful.
+## 4.9 Calm copy rule
+Account, privacy, and subscription copy must stay calm, grateful, and respectful.
 It must not shame free users or use aggressive monetization language.
 
 ---
 
-# 5. Canonical terminology for this feature family
+# 5. Canonical terminology
 
 ## 5.1 Account gate
 A screen or flow that requests authentication only because a protected action requires it.
@@ -177,13 +205,16 @@ A screen or feature state where a richer variant is unavailable because of entit
 ## 5.7 Settings Root
 The canonical screen for account, preferences, privacy, support, and app-management options.
 
-## 5.8 Support this App
+## 5.8 Privacy & Data flow
+The settings flow that helps users understand local-only data, server-backed account data, deletion, export, retention, and privacy-related handoffs.
+
+## 5.9 Support this App
 The user-facing subscription and restore entry surface.
 
-## 5.9 Auth-linked settings
+## 5.10 Auth-linked settings
 Settings that only make sense when the user has an authenticated account context.
 
-## 5.10 Local preference
+## 5.11 Local preference
 A device-local user preference or UX-management toggle that is not server-authoritative by default.
 
 ---
@@ -192,7 +223,7 @@ A device-local user preference or UX-management toggle that is not server-author
 
 ## 6.1 Optional account access
 - **As a new pilgrim**, I can use the app without creating an account until I need a protected online feature.
-- **As a user**, if I try to join a group or restore purchases, the app explains why sign-in is needed.
+- **As a user**, if I try to create/join a group or restore purchases, the app explains why sign-in is needed.
 
 ## 6.2 Supporter and restore
 - **As a user**, I can see what Supporter provides without being pressured during sacred or urgent flows.
@@ -200,12 +231,18 @@ A device-local user preference or UX-management toggle that is not server-author
 - **As a user**, if restore fails or I am offline, I understand what happened and what to do next.
 
 ## 6.3 Settings and preferences
-- **As a user**, I can manage language, app behavior, download preferences, and notification-related settings without hunting through many screens.
+- **As a user**, I can manage language, app behavior, download preferences, privacy/data actions, and notification-related settings without hunting through many screens.
 - **As a user**, I can open system settings when a permission or platform setting matters.
 
 ## 6.4 Downgrade and continuity
-- **As a downgraded or refunded user**, I can still use the free features calmly and understand what changed.
+- **As a downgraded or refunded user**, I can still use free features calmly and understand what changed.
 - **As an offline user**, I do not see fake current entitlement certainty when the app cannot verify it.
+
+## 6.5 Privacy and data
+- **As a user**, I can understand which data is local-only and which data is server-backed.
+- **As a signed-in user**, I can request account deletion and see deletion status where applicable.
+- **As a signed-in user**, I can request a scoped export of server-backed personal data where applicable.
+- **As a user**, I can delete or manage local-only data without being misled that it was uploaded.
 
 ---
 
@@ -227,9 +264,11 @@ The exact low-friction sign-in method may evolve beneath this contract, but it m
 
 ## 7.4 Optional account gate rule
 Account gating is triggered only for trusted or account-linked features such as:
+- group creation,
 - group join,
 - purchase restore or validate,
 - protected account settings,
+- deletion/export/status requests,
 - other future approved protected operations.
 
 ## 7.5 No-first-launch-auth rule
@@ -250,778 +289,306 @@ Signing out should:
 ## 7.8 No misleading anonymous-account language rule
 If the user is not signed in, the product must explain the practical consequence clearly rather than implying the app is broken.
 
-## 7.9 Account deletion availability rule
-If the product offers account creation or maintains server-backed personal data, authenticated users must be able to find a clear delete-account / data-deletion path from Settings Root.
-This path may be an immediate in-app delete flow, a governed request flow, or a clearly explained handoff, but it must not be hidden behind support-only email copy or undocumented support channels.
-
-## 7.10 Web deletion handoff rule
-Where store policy or legal/compliance posture requires an external deletion resource, the app must expose a trusted web handoff from the same account/data-management area.
-The hosted page or support flow may live outside the app, but discoverability from the app remains this feature family’s responsibility.
-
 ---
 
-# 8. Subscriptions and product offering behavior
+# 8. Entitlement behavior
 
-## 8.1 Product posture
-The app offers a free baseline and a Supporter tier.
-The purpose of Supporter is to fund operations, translations, accessibility, maps, audio, and maintenance while preserving ethical access boundaries.
+## 8.1 Entitlement source of truth
+The backend returns the trusted entitlement snapshot.
+Client code consumes this snapshot and must not invent gates.
 
-## 8.2 Free baseline
-Free access must continue to include the baseline capabilities already defined across the feature-family files.
-This file does not override those free guarantees.
+## 8.2 Canonical gates
+Current Supporter-linked gates are defined in `CONTRACTS/entitlement_capability_policy.yaml` and may include:
+- `PACK_AUTO_DOWNLOAD`,
+- `AUDIO_OFFLINE`,
+- `SMART_PLANNER`,
+- `GROUP_LIVE_BOARD`,
+- `NOTES_BOOKMARKS_EXTENDED`.
 
-## 8.3 Supporter value categories
-Supporter may unlock convenience and enrichment such as:
-- offline pack conveniences,
-- offline audio,
-- live group board,
-- smart planner suggestions,
-- extended notes/bookmarks capability.
+## 8.3 Never-gate capabilities
+Capabilities marked `never_gate` in the contract must remain available in the relevant free/guest/local state.
+Release tests must prove this for correctness-critical and emergency-critical flows.
 
-## 8.4 Subscription-group posture
-The paid tier should be exposed to the user as one coherent Supporter offering even if store-side product IDs, durations, or future levels differ internally.
-
-## 8.5 No billing sprawl rule
-The app must not surface a confusing matrix of plans or billing jargon unless product strategy later expands deliberately.
-
-## 8.6 Regionalized pricing rule
-Displayed pricing should respect platform/store regionalization and must not hardcode one global amount in product copy.
-
-## 8.7 Trial and intro-offer posture
-If a trial or introductory offer is enabled, it must be disclosed clearly and must not create hidden assumptions elsewhere in the product.
-Any server-enforced trial limits must remain product-governed and documented.
-
----
-
-# 9. Canonical entitlement model
-
-## 9.1 Entitlement truth
-The canonical trusted source of entitlement truth is the server-backed `user_entitlements` record and the normalized entitlement responses from the authenticated API.
-
-## 9.2 Tier values
-The canonical high-level tier values are:
-- `FREE`
-- `SUPPORTER`
-
-## 9.3 Gate snapshot
-The current normalized gate snapshot includes at minimum:
-- `PACK_AUTO_DOWNLOAD`
-- `AUDIO_OFFLINE`
-- `SMART_PLANNER`
-- `GROUP_LIVE_BOARD`
-- `NOTES_BOOKMARKS_EXTENDED`
-
-## 9.4 Gate semantics rule
-Gate meanings are centralized here and must not be reinterpreted independently in feature modules.
-
-### `PACK_AUTO_DOWNLOAD`
-Allows Supporter convenience behavior for auto-download flows when user consent and network/device conditions permit.
-
-### `AUDIO_OFFLINE`
-Allows offline audio pack access where supported by content and pack state.
-
-### `SMART_PLANNER`
-Allows supportive planner suggestions where approved.
-
-### `GROUP_LIVE_BOARD`
-Allows richer live-board access where group authorization also permits it.
-
-### `NOTES_BOOKMARKS_EXTENDED`
-Allows richer notes/bookmarks features such as markdown, tags, multiple attachments, and richer export according to the personal-tools feature contract.
-
-## 9.5 Legacy alias rule
-Older materials may refer to `NOTES_BOOKMARKS`.
-Current implementation and tests must treat `NOTES_BOOKMARKS_EXTENDED` as authoritative while preserving compatibility awareness where legacy references still exist.
-
-## 9.6 Entitlement-response contract
-The canonical normalized entitlement response includes:
-- `tier`
-- optional `active_until`
-- `source`
-- `gates`
-- optional `last_validated_at`
-
-## 9.7 Source rule
-`source` is a normalized backend value such as a store/provider source string.
-Flutter feature code must not infer product meaning from raw provider receipts or transaction details.
-
----
-
-# 10. Purchase, validate, and restore behavior
-
-## 10.1 Purchase initiation rule
-Purchase initiation occurs through the platform-native purchase flow exposed through the store bridge.
-Flutter feature modules must not talk directly to raw platform store APIs from screen widgets.
-
-## 10.2 Backend validation rule
-After a purchase succeeds locally, the app must call the trusted backend validation endpoint and use the normalized entitlement response that comes back.
-
-## 10.3 Restore rule
-Restore is a user-initiated action available from:
-- Support this App surface,
-- gated feature surfaces where appropriate,
-- Settings Root.
-
-The app must call the trusted restore endpoint and use the normalized entitlement response.
-
-## 10.4 Idempotency rule
-Purchase validate and restore must use the idempotency and retry rules already defined in the API contract.
-
-## 10.5 Auth requirement rule
-Trusted purchase validate and restore flows require authenticated user context.
-If a user tries to restore while signed out, the app must route through the account gate first.
-
-## 10.6 Success behavior
-On successful purchase validation or restore:
-- the cached entitlement snapshot is updated,
-- feature gates react quickly,
-- the user sees a calm success confirmation,
-- related convenience prompts such as pack preparation may appear only when contextually appropriate.
-
-## 10.7 Failure behavior
-Failure states must distinguish between:
-- user canceled purchase,
-- temporary network or store error,
-- auth required,
-- validation failure,
-- restore found no active entitlement,
-- backend integration error.
-
-## 10.8 No fake success rule
-The app must not unlock paid features permanently based only on client-side purchase optimism without trusted validation.
-
-## 10.9 Restore expectation rule
-Restore is for recovering current or valid store-backed entitlement state, not for bypassing the platform subscription lifecycle.
-
----
-
-# 11. Cancel, downgrade, refund, and expiry behavior
-
-## 11.1 Cancel behavior
-Subscription cancellation is managed by the store, not by a custom in-app cancellation workflow.
-The app may surface a platform-appropriate “Manage Subscription” handoff, but it must not imply it controls cancellation directly.
-
-## 11.2 Downgrade behavior
-When the user’s paid access lapses or the backend reflects downgrade:
-- the tier and gate snapshot update accordingly,
-- free features remain fully available,
-- richer gated capabilities become unavailable or read-only according to their feature contracts,
-- the app explains the change without panic language.
-
-## 11.3 Refund behavior
-Refund or revoked purchase state must be reflected through the trusted backend path and then propagated into the entitlement snapshot.
-The app must close paid gates gracefully while preserving ethical free access.
-
-## 11.4 Expiry rule
-If `active_until` is past and the app cannot verify a new active state, it must not imply current Supporter certainty.
-
-## 11.5 Graceful read-only rule
-Where a gated feature supports read-only downgrade behavior, the feature family that owns it must implement that behavior, but file `24` owns the entitlement truth that triggers it.
-
-## 11.6 No punitive UX rule
-Do not use scary or manipulative copy when Supporter ends. The user should still feel welcomed in the free product.
-
----
-
-# 12. Family-sharing and cross-platform account behavior
-
-## 12.1 Shared product meaning rule
-The product-level meaning of Supporter remains shared across platforms, but family and restore semantics may differ by store.
-
-## 12.2 Apple-family behavior caution
-If Apple family-sharing support is enabled for the subscription product, the app may reflect that through normalized entitlement state.
-The app must not hardcode family-sharing assumptions into product logic outside the normalized backend contract.
-
-## 12.3 Android-family behavior caution
-Do not assume Android offers the same subscription family-sharing semantics as Apple.
-Any family-related entitlement experience on Android must come from trusted normalized backend truth rather than product assumptions.
-
-## 12.4 Cross-platform linking rule
-Entitlements should follow the authenticated user account as normalized by the backend, not remain device-isolated.
-The app must not imply that buying on one device automatically bypasses the need for account-linked restore/validation on another.
-
-## 12.5 Wording rule
-Family-related copy must be platform-aware and cautious.
-Do not promise identical family behavior across Apple and Google if the platforms differ.
-
----
-
-# 13. Offline entitlement continuity behavior
-
-## 13.1 Continuity rule
-The app may cache the last-known entitlement snapshot for UX continuity only.
-
-## 13.2 Refresh triggers
-The entitlement snapshot should be refreshed when online at least on:
-- app start,
-- purchase success transition,
-- restore flow,
-- relevant account/auth transitions,
-- other purchase-related transitions where appropriate.
-
-## 13.3 Offline-safe behavior
+## 8.4 Offline entitlement continuity
 When offline:
 - the app may use the last-known entitlement snapshot for short-term continuity,
 - it must not falsely confirm new paid access,
 - it must not imply post-expiry certainty without trusted verification.
 
-## 13.4 Expiry-aware rule
-If the cached snapshot indicates active access still within a clearly valid time window, the app may preserve gated UX continuity.
-Once that state is expired, missing, or unverifiable, gated features must fail safe.
-
-## 13.5 Protected-state staleness rule
-Screens must clearly distinguish between:
-- current verified paid access,
-- cached last-known access,
-- unavailable because server confirmation is required,
-- locked because no valid trusted access is known.
-
-## 13.6 Offline local-only rule
-Even when paid features are locked due to unverifiable protected state, local-first free features remain usable.
+## 8.5 Downgrade behavior
+Downgrade must preserve ethical free access.
+Where a gated feature has read-only downgrade behavior, that behavior is owned by the feature family but triggered by entitlement truth owned here.
 
 ---
 
-# 14. Settings ownership and information architecture
+# 9. Purchase, restore, refund, and platform behavior
 
-## 14.1 Purpose of Settings Root
-Settings Root exists to expose account, preferences, pack/download options, notifications-related surfaces, privacy/help links, and app-management actions in one coherent place.
+## 9.1 Purchase initiation
+Purchase initiation may use native platform purchase surfaces.
+The app should explain Supporter calmly and avoid interrupting urgent flows.
 
-## 14.2 Settings ownership rule
-This feature family owns the settings surface and the user-facing meaning of settings categories.
-It does not own every deep implementation detail behind each setting.
+## 9.2 Restore behavior
+Restore is user-initiated and must call the trusted backend/store validation path.
+Restore failure must distinguish:
+- offline,
+- auth required,
+- store unavailable,
+- no active purchase found,
+- backend validation failure.
 
-## 14.3 Canonical settings sections
-Settings Root should group items into sections such as:
-- account and profile,
-- Support this App,
-- app preferences,
-- packs and downloads,
-- notifications and permissions,
-- privacy and data,
-- help/about/app info.
+## 9.3 Refund and revocation behavior
+Refund or revoked purchase state must be reflected through the trusted backend path and then propagated into the entitlement snapshot.
+The app must close paid gates gracefully while preserving ethical free access.
 
-## 14.4 Settings anti-sprawl rule
-Do not create dozens of fine-grained toggles when a simpler explanation or handoff is better.
-
-## 14.5 Auth-linked settings rule
-Some settings are only meaningful when authenticated.
-Those must render honestly as available or unavailable rather than as broken rows.
+## 9.4 Family/cross-platform caution
+Entitlements may follow authenticated account truth as normalized by the backend.
+The app must not promise identical family-sharing or cross-platform restore semantics unless the implementation and store policy truly support it.
 
 ---
 
-# 15. Local preference model
+# 10. Settings Root
 
-## 15.1 Local settings posture
-Most preferences in this feature family are device-local by default unless a future approved contract makes them server-backed.
+## 10.1 Purpose
+Settings Root is the low-noise place for account, support, privacy, permissions, preferences, packs, and app information.
 
-## 15.2 Canonical locally owned preferences
-Representative locally owned preferences include:
-- selected app language or language override where applicable,
-- simple-mode preference,
-- pack/download preferences such as Wi-Fi-only and auto-download consent,
-- notification-related local UX preferences,
-- support prompt dismissal state,
-- other app-level UX toggles explicitly approved here.
+## 10.2 Required categories
+Settings Root must include:
+- Account & profile,
+- Support this App / purchase and restore,
+- Privacy & Data,
+- App preferences,
+- Packs & downloads,
+- Notifications & permissions,
+- Help / About / App info.
 
-## 15.3 Not everything belongs here
-Feature-specific dismissals or domain-specific storage may live in their owning feature family even if surfaced from Settings.
-Examples:
-- safety-banner dismissals,
-- note-specific editor defaults,
-- map runtime session state.
+## 10.3 Avoid junk drawer behavior
+Settings must not become a random dumping ground. Feature-specific controls should live in the owning feature unless the setting is global.
 
-## 15.4 Local persistence rule
-Local preferences must remain functional offline and should load immediately without waiting on network.
-
-## 15.5 No ad hoc strings rule
-Preference keys and enum values must remain centralized and typed. Do not invent ad hoc string literals in feature widgets.
+## 10.4 Local preference behavior
+Simple Mode, language preference, dismissal states, and selected app preferences remain local unless future specs approve server sync.
 
 ---
 
-# 16. Support this App surface behavior
+# 11. Privacy & Data flow
 
-## 16.1 Purpose
-Support this App is the canonical purchase and restore entry surface.
+## 11.1 Purpose
+Privacy & Data helps users understand and manage account-linked data, local-only data, deletion, export, and retention without fear or confusion.
 
-## 16.2 Placement
-This surface may appear as:
-- a full screen reachable from Settings Root,
-- a dedicated detail page reachable from gated screens,
-- a contextually invoked purchase sheet when ethically appropriate.
+## 11.2 Required content blocks
+The flow must include:
+- local-only data explanation,
+- server-backed account data explanation,
+- delete account / request deletion,
+- deletion status where a request exists,
+- delete local-only data explanation or entry points,
+- export server-backed personal data request where applicable,
+- retention summary,
+- public deletion/help handoff where required,
+- privacy policy and legal links where applicable.
 
-## 16.3 Required content blocks
-Support this App should include:
-- short explanation of why Supporter exists,
-- what remains free,
-- what Supporter unlocks,
-- pricing as resolved through the store/product layer,
-- Become a Supporter CTA,
-- Restore Purchase CTA,
-- Manage Subscription handoff where appropriate,
-- fine-print or disclosure copy as required by policy.
+## 11.3 Local-only data explanation
+The UI must clearly say that these are device-local by default unless a future approved feature changes that boundary:
+- ritual progress,
+- saved gates / anchors,
+- planner items,
+- notes,
+- bookmarks,
+- local wallet artifacts,
+- medical profile,
+- pack inventory.
 
-## 16.4 Ethical messaging rule
-Copy must reinforce:
-- no ads,
-- no paywall on correctness or safety,
-- Supporter helps keep the app available for everyone.
+## 11.4 Server-backed data explanation
+The UI must distinguish server-backed data such as:
+- profile metadata,
+- entitlements,
+- purchase validation records,
+- groups and group membership,
+- group check-ins/regroup pins/itinerary where used,
+- account deletion/export request status.
 
-## 16.5 Placement rule
-Do not open this surface inside ritual-critical, emergency, or urgent recovery moments.
+## 11.5 Delete account/request deletion
+If the product offers account creation or maintains server-backed personal data, authenticated users must be able to find a clear delete-account or data-deletion path from Settings Root.
 
----
+The path may be a governed request flow, but must not be hidden behind undocumented support-only channels.
 
-# 17. Settings Root UX contract
+## 11.6 Deletion status
+Where deletion is asynchronous, the UI must show understandable status states:
+- no request,
+- requested,
+- in progress,
+- completed,
+- blocked pending user/support/legal action,
+- failed with next step.
 
-## 17.1 Canonical screen
-This feature family owns `settings_root` and strongly depends on `account_gate`.
+## 11.7 Export request
+Any export must be explicit, scoped, and understandable.
+The app must not create broad casual export surfaces for sensitive local-only data.
 
-## 17.2 Settings Root primary purpose
-Expose account, preferences, pack settings, notifications, privacy, and app options in a calm, structured layout.
+## 11.8 Retention summary
+Retention copy must explain that some records may be retained longer for purchase restore, accounting, fraud prevention, security, backup, legal hold, or compliance evidence.
+It must not promise immediate deletion of records that lawfully require retention.
 
-## 17.3 Required content blocks
-Settings Root must include, where relevant:
-- account summary card or sign-in prompt,
-- Support this App entry,
-- language/preferences section,
-- packs/download preferences section,
-- notification/permission summary section,
-- privacy and data section,
-- account/data management section when signed in or when account-linked deletion/help must be shown,
-- help/about section.
+## 11.9 Public web deletion handoff
+Where required, the app must expose a trusted web handoff from the same Privacy & Data area.
+The hosted page or support flow may live outside the app, but discoverability from the app remains this feature family’s responsibility.
 
-## 17.4 Required states
-- default content,
-- signed-out state,
-- auth-linked settings available,
-- auth-linked settings unavailable,
-- offline with local settings only,
-- permission-summary states,
-- entitlement-stale state where it materially matters,
-- account/data-management availability state where auth or connectivity changes what can be shown.
-
-## 17.5 Primary actions
-- sign in or manage account,
-- open Support this App,
-- restore purchase,
-- open platform manage subscription surface where appropriate,
-- open system settings for permissions when needed,
-- open account/data deletion flow or trusted web handoff when applicable,
-- edit local preferences.
-
-## 17.6 Rule
-Settings Root must not feel like a billing dashboard or technical admin panel.
+## 11.10 Offline behavior
+When offline:
+- local-only data explanations remain available,
+- deletion/export server requests are unavailable until online,
+- cached request status may be shown only with stale/offline labeling.
 
 ---
 
-# 18. Account Gate UX contract
+# 12. Account Gate behavior
 
-## 18.1 Canonical screen
-This feature family strongly owns `account_gate`.
+## 12.1 Purpose
+Account Gate explains why sign-in is needed for a specific protected action.
 
-## 18.2 Primary purpose
-Request authentication only because a trusted online feature requires it.
-
-## 18.3 Entry points
-- Group join,
-- purchase restore/validation,
+## 12.2 Approved triggers
+Account Gate may appear for:
+- group creation,
+- group join,
+- purchase validation/restore,
+- deletion/export/status requests,
 - protected account settings,
 - any future approved protected feature.
 
-## 18.4 Required content blocks
+## 12.3 Required content blocks
 - clear explanation of why sign-in is needed,
 - sign-in action(s),
-- cancel or back action where appropriate,
+- cancel/back action where appropriate,
 - offline explanation if auth cannot proceed.
 
-## 18.5 Required states
+## 12.4 Required states
 - sign-in choice,
 - loading,
 - auth failure,
 - offline unavailable for auth-required action.
 
-## 18.6 Rule
+## 12.5 Rule
 Do not frame this as “you must make an account to use the app.”
 Frame it as “this trusted feature needs sign-in.”
 
 ---
 
-# 19. Lock-state behavior
+# 13. Lock-state behavior
 
-## 19.1 General lock-state rule
+## 13.1 General lock-state rule
 If a feature or richer variant is gated, the lock state must:
 - explain the value clearly,
 - preserve ethical free access boundaries,
 - avoid implying that correctness or safety is being withheld.
 
-## 19.2 Example lock-state uses
+## 13.2 Example lock-state uses
 - supporter-only pack states,
 - group live board,
 - offline audio convenience,
 - extended notes/bookmarks features.
 
-## 19.3 Protected vs unavailable distinction
+## 13.3 Protected vs unavailable distinction
 The UI must distinguish between:
 - locked by entitlement,
 - unavailable because offline verification is required,
 - unavailable because a pack is missing,
-- unavailable because a permission or device capability is missing.
+- unavailable because a permission or device capability is missing,
+- unavailable because auth is required,
+- unavailable because deletion/export requires online trusted server action.
 
-## 19.4 No deceptive dark-pattern rule
+## 13.4 No deceptive dark-pattern rule
 Do not use countdown pressure, guilt language, or misleading “limited time” framing unless the store/product configuration genuinely requires it and legal/policy review has approved it.
 
 ---
 
-# 20. Copy, localization, RTL, and accessibility rules
+# 14. Analytics and observability
 
-## 20.1 Copy tone
-Account and subscription copy must be:
-- calm,
-- grateful,
-- respectful,
-- plain-language,
-- not aggressive,
-- not overly technical.
+## 14.1 Required analytics events
+This feature family should emit privacy-safe events for:
+- account_gate_view,
+- account_gate_complete,
+- support_view,
+- purchase_start,
+- purchase_complete,
+- purchase_fail,
+- restore_start,
+- restore_complete,
+- restore_fail,
+- entitlement_refresh_complete,
+- entitlement_refresh_fail,
+- settings_view,
+- privacy_data_view,
+- account_deletion_request_start,
+- account_deletion_request_complete,
+- account_deletion_request_fail,
+- data_export_request_start,
+- data_export_request_complete,
+- data_export_request_fail.
 
-## 20.2 Support copy guidance
-Preferred framing includes:
-- “Support this app”
-- “Help keep guidance and safety tools free for everyone.”
-- “Restore Purchase”
-- “Manage Subscription”
-
-Avoid copy that sounds like:
-- a high-pressure sale,
-- a rewards scheme,
-- a punishment for free users.
-
-## 20.3 Pricing and disclosure rule
-Displayed pricing, trial language, and renewal language must reflect platform/store truth and localization.
-Do not hardcode obsolete price strings into the product.
-
-## 20.4 RTL and mixed-content rule
-Plan names, product IDs, dates, purchase states, and mixed-language support copy must remain bidi-safe in RTL contexts.
-
-## 20.5 Accessibility requirements
-This feature family must support:
-- large text,
-- screen-reader clarity for price and restore/manage actions,
-- non-color-only lock-state meaning,
-- simple segmented information hierarchy,
-- full-screen flows for dense account or restore tasks rather than cramped modal overload.
-
-## 20.6 Error-copy rule
-Store, restore, and auth errors must be translated into calm user-appropriate messages rather than exposing raw platform or backend error details.
+## 14.2 Forbidden analytics values
+Do not send:
+- raw receipt values,
+- raw tokens,
+- medical profile contents,
+- personal notes,
+- exact private location,
+- join codes,
+- deletion/export payload details.
 
 ---
 
-# 21. Security and privacy rules for this feature family
+# 15. Testing and release evidence
 
-## 21.1 No raw receipt leakage rule
-Raw store receipts, tokens, or signed transaction payloads must not be logged or surfaced casually in client UI.
+## 15.1 Required test coverage
+Tests must cover:
+- guest first-use path without forced account,
+- account gate for group creation/join,
+- purchase/restore success and failure states,
+- expired/downgraded entitlement state,
+- offline entitlement continuity,
+- no paywall on never-gate capabilities,
+- Privacy & Data entry from Settings Root,
+- deletion request success/failure/offline states,
+- deletion status display,
+- export request success/failure/offline states,
+- retention summary copy,
+- sign-out preserving local-only data,
+- large text and screen reader behavior.
 
-## 21.2 Entitlement trust rule
-Only the trusted backend writes or updates `user_entitlements` and purchase-validation records.
-
-## 21.3 Minimal profile rule
-Profile data should remain minimal and practical for product needs such as display name and group display context.
-
-## 21.4 Protected cache rule
-Cached entitlement snapshots and protected account state must remain app-private and should not be treated like public configuration.
-
-## 21.5 User-initiated purchase actions rule
-All purchase, restore, and manage-subscription actions remain explicitly user-initiated.
-
-## 21.6 No hidden monetization tracking rule
-Do not collect more purchase-related telemetry than needed for product quality, conversion analysis, and fraud/debug operations within the broader analytics policy.
-
-## 21.7 Account-deletion discoverability rule
-If account deletion is supported or required, the app must make the path easy to find from Settings and must describe what is deleted immediately, what may be retained for legal, fraud, accounting, or support reasons, and when a web handoff is being used instead of an immediate in-app destructive action.
-
----
-
-# 22. Reactions required from other feature families
-
-## 22.1 Rituals
-Ritual flows must never show monetization interruption inside correctness-critical moments.
-Ritual audio convenience or related enrichments may react to entitlement state but cannot redefine it.
-
-## 22.2 Maps
-Maps may use entitlement state for pack-related convenience and lock states, but anchor recovery and baseline orientation remain free.
-
-## 22.3 Group
-Group join depends on account gating when trusted auth is required, and Live Board depends on entitlement plus membership authorization.
-
-## 22.4 Planner / Notes / Wallet
-Planner reacts to `SMART_PLANNER`, and Notes/Bookmarks reacts to `NOTES_BOOKMARKS_EXTENDED`, but those modules must treat file `24` as the owner of entitlement truth and downgrade semantics trigger.
-
-## 22.5 Phrasebook / Emergency
-Phrasebook reacts to `AUDIO_OFFLINE` and local preferences surfaced through Settings, but must not own subscription truth.
+## 15.2 Release evidence
+Release evidence must include:
+- platform purchase/restore proof where applicable,
+- entitlement policy proof against `CONTRACTS/entitlement_capability_policy.yaml`,
+- privacy/data flow proof,
+- account deletion/public handoff proof where applicable,
+- evidence that urgent/sacred/recovery flows are not interrupted by monetization.
 
 ---
 
-# 23. Performance and operational rules for this feature family
+# 16. Definition of done
 
-## 23.1 Performance authority
-Global budgets are defined in file `17`.
-This feature family must obey them.
-
-## 23.2 Feature-level operational priorities
-This feature family must optimize for:
-- fast opening of Settings Root from local data,
-- low-friction account gate transitions,
-- quick post-purchase or post-restore state convergence,
-- honest offline behavior for protected state.
-
-## 23.3 Recommended operational targets
-Representative targets:
-- Settings Root open from local data p95 ≤ **400 ms**,
-- account gate open p95 ≤ **350 ms**,
-- post-restore entitlement state visible quickly after the trusted response returns,
-- no visible spinner-only gating in sacred or urgent flows.
+This feature family is ready when:
+- account is optional until protected online value requires it,
+- Supporter gates are ethical and contract-backed,
+- entitlement state is server-truth and stale-aware,
+- Privacy & Data is first-class in Settings,
+- deletion/export/status behavior matches file `14` and file `29`,
+- local-only data boundaries are clear,
+- purchase/restore behavior is platform-aware and calm,
+- analytics are privacy-safe,
+- accessibility and release evidence are complete.
 
 ---
 
-# 24. Analytics and observability requirements
+# 17. AI-agent checklist
 
-## 24.1 Canonical events from file `17`
-This feature family must emit at minimum:
-- `entitlement_snapshot_refresh`
-- `entitlement_restore_start`
-- `entitlement_restore_complete`
-- `entitlement_restore_fail`
-- `entitlement_upgrade_view`
-- `entitlement_upgrade_start`
-- `entitlement_upgrade_complete`
-- `entitlement_upgrade_fail`
-- `settings_preference_change`
-
-## 24.2 Recommended feature parameters where relevant
-- `surface`
-- `tier_before`
-- `tier_after`
-- `source`
-- `restore_platform`
-- `network_state`
-- `offline_continuity_used`
-- `preference_key`
-- `lock_reason`
-
-## 24.3 Privacy-light telemetry rule
-Do not send raw receipts, full store payloads, personal profile fields, or sensitive identifiers as analytics parameters.
-
-## 24.4 Observability priorities
-High-signal issues include:
-- purchase validation failures,
-- restore failures,
-- stale-entitlement logic regressions,
-- incorrect gate mapping,
-- auth gate loops,
-- sign-out state corruption,
-- inconsistent downgrade behavior across modules.
+Before editing account, subscription, entitlement, or settings code, an AI agent must:
+1. Read files `03`, `13`, `14`, `24`, `29`, and `31`.
+2. Read `CONTRACTS/entitlement_capability_policy.yaml`.
+3. Check whether the change affects any `never_gate` capability.
+4. Check whether privacy/deletion/export behavior is affected.
+5. Update affected feature specs and tests together.
+6. Never add monetization prompts to ritual-critical, emergency, medical, group recovery, or urgent map recovery flows.
 
 ---
 
-# 25. Testing and validation requirements
-
-## 25.1 Required automated coverage
-Automated tests must cover at minimum:
-- account-gate routing only for protected features,
-- authenticated versus signed-out settings states,
-- entitlement gate mapping for all current gates,
-- purchase-validate success/failure handling,
-- restore success/failure handling,
-- cached entitlement continuity rules,
-- post-expiry fail-safe behavior,
-- downgrade behavior for extended notes/bookmarks,
-- pack auto-download setting reactions,
-- lock-state copy and navigation rules,
-- account/data-management entry visibility and deletion-path routing rules.
-
-## 25.2 Required manual/device validation
-Manual or device validation must cover at minimum:
-- first-use without account,
-- triggering account gate from Group join,
-- triggering account gate from restore purchase,
-- successful Supporter purchase flow on iOS and Android test environments,
-- restore on reinstall or new device path,
-- offline after valid entitlement snapshot,
-- expiry or refund reflection,
-- signed-out local-only settings behavior,
-- large-text and screen-reader usability of Support this App and Settings Root,
-- platform-specific manage-subscription handoffs,
-- delete-account or data-deletion discoverability and any required web handoff.
-
-## 25.3 Real-world validation requirement
-Before release, representative testing must validate:
-- users understand why sign-in is needed when it appears,
-- Supporter messaging does not feel coercive,
-- restore is discoverable and understandable,
-- settings structure is calm rather than cluttered,
-- offline protected-state behavior is honest,
-- authenticated users can find account/data-management and deletion help without support intervention.
-
-## 25.4 Fake-success warning
-A working purchase button is not enough evidence.
-Release confidence requires restore, expiry, downgrade, offline continuity, and lock-state correctness across modules.
-
----
-
-# 26. Definition of done for this feature family
-
-This feature family is not ready for release unless all of the following are true:
-- account gate appears only when a trusted feature requires it,
-- `profiles`, `user_entitlements`, and purchase-validation behavior stay aligned with files `13` and `14`,
-- purchase validate and restore use normalized trusted entitlement responses,
-- offline continuity does not overclaim certainty after expiry or failed verification,
-- free versus Supporter boundaries remain ethical and consistent across modules,
-- settings own the agreed account/preferences/privacy/help/account-data-management structure without feature-sprawl confusion,
-- platform differences are reflected honestly,
-- account deletion or deletion-request pathways are discoverable, truthful, and aligned with the actual server-side deletion/retention posture,
-- analytics hooks align with file `17`,
-- real-device validation confirms restore, downgrade, and lock-state clarity.
-
----
-
-# 27. Cross-file dependency rules
-
-## 27.1 If entitlement keys or product meaning changes
-Update:
-- this file,
-- file `14`,
-- file `13` if persistence meaning changes,
-- all affected feature-family files,
-- analytics and tests.
-
-## 27.2 If pricing or store-offer policy changes
-Update:
-- this file,
-- relevant copy/localization assets,
-- backend product-id or plan mappings,
-- release evidence where needed.
-
-## 27.3 If settings categories or ownership changes
-Update:
-- this file,
-- file `11`,
-- affected feature-family files,
-- app architecture docs if module boundaries change.
-
-## 27.4 If restore or purchase flow changes
-Update:
-- this file,
-- file `14`,
-- file `09` if bridge expectations change,
-- tests and QA scenarios.
-
-## 27.5 If offline continuity policy changes
-Update:
-- this file,
-- file `15`,
-- file `17` if observability or alerting changes,
-- lock-state rules in affected screens.
-
----
-
-# 28. Anti-patterns forbidden by this document
-
-The following are forbidden unless explicitly approved.
-
-## 28.1 Forcing account creation before the user can access the core local-first product
-Forbidden.
-
-## 28.2 Letting the client invent or extend entitlement truth
-Forbidden.
-
-## 28.3 Showing paywalls inside ritual-critical or emergency-critical flows
-Forbidden.
-
-## 28.4 Promising identical family-sharing behavior across Apple and Google without store-backed truth
-Forbidden.
-
-## 28.5 Hiding restore behind obscure navigation or support-only flows
-Forbidden.
-
-## 28.6 Treating stale entitlement state as definitely current when freshness materially matters
-Forbidden.
-
-## 28.7 Scattering settings ownership across unrelated feature widgets without central control
-Forbidden.
-
-## 28.8 Logging raw receipt payloads or exposing store internals in user-facing copy
-Forbidden.
-
-## 28.9 Building a custom in-app cancellation system that pretends to replace store-managed subscription control
-Forbidden.
-
-## 28.10 Using aggressive or guilt-based monetization copy in a stress-sensitive product
-Forbidden.
-
----
-
-# 29. Implementation priorities
-
-## 29.1 Phase 1 priorities
-Implement first:
-- account gate routing,
-- normalized entitlement snapshot consumption,
-- Support this App baseline surface,
-- purchase validate and restore integration,
-- Settings Root baseline sections,
-- local preference persistence for app-level settings.
-
-## 29.2 Phase 2 priorities
-Then add:
-- profile editing polish,
-- manage-subscription handoffs,
-- richer lock-state refinement across modules,
-- better downgrade/read-only behavior messaging,
-- family-related explanatory wording where supported.
-
-## 29.3 Phase 3 priorities
-Then refine:
-- stronger platform-tailored subscription UX,
-- better conversion and restore diagnostics,
-- deeper contextual upgrade surfaces that still respect ethical placement,
-- post-launch simplification based on real user confusion data.
-
----
-
-# 30. When this file must be updated
-
-This file must be updated whenever any of the following changes:
-- auth-gate policy,
-- profile fields exposed to users,
-- Supporter product meaning,
-- entitlement gate list or semantics,
-- purchase validate or restore flow behavior,
-- downgrade/refund/expiry handling,
-- settings categories or ownership,
-- offline entitlement continuity policy,
-- account or subscription analytics hooks,
-- release-readiness expectations tied to subscriptions or settings.
-
-If these truths change but this file is not updated, lock-state behavior, purchase flows, and other feature-family contracts will drift quickly.
-
----
-
-# 31. Summary
-
-This file defines the canonical feature-facing contract for Account, Subscriptions, Entitlements, and Settings in Pilgrims Mobile App.
-
-It establishes:
-- optional account-gate behavior,
-- Supporter and restore UX behavior,
-- trusted entitlement truth and gate semantics,
-- downgrade, refund, and expiry handling,
-- offline continuity rules for protected state,
-- Settings Root ownership,
-- copy, accessibility, analytics, and testing requirements.
-
-Its purpose is to ensure this trust-boundary feature family remains:
-- calm,
-- honest,
-- ethically monetized,
-- platform-aware,
-- and maintainable for long-term AI-assisted implementation.
-
+End of file.
