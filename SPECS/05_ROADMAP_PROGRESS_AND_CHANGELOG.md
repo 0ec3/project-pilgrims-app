@@ -177,7 +177,7 @@ Success condition:
 | M-00 | Historical compact 30-file draft archived | Done | The previous compact 30-file draft is retained only as non-normative historical context. | Do not use archived drafts for implementation or review. |
 | M-01 | 31-spec normative system established | Done | Files `01` through `31` exist as the current normative Markdown spec system. | Keep file names and cross-file dependencies stable. |
 | M-02 | Machine-readable contract baseline established | Done | Contract artifacts exist under `SPECS/CONTRACTS/` and are treated as normative implementation policy where applicable. | Keep Markdown specs, contract artifacts, and validator checks synchronized. |
-| M-03 | Contract hardening checkpoint | In progress | Screen traceability, entitlements, group presence privacy, and validator coverage are being tightened before broad Phase 1 work. | Finish validator-backed checks and API/privacy endpoint alignment. |
+| M-03 | Contract hardening checkpoint | Done / monitor | Validator now passes for all 6 required contract files; screen traceability, entitlement capability policy, group presence privacy mapping, advisory registry, release taxonomy, and trust-chain checks are coherent. | Wire validator into CI and keep expanding checks as contracts evolve. |
 | M-04 | Implementation bootstrap | Planned | Repository structure, shared packages, environments, tokens, schemas, APIs, and build scaffolding must be created under the spec contracts. | Begin repo/bootstrap work using files `01`–`17`, `24`–`31`, and `SPECS/CONTRACTS/*`. |
 | M-05 | Core MVP vertical slices | Planned | Home, Rituals/RIC, Phrasebook/Emergency, Save My Gate, Offline Essentials, and Account baseline should be built as the first end-to-end flows. | Select the first two vertical slices and wire them through real app architecture. |
 | M-06 | Integration hardening and governed-content tooling | Planned | Packs, content workflow, coordination depth, analytics, and release-quality integration must be established. | Instantiate content schemas/tooling and CI-quality lanes. |
@@ -190,12 +190,12 @@ Success condition:
 # 6. Current project snapshot
 
 ## 6.1 Current snapshot
-- **Current phase:** Phase 0 complete with active hardening checkpoint before unrestricted Phase 1 implementation.
-- **Overall delivery confidence:** high for documentation maturity; medium for implementation readiness because no aligned codebase, environments, or release evidence exist yet.
-- **Active focus areas:** contract hardening, validator enforcement, API/privacy endpoint alignment, screen traceability, implementation bootstrap planning.
-- **Most critical blockers:** no implementation baseline yet; no finalized production tooling stack; no operationalized content-review tooling; no device-lab or release-evidence execution lane yet.
-- **Recently completed milestones:** specs `01`–`31`, contract artifact baseline, quality-first hardening amendments, archived 30-file draft marker.
-- **Immediate next priority:** complete validator-backed spec/contract alignment, then begin narrow Phase 1 bootstrap.
+- **Current phase:** Phase 0 specification and contract hardening is materially complete; narrow Phase 1 bootstrap can begin once CI validation and remaining prose-drift notes are handled.
+- **Overall delivery confidence:** high for documentation maturity and contract-file coherence; medium for implementation readiness because no aligned codebase, environments, CI workflow, or release evidence exist yet.
+- **Active focus areas:** CI validator wiring, file `13` group-presence prose alignment, signed pack/content prose alignment in files `15` and `26`, release-evidence template planning, implementation bootstrap planning.
+- **Most critical blockers:** no implementation baseline yet; no CI workflow enforcing contract validation; no finalized production tooling stack; no operationalized content-review tooling; no device-lab or release-evidence execution lane yet.
+- **Recently completed milestones:** specs `01`–`31`, contract artifact baseline, quality-first hardening amendments, archived 30-file draft marker, file `02` agent-workflow normalization, validator pass for 6 contract files.
+- **Immediate next priority:** wire contract validation into CI, then begin narrow Phase 1 bootstrap with contract-aware implementation tasks.
 
 ## 6.2 Phase transition rule
 Broad Phase 1 feature development must not begin until:
@@ -205,22 +205,29 @@ Broad Phase 1 feature development must not begin until:
 - obsolete 30-file and hyphenated filename references are removed or clearly marked historical,
 - implementation tasks reference the current 31-spec + contracts authority model.
 
+Current status:
+- validator pass: complete,
+- 47-screen traceability: complete in contract artifact,
+- entitlement and privacy/account server-write rules: complete in contract/API specs,
+- file `02` obsolete filename references: complete,
+- remaining known prose drift: file `13` should explicitly mirror the group-presence `id`/`event_id` and conditional `text_pin` rules; file `31` carry-forward checklist should eventually be converted to a status table.
+
 ---
 
 # 7. Module tracker status
 
 | Module | Related specs/contracts | Phase target | Priority | Spec status | Implementation status | Validation status | Next required action |
 |---|---|---:|---:|---|---|---|---|
-| Governance/source of truth | `01`, `02`, `04`, `05`, `31`, `CONTRACTS/README` | 0 | P0 | Done / hardening | Not started | Planned | Keep outdated historical references archived and current references normalized. |
-| Contract validator | `tools/specs/validate_spec_contracts.py`, `CONTRACTS/*` | 0 | P0 | In progress | In progress | In progress | Run validator in CI and expand checks as contracts evolve. |
-| Screen traceability | `11`, `screen_feature_traceability.yaml` | 0 | P0 | In progress | Not started | Planned | Keep all 47 canonical screens mapped and evidence-owned. |
-| Entitlements/account | `24`, `entitlement_capability_policy.yaml` | 1 | P0 | Done / hardening | Not started | Planned | Implement free/auth/Supporter capability gates exactly from contract. |
-| API/privacy endpoints | `14`, `24`, `29`, `31` | 1 | P0 | Needs hardening | Not started | Planned | Add idempotency, rate-limit, audit, alert, and evidence rules for deletion/export endpoints. |
-| Group coordination | `20`, `13`, `14`, `group_presence_privacy_contract.yaml` | 2 | P1 | Done / hardening | Not started | Planned | Implement group create/join/check-in as server-trusted writes with no hidden offline queue. |
+| Governance/source of truth | `01`, `02`, `04`, `05`, `31`, `CONTRACTS/README` | 0 | P0 | Done / monitor | Not started | Validator passed where contract-backed | Keep outdated historical references archived and current references normalized. |
+| Contract validator | `tools/specs/validate_spec_contracts.py`, `CONTRACTS/*` | 0 | P0 | Done / monitor | Script exists | Passed locally | Wire into CI and expand checks as contracts evolve. |
+| Screen traceability | `11`, `screen_feature_traceability.yaml` | 0 | P0 | Done / monitor | Not started | Validator passed | Keep all 47 canonical screens mapped and evidence-owned. |
+| Entitlements/account | `24`, `entitlement_capability_policy.yaml` | 1 | P0 | Done / hardening | Not started | Validator passed | Implement free/auth/Supporter capability gates exactly from contract. |
+| API/privacy endpoints | `14`, `24`, `29`, `31` | 1 | P0 | Done / hardening | Not started | Spec-reviewed | Implement idempotency, rate-limit, audit, alert, and evidence rules from file `14`. |
+| Group coordination | `20`, `13`, `14`, `group_presence_privacy_contract.yaml` | 2 | P1 | Done / prose-drift note | Not started | Validator passed | Patch file `13` prose for `id`/`event_id` and conditional `text_pin`, then implement create/join/check-in as server-trusted writes. |
 | Ritual/RIC content | `18`, `26` | 1 | P0 | Done | Not started | Planned | Add minimal governed fixture before implementation claims correctness. |
-| Offline packs | `15`, `23`, `content_pack_trust_chain_contract.yaml` | 1 | P0 | Done | Not started | Planned | Implement signed manifest verification and LKG activation path. |
+| Offline packs | `15`, `23`, `content_pack_trust_chain_contract.yaml` | 1 | P0 | Done / contract-backed | Not started | Validator passed | Reflect signed manifest verification and LKG activation path in implementation and tests. |
 | Design system | `08`, `09`, `11`, `12` | 1 | P0 | Done / needs implementation tokens | Not started | Planned | Convert tokens and components into concrete Flutter package baseline. |
-| Release evidence | `27`, `28`, `29`, `30`, `release_gate_taxonomy.yaml` | 3 | P0 | Done | Not started | Planned | Create evidence templates and CI/device-lab lanes. |
+| Release evidence | `27`, `28`, `29`, `30`, `release_gate_taxonomy.yaml` | 3 | P0 | Done / contract-backed | Not started | Validator passed | Create evidence templates and CI/device-lab lanes. |
 
 ---
 
@@ -229,14 +236,20 @@ Broad Phase 1 feature development must not begin until:
 | Blocker ID | Severity | Area | Description | Required resolution |
 |---|---|---|---|---|
 | B-001 | P0 | Implementation | No aligned Flutter/backend implementation baseline exists yet. | Bootstrap repo structure, packages, tokens, routes, schemas, and tests from specs. |
-| B-002 | P0 | Validation | Contract validator must be run and wired into CI before relying on contracts during implementation. | Add CI command and evidence record after validator passes. |
+| B-002 | P0 | CI validation | Contract validator passes locally but is not yet enforced by repository CI. | Add a GitHub Actions workflow or equivalent CI lane for `python tools/specs/validate_spec_contracts.py`. |
 | B-003 | P0 | Content correctness | Ritual/RIC implementation needs minimal governed fixture before correctness claims. | Add schema/fixture/review metadata under content governance. |
 | B-004 | P1 | Operations | Device-lab and release-evidence lane not operationalized. | Create release evidence templates, owner model, and device bucket execution path. |
-| B-005 | P1 | API/security | Privacy/account endpoints need complete idempotency, rate-limit, audit, alert, and user-visible status rules. | Harden file `14` and dependent tests before endpoint implementation. |
+| B-005 | P1 | Data prose drift | File `13` prose should explicitly match the group-presence contract mapping and conditional fields. | Patch file `13` to document `group_presence_events.id` as API `event_id` and `text_pin` conditionality. |
 
 ---
 
 # 9. Changelog
+
+## 2026-06-12 — Validator pass and agent-workflow normalization
+- Confirmed local validation output: `Validated 6 spec contract files.`
+- Updated file `02` to use current underscore spec paths and require contract-artifact review before contract-shaped changes.
+- Updated this roadmap snapshot to distinguish contract validation done from CI enforcement still pending.
+- Recorded file `13` group-presence prose alignment and file `31` carry-forward status conversion as remaining prose-drift follow-ups.
 
 ## 2026-06-12 — Governance and contract hardening patch
 - Marked the archived compact 30-file draft as non-normative historical context.
@@ -258,6 +271,7 @@ Before starting Phase 1 implementation:
 4. For the target feature area, read the relevant Markdown specs and contract artifact.
 5. Do not implement from archived 30-file draft material or obsolete hyphenated filename references.
 6. Do not call a module done until implementation, tests, accessibility/offline behavior, and release evidence match the governing specs.
+7. Treat file `13` group-presence prose alignment and CI validator wiring as the remaining P0 hygiene tasks before broad feature work.
 
 ---
 
@@ -270,3 +284,7 @@ This file is healthy when:
 - module statuses distinguish spec maturity from implementation maturity,
 - changelog entries preserve why changes happened,
 - next contributors can safely resume without relying on chat memory.
+
+---
+
+End of file.
