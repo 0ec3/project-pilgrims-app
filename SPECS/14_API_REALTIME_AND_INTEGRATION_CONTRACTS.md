@@ -5,8 +5,8 @@
 - **Priority:** Highest
 - **Audience:** Backend engineer, Flutter engineer, QA, AI agents, release/ops
 - **Purpose:** Define HTTP API endpoints, realtime contracts, integration boundaries, request/response shapes, caching, auth, errors, and contract-testing expectations.
-- **Last-updated-by:** AI-assisted hardening pass (validated 2026-03-22)
-- **Related files:** 06, 07, 13, 15, 17, 20, 23, 24, 26, 27, 28, 29, 30
+- **Last-updated-by:** AI-assisted governance/contract hardening pass (2026-06-12)
+- **Related files:** `06`, `07`, `13`, `15`, `17`, `20`, `23`, `24`, `26`, `27`, `28`, `29`, `30`, `31`, `SPECS/CONTRACTS/*`
 
 ---
 
@@ -38,26 +38,12 @@ This file does **not** define:
 # 2. API design principles
 
 ## 2.1 Tiny online surface rule
-The online API should stay small.
-
-The app must not become dependent on a large server backend for core local-first value.
+The online API should stay small. The app must not become dependent on a large server backend for core local-first value.
 
 ## 2.2 Local-first default
-The API supports:
-- entitlements,
-- group coordination,
-- pack manifest discovery,
-- safety/config flags,
-- purchase validation,
-- selected publishing/control-plane functions.
+The API supports entitlements, group coordination, pack manifest discovery, safety/config flags, purchase validation, selected privacy/account actions, and selected publishing/control-plane functions.
 
-It should not become the default home for:
-- notes,
-- medical profile,
-- ritual progress,
-- saved anchors,
-- local planner data,
-- private user-authored content.
+It should not become the default home for notes, medical profile, ritual progress, saved anchors, local planner data, or private user-authored content.
 
 ## 2.3 Explicit trust boundary rule
 If a feature needs trusted server authority, the API must clearly define that trust boundary.
@@ -67,24 +53,16 @@ Examples:
 - group membership,
 - group leader permissions,
 - purchase validation,
+- deletion/export request status,
 - release flags.
 
 ## 2.4 No hidden generic content API
-Governed content should not be served by an undefined generic live API.
-
-Governed content distribution must follow files `15`, `23`, and `26`.
+Governed content should not be served by an undefined generic live API. Governed content distribution must follow files `15`, `23`, and `26`.
 
 ## 2.5 Contract-first rule
 Mobile code, backend handlers, and tests must agree on the contract.
 
-Do not silently change:
-- endpoint paths,
-- enums,
-- error codes,
-- field names,
-- auth rules,
-- cache behavior,
-- realtime event payloads.
+Do not silently change endpoint paths, enums, error codes, field names, auth rules, cache behavior, realtime event payloads, or contract artifact semantics.
 
 ---
 
@@ -102,16 +80,10 @@ Responsibilities:
 - expose tiny control-plane endpoints.
 
 ## 3.2 Supabase / database boundary
-The database remains the source of truth for server-backed domain data.
-
-The API must not bypass RLS assumptions casually.
+The database remains the source of truth for server-backed domain data. The API must not bypass RLS assumptions casually.
 
 ## 3.3 External integrations
-External integrations may include:
-- Apple / Google purchase validation,
-- CDN/R2 pack delivery,
-- crash/analytics service ingestion,
-- platform notification APIs for local behavior only where applicable.
+External integrations may include Apple / Google purchase validation, CDN/R2 pack delivery, crash/analytics ingestion, and platform notification APIs for local behavior only where applicable.
 
 ---
 
@@ -151,10 +123,10 @@ Rules:
 - Offline clients must show honest unavailable state and must not queue hidden group creation.
 
 ### `POST /v1/groups/join`
-Join a group by join code.
+Join a group by join code. Must be authenticated, idempotent, rate-limited, and server-authoritative.
 
 ### `POST /v1/groups/{group_id}/checkins`
-Create a group check-in.
+Create a group check-in. Must follow `SPECS/CONTRACTS/group_presence_privacy_contract.yaml` where presence semantics apply.
 
 ### `POST /v1/groups/{group_id}/regroup-pins`
 Create a regroup pin. Leader-only.
@@ -173,14 +145,40 @@ Trigger restore lookup and return current trusted entitlement state.
 ### `POST /v1/account/deletion-request`
 Request deletion of server-backed account data, subject to lawful retention, purchase/accounting needs, fraud-prevention needs, backup delay, and legal hold constraints.
 
+Rules:
+- Auth required.
+- `Idempotency-Key` required.
+- Rate limit: 3 requests/day/user.
+- Must return a deletion request identifier and status.
+- Must not claim immediate deletion when backup delay, fraud/accounting retention, or legal hold applies.
+- Must not delete local-only data; the client must offer separate local data deletion.
+
 ### `GET /v1/account/deletion-status`
 Return the current status of an authenticated deletion request.
+
+Rules:
+- Auth required.
+- Rate limit: 30 requests/hour/user.
+- Must expose user-readable status and any lawful retention caveat.
+- Must not expose internal legal, abuse, or operational details beyond user-safe explanation.
 
 ### `POST /v1/privacy/export-request`
 Request an explicit, scoped export of server-backed personal data where applicable.
 
+Rules:
+- Auth required.
+- `Idempotency-Key` required.
+- Rate limit: 5 requests/day/user.
+- Must return an export request identifier and status.
+- Must clearly distinguish server-backed export from local-only data that never left the device.
+
 ### `GET /v1/privacy/retention-summary`
 Return a user-readable summary of server-backed data categories, default retention posture, and local-only data boundaries.
+
+Rules:
+- Auth required when returning account-specific summary.
+- Rate limit: 30 requests/hour/user.
+- Must be safe for direct display in the Privacy & Data flow.
 
 ## 4.6 Optional future endpoints (not active by default)
 These must not be implemented unless approved and documented.
@@ -194,40 +192,21 @@ These must not be implemented unless approved and documented.
 
 # 5. Base protocol rules
 
-## 5.1 Transport
-- HTTPS only
-- JSON request and response bodies unless explicitly documented otherwise
-- UTF-8 encoding
-
-## 5.2 Path versioning
-All HTTP endpoints must be version-prefixed.
-
-Current version:
-- `/v1/...`
-
-## 5.3 Content types
-### Requests
-- `Content-Type: application/json`
-
-### Responses
-- `Content-Type: application/json; charset=utf-8`
-
-## 5.4 Timestamp format
-All server timestamps must use RFC 3339 / ISO 8601 UTC timestamps.
-
-## 5.5 JSON naming convention
-JSON field names use `snake_case`.
-
-## 5.6 Unknown field rule
-Clients must ignore unknown response fields unless the endpoint contract explicitly forbids it.
-
-Servers must reject unknown dangerous request fields where accepting them would create privilege, privacy, or integrity ambiguity.
+- HTTPS only.
+- JSON request and response bodies unless explicitly documented otherwise.
+- UTF-8 encoding.
+- All endpoints must be version-prefixed with `/v1/...`.
+- Requests use `Content-Type: application/json`.
+- Responses use `Content-Type: application/json; charset=utf-8`.
+- All server timestamps must use RFC 3339 / ISO 8601 UTC timestamps.
+- JSON field names use `snake_case`.
+- Clients must ignore unknown response fields unless the endpoint contract explicitly forbids it.
+- Servers must reject unknown dangerous request fields where accepting them would create privilege, privacy, or integrity ambiguity.
 
 ---
 
 # 6. Authentication and authorization
 
-## 6.1 Auth mechanism
 Authenticated endpoints require a valid user identity token.
 
 The API layer validates:
@@ -236,21 +215,16 @@ The API layer validates:
 - expiry,
 - user identity binding.
 
-## 6.2 Public endpoints
 Public endpoints:
 - `GET /v1/flags`
 - `GET /v1/packs/manifest`
 
-Public endpoints must not expose user-private data.
-
-## 6.3 Authenticated endpoints
 Authenticated endpoints include:
 - entitlements,
 - group reads/writes,
 - purchase validation/restore,
 - account/privacy data requests.
 
-## 6.4 Authorization rules
 Authorization must validate:
 - user can read the requested group,
 - user can write to the requested group,
@@ -258,33 +232,25 @@ Authorization must validate:
 - user can access the requested entitlement state,
 - user can request deletion/export only for their own account context.
 
-## 6.5 Client trust rule
-The client must not be trusted for:
-- membership,
-- leader role,
-- entitlement tier,
-- purchase validity,
-- server-side deletion/export status.
+The client must not be trusted for membership, leader role, entitlement tier, purchase validity, or server-side deletion/export status.
 
 ---
 
-# 7. Standard response envelopes
+# 7. Standard response envelopes and error codes
 
-## 7.1 Success envelope rule
-Small endpoints may return direct JSON objects.
+Small endpoints may return direct JSON objects. List-like endpoints should use:
 
-For list-like endpoints, prefer:
 ```json
 {
   "data": [],
   "meta": {
-    "server_time": "2026-03-22T00:00:00Z"
+    "server_time": "2026-06-12T00:00:00Z"
   }
 }
 ```
 
-## 7.2 Error envelope
 All API errors should follow:
+
 ```json
 {
   "error": {
@@ -298,23 +264,7 @@ All API errors should follow:
 }
 ```
 
-## 7.3 Error message rule
-Error messages should be safe for user-facing display only when the endpoint marks them as such.
-
-Avoid exposing:
-- database internals,
-- provider raw messages,
-- secrets,
-- receipt payloads,
-- raw auth failures,
-- sensitive operational detail.
-
----
-
-# 8. Canonical error codes
-
-Use these stable error codes unless file `04` approves changes:
-
+Canonical error codes:
 - `VALIDATION_ERROR`
 - `UNAUTHORIZED`
 - `FORBIDDEN`
@@ -325,60 +275,27 @@ Use these stable error codes unless file `04` approves changes:
 - `INTEGRATION_ERROR`
 - `INTERNAL_ERROR`
 
-## 8.1 Feature-specific examples
-### Group join
-- bad code format → `VALIDATION_ERROR`
-- code not found → `NOT_FOUND`
-- already joined → `CONFLICT` or successful idempotent response depending on request identity
-- unauthenticated → `UNAUTHORIZED`
-- not allowed → `FORBIDDEN`
-
-### Purchase validation
-- invalid payload → `VALIDATION_ERROR`
-- store unavailable → `INTEGRATION_ERROR`
-- duplicate known transaction → idempotent success where safe
-
-### Pack manifest
-- unavailable backend → stale local fallback on client if available
+Error messages should avoid exposing database internals, provider raw messages, secrets, receipt payloads, raw auth failures, or sensitive operational detail.
 
 ---
 
-# 9. Request IDs and traceability
+# 8. Request IDs and traceability
 
-## 9.1 Request ID rule
-Every API response should include or be associated with a request ID.
+Every API response should include or be associated with a request ID through a response header, body error field, or structured log correlation value.
 
-The request ID may be:
-- response header,
-- body field in error envelope,
-- structured log correlation value.
-
-## 9.2 Client logging rule
 Clients may log request IDs for diagnostics.
 
-Clients must not log:
-- raw tokens,
-- raw receipts,
-- medical profile content,
-- exact private location,
-- personal notes,
-- ritual-sensitive private user notes.
+Clients must not log raw tokens, raw receipts, medical profile content, exact private location, personal notes, or ritual-sensitive private user notes.
 
 ---
 
-# 10. Rate limiting rules
+# 9. Rate limiting rules
 
-## 10.1 Goals
-Rate limiting exists to protect:
-- edge capacity,
-- abuse-sensitive flows,
-- store-validation endpoints,
-- join-code brute forcing,
-- accidental client retry storms.
+## 9.1 Goals
+Rate limiting protects edge capacity, abuse-sensitive flows, store-validation endpoints, join-code brute forcing, privacy/account actions, and accidental client retry storms.
 
-## 10.2 Baseline limits
-These are initial contract-level defaults and may be tuned with documented change control.
-
+## 9.2 Baseline limits
+Initial contract-level defaults:
 - `GET /v1/flags` → 60 requests/minute/IP
 - `GET /v1/packs/manifest` → 30 requests/minute/IP
 - `GET /v1/entitlements` → 30 requests/minute/user
@@ -388,126 +305,67 @@ These are initial contract-level defaults and may be tuned with documented chang
 - `POST /v1/groups/{group_id}/regroup-pins` → 15 requests/minute/user
 - `PATCH /v1/groups/{group_id}/regroup-pins/{pin_id}` → 30 requests/minute/user
 - `POST /v1/purchases/*` → 15 requests/minute/user
+- `POST /v1/account/deletion-request` → 3 requests/day/user
+- `GET /v1/account/deletion-status` → 30 requests/hour/user
+- `POST /v1/privacy/export-request` → 5 requests/day/user
+- `GET /v1/privacy/retention-summary` → 30 requests/hour/user
 
-## 10.3 Rate-limit contract rule
 429 responses must include a retry hint and must not return HTML or provider-native error blobs.
 
 ---
 
-# 11. Idempotency rules
+# 10. Idempotency rules
 
-## 11.1 Purpose
+## 10.1 Purpose
 Idempotency is required where retries are likely and duplicate side effects would be harmful or confusing.
 
-## 11.2 Required behavior
+## 10.2 Required behavior
 When the same authenticated principal sends the same idempotency key to the same endpoint within the retention window, the server must return the original logical result or a consistent duplicate-safe response.
 
-## 11.3 Retention window
+## 10.3 Retention window
 Default idempotency-key retention window:
-- 24 hours for group creation, join, and purchase endpoints
+- 24 hours for group creation, group join, group check-in where `client_event_id` is supplied, and purchase endpoints.
+- 30 days for account deletion requests and privacy export requests.
 
-## 11.4 Endpoint rules
-### `POST /v1/groups`
-Must be idempotent. Retried group creation must not create duplicate groups for the same creation intent.
-
-### `POST /v1/groups/join`
-Must be idempotent.
-
-### `POST /v1/purchases/validate`
-Must be idempotent by store transaction identity and idempotency key where applicable.
-
-### `POST /v1/purchases/restore`
-Must be retry-safe.
+## 10.4 Endpoint rules
+- `POST /v1/groups` must be idempotent.
+- `POST /v1/groups/join` must be idempotent.
+- `POST /v1/groups/{group_id}/checkins` must be idempotent when `client_event_id` is supplied.
+- `POST /v1/purchases/validate` must be idempotent by store transaction identity and idempotency key where applicable.
+- `POST /v1/purchases/restore` must be retry-safe.
+- `POST /v1/account/deletion-request` must be idempotent and return the existing active deletion request if one exists.
+- `POST /v1/privacy/export-request` must be idempotent and return the existing compatible export request if one exists.
 
 ---
 
-# 12. Caching and ETag rules
+# 11. Caching and ETag rules
 
-## 12.1 Goals
-Caching is used to reduce latency, save battery and bandwidth, and support offline continuity.
+Public cacheable endpoints:
+- `GET /v1/flags` → recommended `Cache-Control: public, max-age=300`, ETag support, last-good cached snapshot offline.
+- `GET /v1/packs/manifest` → recommended `Cache-Control: public, max-age=1800`, ETag support, last-known manifest offline with stale honesty.
 
-## 12.2 Public cacheable endpoints
-### `GET /v1/flags`
-Recommended:
-- `Cache-Control: public, max-age=300`
-- ETag support
-- client may use last-good cached snapshot offline
+User-specific endpoints must not be publicly cached. Examples include entitlements, group state, purchase responses, and account/privacy data responses.
 
-### `GET /v1/packs/manifest`
-Recommended:
-- `Cache-Control: public, max-age=1800`
-- ETag support
-- client may browse last-known manifest offline but must not imply latest certainty
-
-## 12.3 Non-public user-specific endpoints
-User-specific endpoints must not be publicly cached.
-
-Examples:
-- entitlements,
-- group state,
-- purchase responses,
-- account/privacy data responses.
-
-## 12.4 Stale client behavior
-If the client uses stale cached data, UI must distinguish:
-- fresh,
-- cached but acceptable,
-- stale / needs refresh,
-- unavailable.
+If the client uses stale cached data, UI must distinguish fresh, cached but acceptable, stale/needs refresh, and unavailable.
 
 ---
 
-# 13. Flags endpoint contract
+# 12. Flags endpoint contract
 
-## 13.1 Purpose
 `GET /v1/flags` provides lightweight control-plane state.
 
-It may include:
-- season configuration,
-- feature flags,
-- safety banner pointers,
-- content activation pointers,
-- minimum app version hints,
-- kill-switch flags for unsafe optional features.
+It may include season configuration, feature flags, safety banner pointers, content activation pointers, minimum app version hints, and kill-switch flags for unsafe optional features.
 
-## 13.2 Constraints
-Flags must not contain:
-- user-private data,
-- large content payloads,
-- scholar-sensitive live ritual rules,
-- executable logic,
-- raw secrets.
+Flags must not contain user-private data, large content payloads, scholar-sensitive live ritual rules, executable logic, or raw secrets.
 
-## 13.3 Example response
-```json
-{
-  "server_time": "2026-03-22T00:00:00Z",
-  "season": "umrah",
-  "features": {
-    "group_live_board": true,
-    "offline_audio": true
-  },
-  "safety": {
-    "banner_id": "safety_general_001",
-    "level": "info"
-  },
-  "minimum_supported_app_version": "1.0.0"
-}
-```
-
-## 13.4 Flag safety rule
-Flags may hide or disable unsafe optional features.
-
-Flags must not be used to remove baseline safety or correctness content.
+Flags may hide or disable unsafe optional features. Flags must not be used to remove baseline safety or correctness content.
 
 ---
 
-# 14. Pack manifest contract
+# 13. Pack manifest contract
 
-## 14.1 Purpose
 `GET /v1/packs/manifest` returns available downloadable packs.
 
-## 14.2 Manifest fields
 Each pack entry should include:
 - `pack_id`
 - `version`
@@ -523,39 +381,24 @@ Each pack entry should include:
 - `entitlement_required?`
 - `dependencies[]`
 
-## 14.3 Signed trust-chain fields
-For mature release quality, manifest and artifact entries must also align with `SPECS/CONTRACTS/content_pack_trust_chain_contract.yaml`.
+For mature release quality, manifest and artifact entries must align with `SPECS/CONTRACTS/content_pack_trust_chain_contract.yaml`, including `manifest_signature`, `artifact_signature`, `signing_key_id`, `signed_at`, `signing_algorithm`, and revoked-key metadata where applicable.
 
-Required trust-chain fields include:
-- `manifest_signature`,
-- `artifact_signature`,
-- `signing_key_id`,
-- `signed_at`,
-- `signing_algorithm`,
-- revoked-key metadata where applicable.
-
-## 14.4 Manifest rule
-The client must not hardcode pack URLs.
-
-## 14.5 Entitlement rule
-If `entitlement_required` is present, the client must verify against trusted entitlement state before enabling gated convenience behavior.
-
-Baseline safety/correctness packs must not be wrongly gated.
+The client must not hardcode pack URLs. Baseline safety/correctness packs must not be wrongly gated.
 
 ---
 
-# 15. Entitlements endpoint contract
+# 14. Entitlements endpoint contract
 
-## 15.1 Purpose
 `GET /v1/entitlements` returns trusted entitlement state.
 
-## 15.2 Example response
+Example response:
+
 ```json
 {
   "user_id": "uuid",
   "tier": "SUPPORTER",
   "source": "APPLE",
-  "active_until": "2026-04-22T00:00:00Z",
+  "active_until": "2026-06-12T00:00:00Z",
   "gates": {
     "PACK_AUTO_DOWNLOAD": true,
     "AUDIO_OFFLINE": true,
@@ -563,42 +406,28 @@ Baseline safety/correctness packs must not be wrongly gated.
     "SMART_PLANNER": true,
     "NOTES_BOOKMARKS_EXTENDED": true
   },
-  "verified_at": "2026-03-22T00:00:00Z"
+  "verified_at": "2026-06-12T00:00:00Z"
 }
 ```
 
-## 15.3 Rule
-The client must not invent gates.
-
-## 15.4 Stale state rule
-If entitlement state is stale, UI must avoid implying verified current paid access where verification matters.
-
-## 15.5 Capability policy rule
-Implementation must validate entitlement use against `SPECS/CONTRACTS/entitlement_capability_policy.yaml`. Supporter must never gate capabilities marked `never_gate`.
+The client must not invent gates. Implementation must validate entitlement use against `SPECS/CONTRACTS/entitlement_capability_policy.yaml`. Supporter must never gate capabilities marked `never_gate`.
 
 ---
 
-# 16. Group endpoint contracts
+# 15. Group endpoint contracts
 
-## 16.1 Live-board response
-A group live-board response should include:
-- group summary,
-- viewer role,
-- members list or summary,
-- latest check-ins,
-- active regroup pins,
-- freshness metadata,
-- entitlement availability if live board is gated.
+## 15.1 Live-board response
+A group live-board response should include group summary, viewer role, members list or summary, latest check-ins, active regroup pins, freshness metadata, and entitlement availability if live board is gated.
 
-## 16.2 Check-in request
+## 15.2 Check-in request
 Fields:
 - `kind`
-- `text_pin`
+- `text_pin?` according to the group presence contract
 - `client_event_id?`
 
 Check-ins must not imply GPS tracking.
 
-## 16.3 Regroup pin request
+## 15.3 Regroup pin request
 Fields:
 - `label`
 - `text_pin`
@@ -607,102 +436,65 @@ Fields:
 
 Leader-only.
 
-## 16.4 Group creation request
+## 15.4 Group creation request
 Fields:
 - `name`
 - `season_scope?`
 - `client_event_id?`
 
-The server returns:
-- group id,
-- group name,
-- viewer role,
-- generated join code,
-- share-code copy fields.
+The server returns group id, group name, viewer role, generated join code, and share-code copy fields.
 
 The server must not import contacts, auto-invite members, or create hidden social graph data.
 
-## 16.5 Freshness rule
+## 15.5 Presence identifier mapping
+When group presence events are represented through API payloads, `event_id` maps to the database primary key `id` in `group_presence_events` unless files `13`, `14`, and `SPECS/CONTRACTS/group_presence_privacy_contract.yaml` are updated together.
+
+## 15.6 Freshness rule
 Group responses must expose enough timestamp/freshness information for the client to avoid fake-live presentation.
 
-## 16.6 Group presence privacy rule
-Any future normalized presence state must follow `SPECS/CONTRACTS/group_presence_privacy_contract.yaml`.
+## 15.7 Group presence privacy rule
+Any normalized presence state must follow `SPECS/CONTRACTS/group_presence_privacy_contract.yaml`.
 
 ---
 
-# 17. Purchase endpoints
+# 16. Purchase endpoints
 
-## 17.1 Purchase validation input
-The API may accept:
-- store platform,
-- receipt/transaction reference,
-- app account token where applicable,
-- product identifier,
-- idempotency key.
+Purchase validation input may accept store platform, receipt/transaction reference, app account token where applicable, product identifier, and idempotency key.
 
-## 17.2 Security rule
-Raw receipt payloads must be treated as sensitive operational data.
+Raw receipt payloads must be treated as sensitive operational data and must not be exposed to logs or analytics.
 
-Do not expose raw provider payloads to logs or analytics.
-
-## 17.3 Store abstraction rule
 The mobile app should receive normalized entitlement state, not provider-native payloads as product truth.
 
 ---
 
-# 18. Realtime contracts
+# 17. Realtime contracts
 
-## 18.1 Realtime scope
 Realtime is approved only for group coordination enhancement.
 
-## 18.2 Channel authorization
-Realtime channels must validate:
-- authenticated user,
-- active group membership,
-- role where needed.
+Realtime channels must validate authenticated user, active group membership, and role where needed.
 
-## 18.3 Event types
 Allowed group realtime event families:
 - `group_checkin_created`
 - `group_regroup_pin_created`
 - `group_regroup_pin_updated`
 - `group_member_updated`
 
-## 18.4 Realtime degradation rule
-Realtime must never be the only path to correctness.
-
-If realtime fails, the app should use:
-- manual refresh,
-- cached snapshot with stale state,
-- SMS/share fallback where relevant.
+Realtime must never be the only path to correctness. If realtime fails, the app should use manual refresh, cached snapshot with stale state, and SMS/share fallback where relevant.
 
 ---
 
-# 19. Retry behavior
+# 18. Retry behavior
 
-## 19.1 Safe retries
-Clients may retry:
-- idempotent GETs,
-- idempotent POSTs with idempotency key,
-- transient network failures.
+Clients may retry idempotent GETs, idempotent POSTs with idempotency key, and transient network failures.
 
-## 19.2 Retry backoff
-Use exponential backoff or bounded retry policy for transient failures.
+Use exponential backoff or bounded retry policy for transient failures. The app must not retry aggressively in crowded weak-network contexts.
 
-## 19.3 No retry storm rule
-The app must not retry aggressively in crowded weak-network contexts.
-
-Respect:
-- rate-limit hints,
-- network state,
-- battery/performance concerns,
-- user stress.
+Respect rate-limit hints, network state, battery/performance concerns, and user stress.
 
 ---
 
-# 20. Offline and degraded behavior
+# 19. Offline and degraded behavior
 
-## 20.1 Offline endpoint behavior
 When offline:
 - public cached data may fall back to last-good snapshots,
 - entitlements may show cached continuity but not verified certainty,
@@ -710,98 +502,82 @@ When offline:
 - purchases/restores must show unavailable or pending explanation,
 - account deletion/export requests must show unavailable until trusted server write is possible.
 
-## 20.2 User-copy rule
-Offline errors should explain:
-- what still works,
-- what needs network,
-- whether data was saved locally,
-- whether trusted server action happened.
+Offline errors should explain what still works, what needs network, whether data was saved locally, and whether trusted server action happened.
 
 ---
 
-# 21. Contract testing
+# 20. Contract testing
 
-## 21.1 Required contract tests
 Contract tests must cover:
 - schema fields,
 - required/optional fields,
 - auth requirements,
+- authorization requirements,
 - error envelopes,
 - canonical error codes,
 - cache headers,
 - idempotency behavior,
 - rate-limit responses,
-- stale/offline behavior.
+- stale/offline behavior,
+- privacy endpoint deletion/export semantics,
+- group presence identifier mapping.
 
-## 21.2 Client fixture rule
-Mobile test fixtures must be generated from or checked against the canonical contract.
+Mobile test fixtures must be generated from or checked against the canonical contract. Do not hand-maintain divergent mocks.
 
-Do not hand-maintain divergent mocks.
-
-## 21.3 Breaking-change rule
-Breaking API changes require synchronized updates to:
-- this file,
-- backend handlers,
-- Flutter client models,
-- fixtures,
-- tests,
-- analytics/dashboard expectations where relevant,
-- release notes and migration plan where user-visible.
+Breaking API changes require synchronized updates to this file, backend handlers, Flutter client models, fixtures, tests, analytics/dashboard expectations where relevant, release notes, and migration plan where user-visible.
 
 ---
 
-# 22. Privacy and security rules
+# 21. Privacy and security rules
 
-## 22.1 Data minimization
+## 21.1 Data minimization
 Endpoints must request and return only what the feature needs.
 
-## 22.2 No sensitive data in URL rule
-Do not put tokens, receipts, medical data, private notes, or exact private coordinates in URLs or query strings.
+## 21.2 No sensitive data in URL rule
+Do not put tokens, receipts, medical data, private notes, exact private coordinates, deletion request IDs, or export download tokens in URLs or query strings.
 
-## 22.3 Log redaction rule
-API logs must redact:
-- auth tokens,
-- receipts,
-- personal contact info where not needed,
-- medical values,
-- raw private text,
-- precise location.
+## 21.3 Log redaction rule
+API logs must redact auth tokens, receipts, personal contact info where not needed, medical values, raw private text, precise location, deletion/export request details, and provider-native account identifiers beyond what is operationally necessary.
 
-## 22.4 Account/privacy endpoint rule
+## 21.4 Account/privacy endpoint rule
 Deletion, status, export, and retention endpoints must align with file `24` UX and file `29` retention/disclosure rules.
+
+## 21.5 Audit trail rule
+Deletion and export requests must record an internal audit event containing request id, authenticated user id, request class, server timestamp, result state, and request idempotency key hash. Audit events must not contain exported data payloads or raw user-private fields.
 
 ---
 
-# 23. Observability requirements
+# 22. Observability requirements
 
-## 23.1 Required API metrics
-Track:
+Required API metrics:
 - request count,
 - latency,
 - error rate,
 - rate-limit count,
 - auth failure count,
 - integration failure count,
-- stale fallback usage where client reports it.
+- stale fallback usage where client reports it,
+- privacy/account request status distribution.
 
-## 23.2 Critical endpoint alerts
-Alert on abnormal failure for:
-- `GET /v1/flags`,
-- `GET /v1/packs/manifest`,
-- `GET /v1/entitlements`,
-- `POST /v1/groups`,
-- `POST /v1/groups/join`,
-- `POST /v1/groups/{group_id}/checkins`,
-- `POST /v1/purchases/validate`,
-- `POST /v1/purchases/restore`,
-- `POST /v1/account/deletion-request`.
+Critical endpoint alerts must cover abnormal failure for:
+- `GET /v1/flags`
+- `GET /v1/packs/manifest`
+- `GET /v1/entitlements`
+- `POST /v1/groups`
+- `POST /v1/groups/join`
+- `POST /v1/groups/{group_id}/checkins`
+- `POST /v1/purchases/validate`
+- `POST /v1/purchases/restore`
+- `POST /v1/account/deletion-request`
+- `GET /v1/account/deletion-status`
+- `POST /v1/privacy/export-request`
+- `GET /v1/privacy/retention-summary`
 
-## 23.3 Privacy rule
-No telemetry payload should include raw receipts, raw JWTs, medical profile contents, or exact hidden personal location.
+No telemetry payload should include raw receipts, raw JWTs, medical profile contents, exact hidden personal location, deletion/export payload details, or raw private notes.
 
 ---
 
-# 24. Definition of done for this API system
+# 23. Definition of done for this API system
 
 This API system is ready when:
 - endpoint catalog matches implementation,
@@ -816,13 +592,14 @@ This API system is ready when:
 - entitlement capability policy is enforced,
 - group presence privacy contract is honored,
 - account/privacy endpoints match files `24` and `29`,
+- deletion/export endpoints have idempotency, rate-limit, audit, and alert evidence,
 - pack/content trust-chain fields are supported where applicable,
 - observability is in place,
 - release evidence links to file `28`.
 
 ---
 
-# 25. AI-agent checklist
+# 24. AI-agent checklist
 
 Before editing API-related code, an AI agent must:
 1. Read files `13`, `14`, `24`, and `29`.
