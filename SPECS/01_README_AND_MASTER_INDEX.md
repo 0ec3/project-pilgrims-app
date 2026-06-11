@@ -108,7 +108,7 @@ The documentation system is now organized as 31 normative markdown specs plus ma
 ## 4.4 Data, APIs, and systems
 - `13_DATA_MODEL_RLS_INVARIANTS_AND_MIGRATIONS.md` — server schema, local schema, RLS, invariants.
 - `14_API_REALTIME_AND_INTEGRATION_CONTRACTS.md` — API, realtime, privacy endpoints, integration contracts.
-- `15_OFFLINE_PACKS_SYNC_ASSET_DELIVERY_AND_CACHE_POLICY.md` — offline tiers, packs, sync, cache, integrity.
+- `15_OFFLINE_PACKS_SYNC_ASSET_DELIVERY_AND_CACHE_POLICY.md` — offline tiers, packs, sync, cache, signed trust-chain, and last-known-good behavior.
 - `16_MAP_ARCHITECTURE_POSITIONING_ROUTING_3_D_AND_OFFLINE_WAYFINDING.md` — map stack, positioning, routing, offline wayfinding.
 - `17_ANALYTICS_OBSERVABILITY_AND_PERFORMANCE_BUDGETS.md` — telemetry, observability, performance budgets.
 
