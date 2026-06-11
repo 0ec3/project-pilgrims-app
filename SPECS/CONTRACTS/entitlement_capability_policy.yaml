@@ -22,6 +22,7 @@ field_contract:
   conditional_rules:
     - Paid-only capabilities must define entitlement_key.
     - Server-trusted writes must set auth_required=true and server_trust_required=true.
+    - Any capability with server_trust_required=true must explicitly declare network_required as true or false.
     - Local-only capabilities must not require auth or server trust.
     - Never-gate capabilities must be available to free users and supporters.
 capabilities:
@@ -159,6 +160,8 @@ capabilities:
     entitlement_key: NOTES_BOOKMARKS_EXTENDED
     auth_required: true
     server_trust_required: true
+    network_required: false
+    cached_entitlement_allowed: true
     downgrade_behavior: existing_rich_content_readable_editing_restricted
   packs.manual_download_and_verify:
     criticality: offline_recovery
@@ -177,6 +180,7 @@ capabilities:
     entitlement_key: PACK_AUTO_DOWNLOAD
     auth_required: true
     server_trust_required: true
+    network_required: true
     downgrade_behavior: manual_pack_download_remains_available
   audio.offline_playback:
     criticality: enrichment
@@ -186,6 +190,8 @@ capabilities:
     entitlement_key: AUDIO_OFFLINE
     auth_required: true
     server_trust_required: true
+    network_required: false
+    cached_entitlement_allowed: true
     downgrade_behavior: text_guidance_remains_available
   planner.smart_suggestions:
     criticality: convenience
@@ -195,6 +201,8 @@ capabilities:
     entitlement_key: SMART_PLANNER
     auth_required: true
     server_trust_required: true
+    network_required: false
+    cached_entitlement_allowed: true
 validation_rules:
   - Client code must not invent capabilities or entitlement keys not listed here or in a synchronized update to file 24.
   - Any capability marked never_gate must have release tests for guest/free access where technically applicable.
