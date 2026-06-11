@@ -25,7 +25,7 @@
 
 ## 1. Product Vision & Mission
 
-The Pilgrims Mobile App exists to make the pilgrimage experience clearer, calmer, and safer for every pilgrim — whether they are a seasoned traveler or completing their first Umrah.
+The Pilgrims Mobile App exists to make the pilgrimage experience clearer, calmer, and safer for every pilgrim — whether they are a seasoned traveler or completing their first Hajj or Umrah.
 
 **Mission Statement:** Provide a reliable companion that helps pilgrims perform rituals correctly, stay oriented in one of the world's most complex environments, coordinate with their group, and access urgent help — all without requiring constant network connectivity.
 
