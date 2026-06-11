@@ -1,4 +1,4 @@
-version: 1
+version: 2
 owner_spec: SPECS/11_SCREENS_STATES_NAVIGATION_AND_UI_BLUEPRINTS.md
 related_specs:
   - SPECS/18_FEATURE_RITUALS_RIC_AND_RELIGIOUS_CONTENT.md
@@ -11,58 +11,325 @@ related_specs:
   - SPECS/25_FEATURE_ONBOARDING_HOME_AND_SIMPLE_MODE.md
 rule: >-
   File 11 owns screen/state/navigation contracts. Feature-family files own business behavior.
-  If they conflict, implementation must stop and update both through change control.
+  Every canonical screen listed in file 11 must appear here with a feature owner, critical flows,
+  offline behavior, permission dependencies, entitlement dependencies, accessibility notes,
+  analytics events, and release-evidence owner. If this contract and file 11 conflict,
+  implementation must stop and update both through change control before code proceeds.
+metadata_defaults:
+  offline_behavior: must_be_explicit_per_screen
+  permission_dependencies: []
+  entitlement_dependencies: []
+  accessibility_notes: [large_text, screen_reader, non_color_status, rtl_safe]
+  release_evidence_owner: SPEC_28
+  implementation_status: planned
 traceability:
+  startup_resolver:
+    feature_owner: SPEC_25
+    category: shell_entry
+    critical_flows: [startup_route, migration_gate, deep_link_resolution, offline_start]
+    offline_behavior: routes_to_last_safe_local_state
+    analytics_events: [app_startup_resolve, screen_startup_resolver_view]
+  onboarding_welcome:
+    feature_owner: SPEC_25
+    category: flow_screen
+    critical_flows: [first_launch_value, no_forced_account, no_permission_wall]
+    offline_behavior: available_offline_after_bundle_load
+    analytics_events: [screen_onboarding_welcome_view]
+  language_preferences_setup:
+    feature_owner: SPEC_25
+    category: flow_screen
+    critical_flows: [locale_choice, rtl_preview, simple_mode_offer]
+    offline_behavior: local_preference_only
+    analytics_events: [screen_language_preferences_setup_view]
+  account_gate:
+    feature_owner: SPEC_24
+    category: flow_screen
+    critical_flows: [protected_action_explanation, auth_start, auth_failure, return_to_task]
+    offline_behavior: explains_auth_unavailable_without_blocking_local_features
+    permission_dependencies: [auth_provider]
+    analytics_events: [account_gate_view, account_gate_complete]
   home_root:
     feature_owner: SPEC_25
-    critical_flows: [continue_ritual, saved_gate_recall, group_safe_action, emergency_shortcut, pack_readiness]
-  simple_home:
-    feature_owner: SPEC_25
-    critical_flows: [ritual_shortcut, map_gate_shortcut, group_safe_shortcut, emergency_shortcut]
+    category: root_screen
+    critical_flows: [continue_ritual, urgent_shortcuts, saved_gate_recall, group_safe_action, pack_readiness]
+    offline_behavior: useful_with_local_state_and_cached_snapshots
+    analytics_events: [screen_home_root_view]
   rituals_root:
     feature_owner: SPEC_18
-    critical_flows: [start_ritual, resume_ritual]
+    category: root_screen
+    critical_flows: [start_ritual, resume_ritual, open_ric, offline_content]
+    offline_behavior: core_guidance_available_from_local_content
+    analytics_events: [screen_rituals_root_view]
+  start_resume_ritual:
+    feature_owner: SPEC_18
+    category: flow_screen
+    critical_flows: [start_umrah, resume_session, choose_supported_context]
+    offline_behavior: creates_or_resumes_local_session
+    analytics_events: [ritual_start, ritual_resume]
+  ritual_session_overview:
+    feature_owner: SPEC_18
+    category: detail_screen
+    critical_flows: [current_step, progress_state, continue_step, open_ric]
+    offline_behavior: local_session_and_content_runtime
+    analytics_events: [screen_ritual_session_overview_view]
   ritual_step_detail:
     feature_owner: SPEC_18
-    critical_flows: [read_step, mark_complete, open_ric, offline_content]
+    category: detail_screen
+    critical_flows: [read_step, mark_complete, counter_use, open_ric, offline_content]
+    offline_behavior: governed_local_content_required
+    analytics_events: [screen_ritual_step_detail_view, ritual_step_complete]
+  ric_entry:
+    feature_owner: SPEC_18
+    category: flow_screen
+    critical_flows: [focused_questions, context_capture, resolver_start]
+    offline_behavior: local_rule_content_required
+    analytics_events: [ric_entry_view, ric_start]
   ric_result:
     feature_owner: SPEC_18
-    critical_flows: [show_result, explain_remedy, save_receipt]
+    category: detail_screen
+    critical_flows: [show_result, explain_remedy, fallback_uncertainty, save_receipt]
+    offline_behavior: local_rule_content_required
+    analytics_events: [ric_result_view, ric_result_generated]
+  ritual_bookmarks_saved_guidance:
+    feature_owner: SPEC_18
+    category: detail_screen
+    critical_flows: [saved_guidance, bookmark_return, local_search]
+    offline_behavior: local_bookmark_references
+    entitlement_dependencies: [notes_bookmarks_extended_optional]
+    analytics_events: [screen_ritual_bookmarks_saved_guidance_view]
   map_root:
     feature_owner: SPEC_19
+    category: root_screen
     critical_flows: [position_confidence, destination_pick, saved_gate_recall, degraded_map]
+    offline_behavior: micro_basemap_and_saved_anchor_fallback
+    permission_dependencies: [location_optional_task_linked]
+    analytics_events: [screen_map_root_view, map_fallback_enter]
+  destination_search_picker:
+    feature_owner: SPEC_19
+    category: flow_screen
+    critical_flows: [local_destination_search, landmark_pick, saved_anchor_pick]
+    offline_behavior: searches_installed_or_bundled_local_index
+    analytics_events: [map_destination_search_view]
+  route_preview:
+    feature_owner: SPEC_19
+    category: flow_screen
+    critical_flows: [route_summary, confidence_warning, floor_changes, text_guidance]
+    offline_behavior: uses_local_graph_or_text_fallback
+    analytics_events: [map_route_preview_view]
+  active_wayfinding:
+    feature_owner: SPEC_19
+    category: task_screen
+    critical_flows: [route_follow, confidence_degrade, reroute_or_fallback, stop_route]
+    offline_behavior: local_route_or_anchor_guidance
+    permission_dependencies: [location_optional_task_linked]
+    analytics_events: [map_route_follow_start, map_route_follow_end]
   save_anchor_flow:
     feature_owner: SPEC_19
-    critical_flows: [save_gate, save_landmark, offline_recall]
+    category: flow_screen
+    critical_flows: [save_gate, save_landmark, manual_confirm, offline_recall]
+    offline_behavior: local_save_required
+    permission_dependencies: [location_optional_task_linked, camera_optional_for_photo]
+    analytics_events: [map_anchor_save_start, map_anchor_save_complete]
+  saved_anchor_detail:
+    feature_owner: SPEC_19
+    category: detail_screen
+    critical_flows: [anchor_recall, route_to_anchor, edit_anchor, delete_anchor]
+    offline_behavior: local_anchor_available
+    analytics_events: [screen_saved_anchor_detail_view]
+  floor_level_selector:
+    feature_owner: SPEC_19
+    category: modal_surface
+    critical_flows: [floor_select, confidence_context, route_floor_change]
+    offline_behavior: available_when_local_floor_data_exists
+    analytics_events: [map_floor_selector_view]
   group_root:
     feature_owner: SPEC_20
-    critical_flows: [join_prompt, im_safe, regroup_summary, stale_state, live_board_entry]
-  join_group_flow:
-    feature_owner: SPEC_20
-    critical_flows: [account_gate, code_entry, idempotent_join, failure_copy]
+    category: root_screen
+    critical_flows: [create_prompt, join_prompt, im_safe, regroup_summary, stale_state, live_board_entry]
+    offline_behavior: stale_snapshot_and_manual_fallback_only
+    permission_dependencies: [auth_for_protected_group_actions]
+    entitlement_dependencies: [group_live_board_optional]
+    analytics_events: [screen_group_root_view]
   group_creation_flow:
     feature_owner: SPEC_20
+    category: flow_screen
     critical_flows: [leader_auth, name_group, generate_code, abuse_controls, share_code]
-    status: governed_if_enabled
-  emergency_root:
-    feature_owner: SPEC_22
-    critical_flows: [emergency_card, medical_profile, urgent_phrase, saved_gate, im_safe]
-  medical_profile_view_edit:
-    feature_owner: SPEC_22
-    critical_flows: [local_create, protected_reveal, explicit_export]
+    offline_behavior: trusted_write_unavailable_no_hidden_queue
+    permission_dependencies: [auth_required, network_required]
+    entitlement_dependencies: []
+    analytics_events: [group_create_start, group_create_complete, group_create_fail]
+  join_group_flow:
+    feature_owner: SPEC_20
+    category: flow_screen
+    critical_flows: [account_gate, code_entry, idempotent_join, failure_copy]
+    offline_behavior: trusted_write_unavailable_no_hidden_queue
+    permission_dependencies: [auth_required, network_required]
+    analytics_events: [group_join_start, group_join_complete, group_join_fail]
+  group_live_board:
+    feature_owner: SPEC_20
+    category: detail_screen
+    critical_flows: [recent_status, freshness_display, stale_state, no_tracking_copy]
+    offline_behavior: stale_snapshot_only_with_clear_label
+    entitlement_dependencies: [GROUP_LIVE_BOARD]
+    analytics_events: [group_live_board_view]
+  checkin_quick_flow:
+    feature_owner: SPEC_20
+    category: flow_screen
+    critical_flows: [im_safe, text_pin, server_checkin, sms_share_fallback]
+    offline_behavior: user_initiated_share_fallback_no_fake_success
+    permission_dependencies: [auth_required_for_server_checkin]
+    analytics_events: [group_checkin_start, group_checkin_complete, group_checkin_fail]
+  regroup_pin_detail:
+    feature_owner: SPEC_20
+    category: detail_screen
+    critical_flows: [read_regroup_instruction, route_launch, copy_text, freshness_state]
+    offline_behavior: cached_or_text_reference_with_stale_label
+    analytics_events: [group_regroup_pin_view]
+  group_itinerary:
+    feature_owner: SPEC_20
+    category: detail_screen
+    critical_flows: [read_itinerary, stale_label, planner_context]
+    offline_behavior: cached_snapshot_with_stale_label
+    analytics_events: [group_itinerary_view]
+  tools_root:
+    feature_owner: SPEC_25
+    category: root_screen
+    critical_flows: [tools_entry, emergency_entry, packs_entry, settings_entry]
+    offline_behavior: local_tools_available
+    analytics_events: [screen_tools_root_view]
   planner_list:
     feature_owner: SPEC_21
+    category: detail_screen
     critical_flows: [local_crud, reminder_state, quiet_hours]
+    offline_behavior: local_first_required
+    analytics_events: [planner_list_view]
+  planner_item_editor:
+    feature_owner: SPEC_21
+    category: flow_screen
+    critical_flows: [create_item, edit_item, schedule_reminder, permission_failure]
+    offline_behavior: local_item_save_required
+    permission_dependencies: [notifications_optional]
+    analytics_events: [planner_item_editor_view]
+  reminder_editor:
+    feature_owner: SPEC_21
+    category: modal_surface
+    critical_flows: [set_reminder, permission_explanation, os_delivery_honesty]
+    offline_behavior: local_notification_scheduling_only
+    permission_dependencies: [notifications_optional]
+    analytics_events: [planner_reminder_editor_view]
+  wallet_list:
+    feature_owner: SPEC_21
+    category: detail_screen
+    critical_flows: [local_records, add_record, export_user_initiated]
+    offline_behavior: local_first_required
+    analytics_events: [wallet_list_view]
+  wallet_item_detail:
+    feature_owner: SPEC_21
+    category: detail_screen
+    critical_flows: [view_record, edit_record, explicit_export, delete_record]
+    offline_behavior: local_first_required
+    analytics_events: [wallet_item_detail_view]
+  notes_list:
+    feature_owner: SPEC_21
+    category: detail_screen
+    critical_flows: [local_notes, search, open_editor]
+    offline_behavior: local_first_required
+    entitlement_dependencies: [notes_bookmarks_extended_optional]
+    analytics_events: [notes_list_view]
+  note_editor:
+    feature_owner: SPEC_21
+    category: detail_screen
+    critical_flows: [create_note, edit_note, save_local, explicit_share]
+    offline_behavior: local_first_required
+    entitlement_dependencies: [notes_bookmarks_extended_optional]
+    analytics_events: [note_editor_view]
+  bookmarks_list:
+    feature_owner: SPEC_21
+    category: detail_screen
+    critical_flows: [local_bookmarks, return_to_content, search_filter]
+    offline_behavior: local_first_required
+    entitlement_dependencies: [notes_bookmarks_extended_optional]
+    analytics_events: [bookmarks_list_view]
+  phrasebook_root:
+    feature_owner: SPEC_22
+    category: detail_screen
+    critical_flows: [phrase_search, big_text_card, audio_if_available, offline_text]
+    offline_behavior: phrase_text_available_offline
+    entitlement_dependencies: [AUDIO_OFFLINE_optional]
+    analytics_events: [phrasebook_root_view]
+  emergency_root:
+    feature_owner: SPEC_22
+    category: root_screen
+    critical_flows: [emergency_card, medical_profile, urgent_phrase, saved_gate, im_safe]
+    offline_behavior: baseline_cards_and_medical_profile_local
+    analytics_events: [emergency_root_view]
+  emergency_card_detail:
+    feature_owner: SPEC_22
+    category: detail_screen
+    critical_flows: [big_text_help, phone_or_sms_handoff, copy_card]
+    offline_behavior: bundled_or_local_card_available
+    permission_dependencies: [phone_or_sms_handoff_user_confirmed]
+    analytics_events: [emergency_card_detail_view]
   pack_catalog:
     feature_owner: SPEC_23
-    critical_flows: [manifest_staleness, install, verify, purge]
+    category: detail_screen
+    critical_flows: [manifest_staleness, install, verify, purge, storage_state]
+    offline_behavior: cached_manifest_browse_with_stale_label
+    entitlement_dependencies: [PACK_AUTO_DOWNLOAD_optional, AUDIO_OFFLINE_optional]
+    analytics_events: [pack_catalog_view]
+  pack_detail_install_flow:
+    feature_owner: SPEC_23
+    category: flow_screen
+    critical_flows: [download, verify, signature_failure, last_known_good, purge]
+    offline_behavior: install_requires_network_existing_installed_pack_remains_usable
+    entitlement_dependencies: [PACK_AUTO_DOWNLOAD_optional, AUDIO_OFFLINE_optional]
+    analytics_events: [pack_install_start, pack_install_complete, pack_install_fail]
   settings_root:
     feature_owner: SPEC_24
+    category: detail_screen
     critical_flows: [privacy_data, account_state, support_restore, permissions, packs]
+    offline_behavior: local_settings_available_protected_refresh_stale
+    analytics_events: [settings_view]
   privacy_data_flow:
     feature_owner: SPEC_24
+    category: flow_screen
     critical_flows: [delete_account, delete_local_data, export_request, retention_summary]
+    offline_behavior: local_explanation_available_server_requests_unavailable
+    permission_dependencies: [auth_required_for_server_data_actions, network_required_for_server_data_actions]
+    analytics_events: [privacy_data_view]
+  simple_home:
+    feature_owner: SPEC_25
+    category: simple_mode_screen
+    critical_flows: [ritual_shortcut, map_gate_shortcut, group_safe_shortcut, emergency_shortcut]
+    offline_behavior: local_recovery_surface
+    analytics_events: [screen_simple_home_view]
+  simple_ritual_shortcut:
+    feature_owner: SPEC_25
+    category: simple_mode_screen
+    critical_flows: [start_or_resume_ritual, open_ric]
+    offline_behavior: local_ritual_content_required
+    analytics_events: [simple_ritual_shortcut_view]
+  simple_map_shortcut:
+    feature_owner: SPEC_25
+    category: simple_mode_screen
+    critical_flows: [save_my_gate, recall_saved_gate, open_map]
+    offline_behavior: local_anchor_and_micro_basemap_fallback
+    analytics_events: [simple_map_shortcut_view]
+  simple_group_shortcut:
+    feature_owner: SPEC_25
+    category: simple_mode_screen
+    critical_flows: [im_safe, open_group, create_or_join_if_no_group]
+    offline_behavior: stale_group_or_manual_share_fallback
+    analytics_events: [simple_group_shortcut_view]
+  simple_emergency_shortcut:
+    feature_owner: SPEC_25
+    category: simple_mode_screen
+    critical_flows: [emergency_card, phrasebook, medical_profile]
+    offline_behavior: baseline_assistive_content_local
+    analytics_events: [simple_emergency_shortcut_view]
 validation_rules:
-  - Every screen implementation must reference a feature_owner and test owner.
+  - File 11 canonical screen inventory and this traceability map must stay in one-to-one sync unless a screen is explicitly marked deferred_with_rationale.
+  - Every screen implementation must reference feature_owner, offline behavior, accessibility notes, analytics events, and release evidence owner from this file.
   - Every critical flow listed here must have a release-evidence mapping before ship.
   - New screens require updates to this file and file 11 in the same change.
+  - Entitlement dependencies here must match SPECS/CONTRACTS/entitlement_capability_policy.yaml or be explicitly marked optional/local/non-entitlement.
