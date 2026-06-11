@@ -1,0 +1,53 @@
+version: 1
+owner_spec: SPECS/20_FEATURE_GROUP_HUB_CHECKINS_REGROUP_AND_SHARED_COORDINATION.md
+related_specs:
+  - SPECS/13_DATA_MODEL_RLS_INVARIANTS_AND_MIGRATIONS.md
+  - SPECS/14_API_REALTIME_AND_INTEGRATION_CONTRACTS.md
+  - SPECS/16_MAP_ARCHITECTURE_POSITIONING_ROUTING_3_D_AND_OFFLINE_WAYFINDING.md
+  - SPECS/19_FEATURE_MAPS_SAVE_MY_GATE_AND_3_D_WAYFINDING.md
+  - SPECS/29_SECURITY_PRIVACY_COMPLIANCE_AND_RISK_REGISTER.md
+principles:
+  - Group coordination exists to help pilgrims recover and regroup, not to create surveillance.
+  - Presence must be explicit, task-linked, foreground-first, and time-bounded.
+  - Cached or inferred state must never be presented as live certainty.
+objects:
+  group_presence_event:
+    required_fields:
+      event_id: uuid
+      group_id: uuid
+      actor_user_id: uuid
+      event_type: safe_checkin | text_checkin | regroup_pin | route_handoff
+      text_pin: string
+      shared_at: timestamptz
+      ttl_expires_at: timestamptz
+      freshness_status: fresh | stale | expired | revoked
+      share_reason: explicit_user_action
+    optional_fields:
+      map_anchor_ref: string
+      precision_level: none | coarse | precise
+      consent_token_id: uuid
+      revoked_at: timestamptz
+      retention_expires_at: timestamptz
+      client_event_id: uuid
+rules:
+  - precision_level defaults to none unless the user explicitly launches a map/location handoff.
+  - precise coordinates are not allowed in ordinary check-ins.
+  - regroup pins may reference a map anchor, but must expose text guidance as fallback.
+  - stale thresholds must be rendered in UI copy and accessibility labels.
+  - expired or revoked state must be hidden from live boards and retained only according to the retention policy.
+  - realtime delivery is an enhancement; server acknowledgement remains the trusted write boundary.
+  - no raw precise location may be sent to ordinary analytics.
+minimum_ttls:
+  safe_checkin_minutes: 240
+  text_checkin_minutes: 240
+  regroup_pin_minutes: 720
+  route_handoff_minutes: 60
+ui_states:
+  fresh: "Recently updated"
+  stale: "May be out of date"
+  expired: "No current update"
+  revoked: "No longer shared"
+validation_rules:
+  - Any UI using this state must show timestamp or relative age.
+  - Any API write that changes shared state must be idempotent where retries could create confusion.
+  - Any future background location feature requires approved spec changes before implementation.
