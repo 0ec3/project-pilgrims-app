@@ -1,23 +1,20 @@
 #!/usr/bin/env python3
-"""Validate machine-readable Pilgrims spec contract files.
-
-This script intentionally performs structural checks only. Product truth still lives in the
-normative markdown specs, but these YAML files must remain parseable and internally sane
-so implementation, QA, and release tooling can consume them safely.
-"""
+"""Validate machine-readable Pilgrims spec contract files."""
 
 from __future__ import annotations
 
 from pathlib import Path
-import sys
+import re
 
 try:
     import yaml
-except ImportError as exc:  # pragma: no cover - environment guard
+except ImportError as exc:  # pragma: no cover
     raise SystemExit("PyYAML is required. Install with: python -m pip install pyyaml") from exc
 
 ROOT = Path(__file__).resolve().parents[2]
 CONTRACT_DIR = ROOT / "SPECS" / "CONTRACTS"
+SCREEN_SPEC = ROOT / "SPECS" / "11_SCREENS_STATES_NAVIGATION_AND_UI_BLUEPRINTS.md"
+
 REQUIRED = [
     "entitlement_capability_policy.yaml",
     "group_presence_privacy_contract.yaml",
@@ -27,47 +24,159 @@ REQUIRED = [
     "screen_feature_traceability.yaml",
 ]
 
+BASELINE_SCREEN_IDS = {
+    "startup_resolver", "onboarding_welcome", "language_preferences_setup", "account_gate",
+    "home_root", "rituals_root", "start_resume_ritual", "ritual_session_overview",
+    "ritual_step_detail", "ric_entry", "ric_result", "ritual_bookmarks_saved_guidance",
+    "map_root", "destination_search_picker", "route_preview", "active_wayfinding",
+    "save_anchor_flow", "saved_anchor_detail", "floor_level_selector", "group_root",
+    "group_creation_flow", "join_group_flow", "group_live_board", "checkin_quick_flow",
+    "regroup_pin_detail", "group_itinerary", "tools_root", "planner_list",
+    "planner_item_editor", "reminder_editor", "wallet_list", "wallet_item_detail",
+    "notes_list", "note_editor", "bookmarks_list", "phrasebook_root", "emergency_root",
+    "emergency_card_detail", "pack_catalog", "pack_detail_install_flow", "settings_root",
+    "privacy_data_flow", "simple_home", "simple_ritual_shortcut", "simple_map_shortcut",
+    "simple_group_shortcut", "simple_emergency_shortcut",
+}
+
+MUST_STAY_FREE = {"correctness", "emergency", "emergency_assistive", "recovery", "offline_recovery"}
+
+
+def fail(message: str) -> None:
+    raise AssertionError(message)
+
 
 def load_yaml(path: Path) -> dict:
     if not path.exists():
-        raise AssertionError(f"Missing required contract file: {path.relative_to(ROOT)}")
+        fail(f"Missing required contract file: {path.relative_to(ROOT)}")
     data = yaml.safe_load(path.read_text(encoding="utf-8"))
     if not isinstance(data, dict):
-        raise AssertionError(f"Contract must parse as mapping: {path.relative_to(ROOT)}")
+        fail(f"Contract must parse as mapping: {path.relative_to(ROOT)}")
     if "version" not in data and "schema_version" not in data:
-        raise AssertionError(f"Contract missing version/schema_version: {path.relative_to(ROOT)}")
+        fail(f"Contract missing version/schema_version: {path.relative_to(ROOT)}")
     return data
 
 
-def validate_entitlements(data: dict) -> None:
-    capabilities = data.get("capabilities")
-    if not isinstance(capabilities, dict) or not capabilities:
-        raise AssertionError("entitlement_capability_policy.yaml must define capabilities")
+def mapping(data: dict, key: str, source: str) -> dict:
+    value = data.get(key)
+    if not isinstance(value, dict) or not value:
+        fail(f"{source} must define non-empty mapping: {key}")
+    return value
 
+
+def validate_entitlements(data: dict) -> None:
+    capabilities = mapping(data, "capabilities", "entitlement_capability_policy.yaml")
     for key, value in capabilities.items():
         if not isinstance(value, dict):
-            raise AssertionError(f"Capability {key} must be a mapping")
-        criticality = value.get("criticality")
-        if criticality in {"correctness", "emergency"} and value.get("supporter_allowed") is False and value.get("supporter") is False:
-            raise AssertionError(f"Critical capability cannot exclude Supporter access: {key}")
-        if criticality in {"correctness", "emergency"} and value.get("never_gate") is not True:
-            raise AssertionError(f"Critical capability must be never_gate=true: {key}")
+            fail(f"Capability {key} must be a mapping")
+        for field in ("criticality", "guest_allowed", "free_allowed", "supporter_allowed"):
+            if field not in value:
+                fail(f"Capability {key} missing required field: {field}")
+        if value.get("criticality") in MUST_STAY_FREE:
+            if value.get("never_gate") is not True:
+                fail(f"Baseline capability must be never_gate=true: {key}")
+            if value.get("free_allowed") is not True or value.get("supporter_allowed") is not True:
+                fail(f"Baseline capability must allow free and supporter access: {key}")
+        paid_only = value.get("free_allowed") is False and value.get("supporter_allowed") is True
+        if paid_only and not value.get("entitlement_key"):
+            fail(f"Paid-only capability must define entitlement_key: {key}")
+        if value.get("auth_required") is True:
+            if "server_trust_required" not in value:
+                fail(f"Auth-required capability must state server_trust_required: {key}")
+            if value.get("server_trust_required") is True and "network_required" not in value:
+                fail(f"Server-trusted capability must state network_required: {key}")
+        if value.get("local_only") is True and value.get("server_trust_required") is True:
+            fail(f"Local-only capability cannot require server trust: {key}")
+
+    required = {
+        "ritual.guidance.text", "ritual.ric.basic", "maps.save_my_gate",
+        "group.create_basic", "group.join_and_manual_coordination", "group.safe_checkin_manual",
+        "phrasebook.text_and_big_text_cards", "emergency.cards_and_safety_basics",
+        "medical_profile.local_basic", "packs.manual_download_and_verify",
+    }
+    missing = sorted(required - set(capabilities))
+    if missing:
+        fail(f"Missing baseline capabilities: {', '.join(missing)}")
 
 
 def validate_group_presence(data: dict) -> None:
-    text = yaml.safe_dump(data)
-    forbidden_terms = ["background tracking", "passive surveillance"]
-    # The contract may name forbidden behaviors, but it must also clearly carry freshness semantics.
-    for required in ["fresh", "stale", "expired", "revoked"]:
-        if required not in text.lower():
-            raise AssertionError(f"group_presence_privacy_contract.yaml missing freshness term: {required}")
+    text = yaml.safe_dump(data).lower()
+    for term in ("fresh", "stale", "expired", "revoked"):
+        if term not in text:
+            fail(f"group_presence_privacy_contract.yaml missing freshness term: {term}")
+    object_mappings = mapping(data, "object_mappings", "group_presence_privacy_contract.yaml")
+    if object_mappings.get("database_primary_key") != "id":
+        fail("Group presence database_primary_key must be id")
+    if object_mappings.get("api_identifier") != "event_id":
+        fail("Group presence api_identifier must be event_id")
+    objects = mapping(data, "objects", "group_presence_privacy_contract.yaml")
+    event = mapping(objects, "group_presence_event", "group_presence_privacy_contract.yaml")
+    required_fields = mapping(event, "required_fields", "group_presence_event")
+    for field in ("event_id", "group_id", "actor_user_id", "event_type", "shared_at", "ttl_expires_at", "freshness_status", "share_reason"):
+        if field not in required_fields:
+            fail(f"group_presence_event missing required field: {field}")
+    conditional = mapping(event, "conditional_fields", "group_presence_event")
+    text_pin = mapping(conditional, "text_pin", "group_presence_event.conditional_fields")
+    if "regroup_pin" not in text_pin.get("required_for", []):
+        fail("text_pin must be required for regroup_pin")
 
 
 def validate_trust_chain(data: dict) -> None:
+    text = yaml.safe_dump(data).lower()
+    for term in ("manifest_signature", "artifact_signature", "signing_key_id", "anti-rollback", "last-known-good", "activation"):
+        if term not in text:
+            fail(f"content_pack_trust_chain_contract.yaml missing term: {term}")
+
+
+def validate_advisory_source_registry(data: dict) -> None:
+    text = yaml.safe_dump(data).lower()
+    for term in ("source_type", "jurisdiction", "review_status", "last_verified_at"):
+        if term not in text:
+            fail(f"advisory_source_registry.schema.yaml missing term: {term}")
+
+
+def validate_release_gate_taxonomy(data: dict) -> None:
     text = yaml.safe_dump(data)
-    for required in ["manifest_signature", "artifact_signature", "signing_key_id"]:
-        if required not in text:
-            raise AssertionError(f"content_pack_trust_chain_contract.yaml missing {required}")
+    for rc in ("RC0", "RC1", "RC2", "RC3", "RC4"):
+        if rc not in text:
+            fail(f"release_gate_taxonomy.yaml missing release class: {rc}")
+    lower = text.lower()
+    for term in ("waiver", "evidence"):
+        if term not in lower:
+            fail(f"release_gate_taxonomy.yaml missing term: {term}")
+
+
+def validate_screen_traceability(data: dict, entitlements: dict) -> None:
+    traceability = mapping(data, "traceability", "screen_feature_traceability.yaml")
+    missing = sorted(BASELINE_SCREEN_IDS - set(traceability))
+    extra = sorted(set(traceability) - BASELINE_SCREEN_IDS)
+    if missing:
+        fail(f"screen_feature_traceability.yaml missing screens: {', '.join(missing)}")
+    if extra:
+        fail(f"screen_feature_traceability.yaml contains unknown screens: {', '.join(extra)}")
+
+    capabilities = set(mapping(entitlements, "capabilities", "entitlement_capability_policy.yaml"))
+    allowed_markers = {"GROUP_LIVE_BOARD", "PACK_AUTO_DOWNLOAD_optional", "AUDIO_OFFLINE_optional", "notes_bookmarks_extended_optional", "NOTES_BOOKMARKS_EXTENDED"}
+    for screen_id, entry in traceability.items():
+        if not isinstance(entry, dict):
+            fail(f"Screen {screen_id} traceability entry must be a mapping")
+        for field in ("feature_owner", "critical_flows", "offline_behavior", "analytics_events"):
+            if field not in entry:
+                fail(f"Screen {screen_id} missing field: {field}")
+        if not isinstance(entry["critical_flows"], list) or not entry["critical_flows"]:
+            fail(f"Screen {screen_id} must define critical_flows")
+        if not isinstance(entry["analytics_events"], list) or not entry["analytics_events"]:
+            fail(f"Screen {screen_id} must define analytics_events")
+        for dep in entry.get("entitlement_dependencies", []) or []:
+            dep = str(dep)
+            if dep not in allowed_markers and dep not in capabilities and not dep.endswith("_optional"):
+                fail(f"Screen {screen_id} references unknown entitlement/capability: {dep}")
+
+    if SCREEN_SPEC.exists():
+        spec_text = SCREEN_SPEC.read_text(encoding="utf-8")
+        match = re.search(r"currently contains (\d+) canonical screens", spec_text)
+        if match and int(match.group(1)) != len(traceability):
+            fail(f"File 11 screen count mismatch: {match.group(1)} != {len(traceability)}")
 
 
 def main() -> int:
@@ -75,6 +184,9 @@ def main() -> int:
     validate_entitlements(loaded["entitlement_capability_policy.yaml"])
     validate_group_presence(loaded["group_presence_privacy_contract.yaml"])
     validate_trust_chain(loaded["content_pack_trust_chain_contract.yaml"])
+    validate_advisory_source_registry(loaded["advisory_source_registry.schema.yaml"])
+    validate_release_gate_taxonomy(loaded["release_gate_taxonomy.yaml"])
+    validate_screen_traceability(loaded["screen_feature_traceability.yaml"], loaded["entitlement_capability_policy.yaml"])
     print(f"Validated {len(loaded)} spec contract files.")
     return 0
 
