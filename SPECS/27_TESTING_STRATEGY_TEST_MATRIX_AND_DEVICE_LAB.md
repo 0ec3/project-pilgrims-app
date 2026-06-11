@@ -155,6 +155,18 @@ If a release proceeds with a known quality gap, that gap must be explicitly docu
 ## 4.10 Contract-enforcement rule
 Machine-readable contract files must be parseable and must have tests proving relevant runtime behavior, not merely file existence.
 
+## 4.11 Contract-artifact treatment rule
+Files in `SPECS/CONTRACTS/` are test and release inputs, not decorative documentation.
+
+Testing must treat them as:
+- fixture sources where practical,
+- contract-test inputs,
+- CI validation inputs,
+- release-evidence anchors,
+- AI/reviewer guardrails.
+
+`tools/specs/validate_spec_contracts.py` is the baseline structural validator. Passing it proves the YAML files are present, parseable, and minimally sane. It does not prove the app obeys the contracts at runtime.
+
 ---
 
 # 5. Canonical terminology
@@ -179,6 +191,12 @@ Controlled non-production data created for repeatable tests, fixtures, screensho
 
 ## 5.7 Certification run
 A broader pre-release execution across required layers, devices, and scenarios used to certify a release candidate.
+
+## 5.8 Contract artifact
+A machine-readable YAML file in `SPECS/CONTRACTS/` that mirrors implementation-critical truth from one or more Markdown specs.
+
+## 5.9 Baseline contract validation
+Structural validation that confirms required contract artifacts exist, parse correctly, and satisfy basic sanity checks. This is necessary but not sufficient for release.
 
 ---
 
@@ -291,12 +309,17 @@ Includes:
 ## 8.1 Baseline parser validation
 `tools/specs/validate_spec_contracts.py` must pass whenever files in `SPECS/CONTRACTS/` change.
 
+This check must be wired into CI or an equivalent pre-merge validation path before implementation work depends on these contracts.
+
+Baseline parser validation is required but insufficient: it must be paired with runtime, widget, integration, and release evidence where the contract affects user behavior.
+
 ## 8.2 Entitlement capability policy tests
 Must verify:
 - `never_gate` capabilities remain accessible in appropriate guest/free/offline states,
 - Supporter gates match API/client fixtures,
 - downgrade/refund behavior preserves ethical free access,
-- lock-state copy does not imply correctness or safety is withheld.
+- lock-state copy does not imply correctness or safety is withheld,
+- implementation does not use entitlement keys absent from `entitlement_capability_policy.yaml` unless the contract and file `24` are updated together.
 
 ## 8.3 Group presence privacy tests
 Must verify:
@@ -304,7 +327,8 @@ Must verify:
 - stale/expired/revoked status renders correctly,
 - TTL expiration changes live-board behavior,
 - revoked/expired events do not appear as live certainty,
-- analytics exclude raw precise location, join codes, and private text.
+- analytics exclude raw precise location, join codes, and private text,
+- implementation uses freshness states and TTL semantics from `group_presence_privacy_contract.yaml`.
 
 ## 8.4 Content/pack trust-chain tests
 Must verify:
@@ -314,21 +338,31 @@ Must verify:
 - revoked-key failure,
 - compatibility failure,
 - last-known-good preservation,
-- signed rollback pointer behavior.
+- signed rollback pointer behavior,
+- implementation uses required fields from `content_pack_trust_chain_contract.yaml` and rejects missing or incompatible trust-chain metadata.
 
 ## 8.5 Advisory source registry tests
 Must verify:
 - required advisory metadata exists,
 - expired publish-blocking advisories fail activation,
 - stale/fallback behavior displays correctly,
-- emergency/safety content remains non-blocking for ritual/recovery flows.
+- emergency/safety content remains non-blocking for ritual/recovery flows,
+- implementation does not show advisory content as current when `advisory_source_registry.schema.yaml` freshness requirements fail.
 
 ## 8.6 Screen-feature traceability tests
 Must verify:
 - all canonical screens have feature owners,
 - critical flows have screen coverage,
 - `group_creation_flow` and `privacy_data_flow` exist,
-- offline/stale/error/locked states are represented.
+- offline/stale/error/locked states are represented,
+- new screens update both file `11` and `screen_feature_traceability.yaml` in the same change.
+
+## 8.7 Release gate taxonomy tests
+Must verify:
+- release-risk classes map to `release_gate_taxonomy.yaml`,
+- waiver objects contain all required fields,
+- no-waiver zones cannot be bypassed by local test overrides,
+- RC3/RC4 changes receive the evidence depth required by files `28` and `30`.
 
 ---
 
