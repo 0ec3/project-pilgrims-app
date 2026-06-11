@@ -1,4 +1,4 @@
-version: 1
+version: 2
 owner_spec: SPECS/20_FEATURE_GROUP_HUB_CHECKINS_REGROUP_AND_SHARED_COORDINATION.md
 related_specs:
   - SPECS/13_DATA_MODEL_RLS_INVARIANTS_AND_MIGRATIONS.md
@@ -7,9 +7,16 @@ related_specs:
   - SPECS/19_FEATURE_MAPS_SAVE_MY_GATE_AND_3_D_WAYFINDING.md
   - SPECS/29_SECURITY_PRIVACY_COMPLIANCE_AND_RISK_REGISTER.md
 principles:
-  - Group coordination exists to help pilgrims recover and regroup, not to create surveillance.
+  - Group coordination exists to help pilgrims recover and regroup, not to monitor them.
   - Presence must be explicit, task-linked, foreground-first, and time-bounded.
   - Cached or inferred state must never be presented as live certainty.
+object_mappings:
+  database_table: group_presence_events
+  database_primary_key: id
+  api_identifier: event_id
+  rule: >-
+    Database column id is the persisted primary key. API payloads may expose the same value as event_id.
+    Do not add a separate event_id column unless file 13, file 14, and this contract are updated together.
 objects:
   group_presence_event:
     required_fields:
@@ -17,13 +24,23 @@ objects:
       group_id: uuid
       actor_user_id: uuid
       event_type: safe_checkin | text_checkin | regroup_pin | route_handoff
-      text_pin: string
       shared_at: timestamptz
       ttl_expires_at: timestamptz
       freshness_status: fresh | stale | expired | revoked
       share_reason: explicit_user_action
+    conditional_fields:
+      text_pin:
+        type: string
+        required_for: [text_checkin, regroup_pin]
+        optional_for: [safe_checkin, route_handoff]
+        rule: >-
+          Required whenever the event must provide human-readable fallback guidance.
+          Safe check-ins may use canonical safe-state copy without freeform text.
+      map_anchor_ref:
+        type: string
+        required_for: [regroup_pin, route_handoff]
+        optional_for: [safe_checkin, text_checkin]
     optional_fields:
-      map_anchor_ref: string
       precision_level: none | coarse | precise
       consent_token_id: uuid
       revoked_at: timestamptz
@@ -50,4 +67,5 @@ ui_states:
 validation_rules:
   - Any UI using this state must show timestamp or relative age.
   - Any API write that changes shared state must be idempotent where retries could create confusion.
-  - Any future background location feature requires approved spec changes before implementation.
+  - API payload field event_id must map to database primary key id unless all related specs are changed together.
+  - Any future continuous location feature requires approved spec changes before implementation.
