@@ -1,0 +1,53 @@
+version: 1
+owner_spec: SPECS/28_REAL_WORLD_VERIFICATION_RELEASE_GATES_AND_EVIDENCE.md
+related_specs:
+  - SPECS/27_TESTING_STRATEGY_TEST_MATRIX_AND_DEVICE_LAB.md
+  - SPECS/29_SECURITY_PRIVACY_COMPLIANCE_AND_RISK_REGISTER.md
+  - SPECS/30_DELIVERY_RUNBOOK_INCIDENTS_ROLLBACK_AND_OPERATIONS.md
+principle: >-
+  File 28 owns go/no-go gates and waiver authority. File 27 owns verification mechanics.
+  File 30 owns rollout, incident response, and rollback execution after gate decisions.
+risk_classes:
+  RC0:
+    description: Copy-only or documentation-only change with no runtime, policy, content, or contract effect.
+    release_evidence: lightweight_review
+    waiver_allowed: true
+  RC1:
+    description: Low-risk UI or non-critical feature refinement.
+    release_evidence: automated_tests_plus_targeted_manual_check
+    waiver_allowed: true
+  RC2:
+    description: User-visible feature, navigation, entitlement, or offline behavior change.
+    release_evidence: matrix_tests_plus_real_device_sample
+    waiver_allowed: limited
+  RC3:
+    description: Ritual, emergency, medical, privacy, security, pack activation, purchase, or group-trust change.
+    release_evidence: full_gate_required
+    waiver_allowed: exceptional_only
+  RC4:
+    description: Known correctness, safety, privacy, or trust regression.
+    release_evidence: must_fix_or_no_ship
+    waiver_allowed: false
+blocker_levels:
+  blocker:
+    meaning: Release must not proceed until fixed or scope removed.
+  high_risk_exception:
+    meaning: Release may proceed only with file 28 waiver, owner, mitigation, and expiration.
+  non_blocking_gap:
+    meaning: Track explicitly; must not be represented as verified.
+waiver_object:
+  required_fields:
+    - waiver_id
+    - risk_class
+    - affected_specs
+    - affected_flows
+    - known_gap
+    - user_risk
+    - mitigation
+    - accountable_owner
+    - expiration_date
+    - approval_reference
+validation_rules:
+  - RC3 changes require physical-device evidence where applicable.
+  - No waiver may override religious correctness, essential safety access, privacy-light behavior, or store/legal non-compliance.
+  - Evidence must distinguish simulator, lab device, weak-network, field, accessibility, and content-governance proof.
