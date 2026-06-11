@@ -1,0 +1,53 @@
+version: 1
+owner_specs:
+  - SPECS/15_OFFLINE_PACKS_SYNC_ASSET_DELIVERY_AND_CACHE_POLICY.md
+  - SPECS/26_CONTENT_MODEL_SCHOLAR_REVIEW_AND_PUBLISHING_WORKFLOW.md
+related_specs:
+  - SPECS/23_FEATURE_OFFLINE_PACKS_AUDIO_AND_CONTENT_DISTRIBUTION.md
+  - SPECS/29_SECURITY_PRIVACY_COMPLIANCE_AND_RISK_REGISTER.md
+  - SPECS/30_DELIVERY_RUNBOOK_INCIDENTS_ROLLBACK_AND_OPERATIONS.md
+principles:
+  - Checksum verification proves integrity of bytes, not publisher authenticity.
+  - Downloadable packs, governed content artifacts, and activation pointers require authenticated signing before runtime activation.
+  - Last-known-good must remain available if candidate verification, compatibility, or signature checks fail.
+required_manifest_fields:
+  manifest_id: string
+  manifest_version: integer
+  generated_at: timestamptz
+  signing_key_id: string
+  signing_algorithm: Ed25519 | ECDSA_P256_SHA256
+  manifest_signature: string
+  revoked_key_ids: array
+  min_app_version: string
+  entries: array
+required_artifact_fields:
+  artifact_id: string
+  artifact_family: map | audio | content | media
+  artifact_version: string
+  schema_version: string
+  checksum_sha256: string
+  artifact_size_bytes: integer
+  artifact_signature: string
+  signing_key_id: string
+  signed_at: timestamptz
+  min_app_version: string
+  max_app_version: string?
+  last_known_good_eligible: boolean
+activation_rules:
+  - Manifest signature must verify before entries are trusted.
+  - Artifact checksum and artifact signature must verify before state can move to INSTALLED.
+  - Artifact schema and app compatibility must pass before runtime exposure.
+  - Failed candidate artifacts must never replace the current last-known-good artifact.
+  - Revoked signing keys must block new activation and trigger recovery guidance.
+anti_rollback_rules:
+  - Activation pointers may move backward only through an explicit rollback action with reason and incident/release reference.
+  - Client must reject unsigned rollback pointers.
+  - Client must not activate artifacts older than a recorded anti-rollback floor unless an emergency rollback override is signed.
+operational_rules:
+  - Key rotation requires documented old/new key overlap and validation evidence.
+  - Compromise response must include manifest revocation, activation freeze, and client last-known-good preservation.
+  - Pack artifacts must never contain executable code.
+validation_rules:
+  - DOWNLOADING must never transition directly to INSTALLED.
+  - VERIFYING must validate checksum, signature, compatibility, and storage completeness.
+  - Any release changing signing logic requires physical-device pack install/restart proof.
