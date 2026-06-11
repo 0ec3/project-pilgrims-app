@@ -143,6 +143,18 @@ The following contract artifacts are normative implementation aids. They mirror 
 Validation helper:
 - `tools/specs/validate_spec_contracts.py`
 
+## 4.8 How to treat contract artifacts and validator scripts
+Humans and AI agents must treat `SPECS/CONTRACTS/` and `tools/specs/validate_spec_contracts.py` as part of the project’s quality-control layer.
+
+Rules:
+- contract artifacts are not disposable documentation examples,
+- contract artifacts should be used as test fixtures, CI inputs, release evidence inputs, and AI-agent review anchors where practical,
+- markdown specs remain the human-readable authority, but YAML contracts must not drift from them,
+- any change to a contract artifact must also review its owning markdown spec, impacted tests, and release evidence,
+- `python tools/specs/validate_spec_contracts.py` must pass whenever contract artifacts change,
+- YAML parse success is only baseline validation and must not be represented as runtime correctness or release readiness,
+- deleting or bypassing contract artifacts requires an approved change-control decision.
+
 ---
 
 # 5. Reading order
