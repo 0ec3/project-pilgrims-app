@@ -1,0 +1,68 @@
+version: 1
+owner_spec: SPECS/11_SCREENS_STATES_NAVIGATION_AND_UI_BLUEPRINTS.md
+related_specs:
+  - SPECS/18_FEATURE_RITUALS_RIC_AND_RELIGIOUS_CONTENT.md
+  - SPECS/19_FEATURE_MAPS_SAVE_MY_GATE_AND_3_D_WAYFINDING.md
+  - SPECS/20_FEATURE_GROUP_HUB_CHECKINS_REGROUP_AND_SHARED_COORDINATION.md
+  - SPECS/21_FEATURE_PLANNER_REMINDERS_WALLET_NOTES_AND_BOOKMARKS.md
+  - SPECS/22_FEATURE_PHRASEBOOK_EMERGENCY_SAFETY_AND_ASSISTIVE_TOOLS.md
+  - SPECS/23_FEATURE_OFFLINE_PACKS_AUDIO_AND_CONTENT_DISTRIBUTION.md
+  - SPECS/24_FEATURE_ACCOUNT_SUBSCRIPTIONS_ENTITLEMENTS_AND_SETTINGS.md
+  - SPECS/25_FEATURE_ONBOARDING_HOME_AND_SIMPLE_MODE.md
+rule: >-
+  File 11 owns screen/state/navigation contracts. Feature-family files own business behavior.
+  If they conflict, implementation must stop and update both through change control.
+traceability:
+  home_root:
+    feature_owner: SPEC_25
+    critical_flows: [continue_ritual, saved_gate_recall, group_safe_action, emergency_shortcut, pack_readiness]
+  simple_home:
+    feature_owner: SPEC_25
+    critical_flows: [ritual_shortcut, map_gate_shortcut, group_safe_shortcut, emergency_shortcut]
+  rituals_root:
+    feature_owner: SPEC_18
+    critical_flows: [start_ritual, resume_ritual]
+  ritual_step_detail:
+    feature_owner: SPEC_18
+    critical_flows: [read_step, mark_complete, open_ric, offline_content]
+  ric_result:
+    feature_owner: SPEC_18
+    critical_flows: [show_result, explain_remedy, save_receipt]
+  map_root:
+    feature_owner: SPEC_19
+    critical_flows: [position_confidence, destination_pick, saved_gate_recall, degraded_map]
+  save_anchor_flow:
+    feature_owner: SPEC_19
+    critical_flows: [save_gate, save_landmark, offline_recall]
+  group_root:
+    feature_owner: SPEC_20
+    critical_flows: [join_prompt, im_safe, regroup_summary, stale_state, live_board_entry]
+  join_group_flow:
+    feature_owner: SPEC_20
+    critical_flows: [account_gate, code_entry, idempotent_join, failure_copy]
+  group_creation_flow:
+    feature_owner: SPEC_20
+    critical_flows: [leader_auth, name_group, generate_code, abuse_controls, share_code]
+    status: governed_if_enabled
+  emergency_root:
+    feature_owner: SPEC_22
+    critical_flows: [emergency_card, medical_profile, urgent_phrase, saved_gate, im_safe]
+  medical_profile_view_edit:
+    feature_owner: SPEC_22
+    critical_flows: [local_create, protected_reveal, explicit_export]
+  planner_list:
+    feature_owner: SPEC_21
+    critical_flows: [local_crud, reminder_state, quiet_hours]
+  pack_catalog:
+    feature_owner: SPEC_23
+    critical_flows: [manifest_staleness, install, verify, purge]
+  settings_root:
+    feature_owner: SPEC_24
+    critical_flows: [privacy_data, account_state, support_restore, permissions, packs]
+  privacy_data_flow:
+    feature_owner: SPEC_24
+    critical_flows: [delete_account, delete_local_data, export_request, retention_summary]
+validation_rules:
+  - Every screen implementation must reference a feature_owner and test owner.
+  - Every critical flow listed here must have a release-evidence mapping before ship.
+  - New screens require updates to this file and file 11 in the same change.
