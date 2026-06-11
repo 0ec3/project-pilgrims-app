@@ -6,7 +6,7 @@
 - **Audience:** Backend engineers, Flutter engineers, tech lead, QA, AI coding agents, reviewer agents, release agents
 - **Purpose:** Define the canonical server-side and device-local data model for the app, including entity ownership, relationships, row-level security, invariants, migration rules, seeds, fixtures, and data-retention boundaries.
 - **Authority level:** This file is the canonical source of truth for relational schema, local persistence shape, authorization boundaries at the data layer, and migration discipline. If code, APIs, or feature docs diverge from this file, this file wins unless superseded through documented change control.
-- **Primary dependencies:** `01-README-AND-MASTER-INDEX.md`, `02-AI-AGENT-RULES-AND-WORKFLOW.md`, `03-PRODUCT-CHARTER-AND-SCOPE.md`, `04-DECISIONS-GLOSSARY-AND-CHANGE-CONTROL.md`, `06-SYSTEM-ARCHITECTURE.md`, `07-FLUTTER-APP-ARCHITECTURE-AND-MODULE-BOUNDARIES.md`
+- **Primary dependencies:** `SPECS/01_README_AND_MASTER_INDEX.md`, `SPECS/02_AI_AGENT_RULES_AND_WORKFLOW.md`, `SPECS/03_PRODUCT_CHARTER_AND_SCOPE.md`, `SPECS/04_DECISIONS_GLOSSARY_AND_CHANGE_CONTROL.md`, `SPECS/06_SYSTEM_ARCHITECTURE.md`, `SPECS/07_FLUTTER_APP_ARCHITECTURE_AND_MODULE_BOUNDARIES.md`
 - **Related files:** `10`, `11`, `12`, `14`, `15`, `16`, `17`, `18`–`26`, `27`, `28`, `29`, `30`, `31`, `CONTRACTS/group_presence_privacy_contract.yaml`, `CONTRACTS/entitlement_capability_policy.yaml`
 
 ---
@@ -64,44 +64,35 @@ Application logic may help the UX, but server-side access must still be enforced
 ## 3.1 Server-side relational data
 The server database stores only shared or trusted data.
 
-### Canonical server domains
-- account profile metadata
-- entitlement state
-- group records
-- group membership
-- group check-ins
-- group presence/freshness events where normalized state is required
-- regroup pins
-- optional group itinerary content
-- server-side purchase validation records
-- minimal audit fields required for correctness and operations
+Canonical server domains:
+- account profile metadata,
+- entitlement state,
+- group records,
+- group membership,
+- group check-ins,
+- group presence/freshness events where normalized state is required,
+- regroup pins,
+- optional group itinerary content,
+- server-side purchase validation records,
+- minimal audit fields required for correctness and operations.
 
 ## 3.2 Device-local persistent data
-The device stores local-first support data.
+The device stores local-first support data:
+- ritual sessions and RIC findings,
+- saved gates / saved anchors,
+- planner items and local reminders,
+- notes and bookmarks,
+- local wallet artifacts; V1 remains device-local unless a later approved sync/export contract explicitly changes this,
+- emergency / medical profile,
+- pack inventory and installation state,
+- local settings and UX dismissals,
+- cached flags / manifest snapshots,
+- lightweight map/local search indexes where needed.
 
-### Canonical device-local domains
-- ritual sessions and RIC findings
-- saved gates / saved anchors
-- planner items and local reminders
-- notes and bookmarks
-- local wallet artifacts; V1 remains device-local unless a later approved sync/export contract explicitly changes this
-- emergency / medical profile
-- pack inventory and installation state
-- local settings and UX dismissals
-- cached flags / manifest snapshots
-- lightweight map/local search indexes where needed
-
-For V1, wallet artifacts remain device-local by default.
-Do not add a server-backed wallet domain unless product, privacy, data-model, and API contracts are explicitly revised together.
+For V1, wallet artifacts remain device-local by default. Do not add a server-backed wallet domain unless product, privacy, data-model, and API contracts are explicitly revised together.
 
 ## 3.3 Derived or ephemeral data
-This data may exist temporarily or be regenerated.
-
-Examples:
-- in-memory live board lists
-- transient route results
-- temporary upload/download states
-- analytics event queues before flush
+This data may exist temporarily or be regenerated, such as in-memory live board lists, transient route results, temporary upload/download states, and analytics event queues before flush.
 
 ---
 
@@ -111,21 +102,20 @@ Examples:
 ### `auth.users`
 This is the canonical authentication identity table managed by Supabase Auth.
 
-### Rule
-Do not duplicate email/phone/password identity ownership in a separate custom table unless a future documented reason requires it.
+Rule: do not duplicate email/phone/password identity ownership in a separate custom table unless a future documented reason requires it.
 
 ## 4.2 App profile table
 ### `profiles`
 Stores app-specific user metadata linked 1:1 with `auth.users`.
 
-### Purpose
-- display name
-- locale preferences if server-backed
-- support metadata for group display
-- optional phone display/masking metadata if needed
-- account lifecycle timestamps
+Purpose:
+- display name,
+- locale preferences if server-backed,
+- support metadata for group display,
+- optional phone display/masking metadata if needed,
+- account lifecycle timestamps.
 
-### Minimum columns
+Minimum columns:
 - `id uuid primary key references auth.users(id) on delete cascade`
 - `display_name text null`
 - `phone_display text null`
@@ -133,7 +123,7 @@ Stores app-specific user metadata linked 1:1 with `auth.users`.
 - `created_at timestamptz not null default now()`
 - `updated_at timestamptz not null default now()`
 
-### Indexes
+Indexes:
 - primary key on `id`
 - optional index on `created_at`
 
@@ -141,10 +131,11 @@ Stores app-specific user metadata linked 1:1 with `auth.users`.
 ### `user_entitlements`
 Stores trusted, server-validated entitlement state.
 
-### Purpose
-This replaces fragile client-side assumptions and is more future-safe than hiding everything in one `premium_until` column.
+Purpose:
+- replace fragile client-side assumptions,
+- support tier, active cutoff, source, restore/debug metadata, and server-computed gates.
 
-### Minimum columns
+Minimum columns:
 - `user_id uuid primary key references auth.users(id) on delete cascade`
 - `tier text not null default 'FREE'`
 - `active_until timestamptz null`
@@ -155,13 +146,13 @@ This replaces fragile client-side assumptions and is more future-safe than hidin
 - `created_at timestamptz not null default now()`
 - `updated_at timestamptz not null default now()`
 
-### Notes
+Notes:
 - `tier` is the human-readable entitlement tier.
 - `active_until` is the current trusted paid-access cutoff where applicable.
 - `gates` is a server-computed snapshot for client convenience, not the conceptual source of business policy.
 - Feature docs and API docs may expose a simplified representation, but this table is the persistence truth.
 
-### Indexes
+Indexes:
 - primary key on `user_id`
 - index on `(tier)` if needed for admin/reporting only
 - optional partial index on `(active_until)` for active subscription operations
@@ -170,12 +161,12 @@ This replaces fragile client-side assumptions and is more future-safe than hidin
 ### `purchase_receipts`
 Stores server-side receipt validation history.
 
-### Purpose
-- audit successful and failed validation attempts
-- reconcile store events and restore flows
-- support entitlement debugging and fraud handling
+Purpose:
+- audit successful and failed validation attempts,
+- reconcile store events and restore flows,
+- support entitlement debugging and fraud handling.
 
-### Minimum columns
+Minimum columns:
 - `id uuid primary key default gen_random_uuid()`
 - `user_id uuid not null references auth.users(id) on delete cascade`
 - `platform text not null`
@@ -185,20 +176,19 @@ Stores server-side receipt validation history.
 - `status text not null`
 - `validated_at timestamptz not null default now()`
 - `expires_at timestamptz null`
-- `raw_ref text null`  
+- `raw_ref text null`
 - `metadata jsonb not null default '{}'::jsonb`
 
-### Constraints
+Constraints:
 - unique `(platform, transaction_id)`
 
-### Rule
-Do not store raw sensitive store payloads casually if a reference or normalized summary is sufficient.
+Rule: do not store raw sensitive store payloads casually if a reference or normalized summary is sufficient.
 
 ## 4.5 Groups table
 ### `groups`
 Represents a pilgrim coordination group.
 
-### Minimum columns
+Minimum columns:
 - `id uuid primary key default gen_random_uuid()`
 - `code text not null unique`
 - `name text not null`
@@ -208,23 +198,22 @@ Represents a pilgrim coordination group.
 - `created_at timestamptz not null default now()`
 - `updated_at timestamptz not null default now()`
 
-### Constraints
+Constraints:
 - `check (length(code) = 6 and code ~ '^[A-Z0-9]+$')`
 - `check (season_scope in ('UMRAH','HAJJ','MIXED'))`
 
-### Indexes
+Indexes:
 - unique index on `(code)`
 - index on `(leader_user_id)`
 - optional index on `(created_by_client_event_id)` where not null
 
-### Group creation rule
-Group creation is a governed server-backed action. The server must generate `code`, create the `groups` row, and create the initial active leader row in `group_members` transactionally. The client must not choose the canonical join code or invent leader state locally.
+Group creation rule: group creation is a governed server-backed action. The server must generate `code`, create the `groups` row, and create the initial active leader row in `group_members` transactionally. The client must not choose the canonical join code or invent leader state locally.
 
 ## 4.6 Group membership table
 ### `group_members`
 Represents membership and role of users inside groups.
 
-### Minimum columns
+Minimum columns:
 - `group_id uuid not null references groups(id) on delete cascade`
 - `user_id uuid not null references auth.users(id) on delete cascade`
 - `role text not null`
@@ -233,23 +222,22 @@ Represents membership and role of users inside groups.
 - `display_alias text null`
 - primary key `(group_id, user_id)`
 
-### Constraints
+Constraints:
 - `check (role in ('LEADER','MEMBER'))`
 - `check (status in ('ACTIVE','LEFT','REMOVED'))`
 
-### Indexes
+Indexes:
 - index on `(user_id)`
 - index on `(group_id, role)`
 - index on `(group_id, status)`
 
-### Rule
-There must always be exactly one active logical leader for a group, enforced by group/role consistency rules.
+Rule: there must always be exactly one active logical leader for a group, enforced by group/role consistency rules.
 
 ## 4.7 Group check-ins table
 ### `group_checkins`
 Represents lightweight group-presence or “I’m Safe” activity.
 
-### Minimum columns
+Minimum columns:
 - `id uuid primary key default gen_random_uuid()`
 - `group_id uuid not null references groups(id) on delete cascade`
 - `user_id uuid not null references auth.users(id) on delete cascade`
@@ -259,30 +247,34 @@ Represents lightweight group-presence or “I’m Safe” activity.
 - `created_at timestamptz not null default now()`
 - `metadata jsonb not null default '{}'::jsonb`
 
-### Constraints
+Constraints:
 - `check (kind in ('SAFE','CHECKIN','STATUS'))`
 
-### Indexes
+Indexes:
 - index on `(group_id, created_at desc)`
 - index on `(group_id, user_id, created_at desc)`
 - index on `(client_event_id)` where not null
 
-### Rule
-Check-ins are text-based coordination events. They do not imply GPS tracking.
+Rule: check-ins are text-based coordination events. They do not imply GPS tracking.
 
 ## 4.8 Group presence events table
 ### `group_presence_events`
 Represents normalized, time-bounded group freshness or presence state where a feature needs explicit TTL, revocation, retention, or map handoff semantics beyond plain check-ins.
 
 ### Why this table exists
-Most group coordination remains text-first through `group_checkins` and `group_regroup_pins`. This table exists only to make privacy-sensitive freshness state explicit and testable when normalized state is required. It must not become a hidden tracking table.
+Most group coordination remains text-first through `group_checkins` and `group_regroup_pins`. This table exists only to make privacy-sensitive freshness state explicit and testable when normalized state is required. It must not become a passive tracking table.
+
+### Identifier mapping
+`id` is the persisted database primary key. API payloads may expose this same value as `event_id`.
+
+Do not add a separate persisted `event_id` column unless this file, file `14`, file `20`, and `CONTRACTS/group_presence_privacy_contract.yaml` are updated together.
 
 ### Minimum columns
 - `id uuid primary key default gen_random_uuid()`
 - `group_id uuid not null references groups(id) on delete cascade`
 - `actor_user_id uuid not null references auth.users(id) on delete cascade`
 - `event_type text not null`
-- `text_pin text not null`
+- `text_pin text null`
 - `map_anchor_ref text null`
 - `precision_level text not null default 'none'`
 - `shared_at timestamptz not null default now()`
@@ -295,11 +287,21 @@ Most group coordination remains text-first through `group_checkins` and `group_r
 - `client_event_id uuid null`
 - `metadata jsonb not null default '{}'::jsonb`
 
+### Conditional field rules
+- `text_pin` is required for `text_checkin` and `regroup_pin`.
+- `text_pin` is optional for `safe_checkin` and `route_handoff`.
+- `map_anchor_ref` is required for `regroup_pin` and `route_handoff`.
+- `map_anchor_ref` is optional for `safe_checkin` and `text_checkin`.
+
+These rules mirror `CONTRACTS/group_presence_privacy_contract.yaml` and should be enforced through application validation and database constraints where practical.
+
 ### Constraints
 - `check (event_type in ('safe_checkin','text_checkin','regroup_pin','route_handoff'))`
 - `check (precision_level in ('none','coarse','precise'))`
 - `check (freshness_status in ('fresh','stale','expired','revoked'))`
 - `check (share_reason = 'explicit_user_action')`
+- conditional constraint: `text_pin is not null` when `event_type in ('text_checkin','regroup_pin')`
+- conditional constraint: `map_anchor_ref is not null` when `event_type in ('regroup_pin','route_handoff')`
 
 ### Indexes
 - index on `(group_id, shared_at desc)`
@@ -320,10 +322,9 @@ Most group coordination remains text-first through `group_checkins` and `group_r
 ### `group_regroup_pins`
 Represents leader-posted regroup anchors.
 
-### Why this table exists
 Earlier specs allowed regroup pins to be encoded as special check-ins. That is too ambiguous for long-term analytics, lifecycle rules, map integration, and AI-agent implementation safety.
 
-### Minimum columns
+Minimum columns:
 - `id uuid primary key default gen_random_uuid()`
 - `group_id uuid not null references groups(id) on delete cascade`
 - `posted_by_user_id uuid not null references auth.users(id)`
@@ -335,18 +336,17 @@ Earlier specs allowed regroup pins to be encoded as special check-ins. That is t
 - `expires_at timestamptz null`
 - `metadata jsonb not null default '{}'::jsonb`
 
-### Indexes
+Indexes:
 - index on `(group_id, created_at desc)`
 - index on `(group_id, is_active)`
 
-### Rule
-Only leaders may create active regroup pins for their group.
+Rule: only leaders may create active regroup pins for their group.
 
 ## 4.10 Group itineraries table
 ### `group_itineraries`
 Represents optional shared itinerary content for a group.
 
-### Minimum columns
+Minimum columns:
 - `id uuid primary key default gen_random_uuid()`
 - `group_id uuid not null references groups(id) on delete cascade`
 - `day date not null`
@@ -354,14 +354,13 @@ Represents optional shared itinerary content for a group.
 - `updated_at timestamptz not null default now()`
 - `updated_by_user_id uuid null references auth.users(id)`
 
-### Constraints
+Constraints:
 - unique `(group_id, day)`
 
-### Indexes
+Indexes:
 - index on `(group_id, day)`
 
-### Rule
-Itinerary content is leader-managed or service-managed and read-only to regular members unless a future approved feature changes that.
+Rule: itinerary content is leader-managed or service-managed and read-only to regular members unless a future approved feature changes that.
 
 ---
 
@@ -373,9 +372,9 @@ The server schema is intentionally small. The following data is canonical on dev
 ### `ritual_sessions`
 Represents local ritual progress state.
 
-### Minimum fields
+Minimum fields:
 - `id uuid`
-- `mode text`  
+- `mode text`
 - `path text`
 - `madhhab text`
 - `current_step_id text`
@@ -384,7 +383,7 @@ Represents local ritual progress state.
 - `completed_at datetime?`
 - `status text`
 
-### Constraints
+Constraints:
 - `mode in ('umrah','hajj')`
 - `status in ('ACTIVE','PAUSED','COMPLETED','ABANDONED')`
 
@@ -392,7 +391,7 @@ Represents local ritual progress state.
 ### `ric_findings`
 Represents local results produced by the ritual integrity checker.
 
-### Minimum fields
+Minimum fields:
 - `id uuid`
 - `ritual_session_id uuid`
 - `status text`
@@ -401,14 +400,13 @@ Represents local results produced by the ritual integrity checker.
 - `created_at datetime`
 - `content_version text`
 
-### Rule
-RIC findings are local by default. They may reference governed content IDs but should not upload private ritual state to the server.
+Rule: RIC findings are local by default. They may reference governed content IDs but should not upload private ritual state to the server.
 
 ## 5.3 Saved anchors
 ### `saved_anchors`
 Represents saved gates, landmarks, or pins.
 
-### Minimum fields
+Minimum fields:
 - `id uuid`
 - `kind text`
 - `label text`
@@ -422,17 +420,16 @@ Represents saved gates, landmarks, or pins.
 - `photo_ref text?`
 - `notes text?`
 
-### Constraints
+Constraints:
 - `kind in ('GATE','LANDMARK','PIN')`
 
-### Rule
-Saved anchors are device-local by default unless explicitly shared through a user-initiated action.
+Rule: saved anchors are device-local by default unless explicitly shared through a user-initiated action.
 
 ## 5.4 Planner items
 ### `planner_items`
 Represents local planning tasks.
 
-### Minimum fields
+Minimum fields:
 - `id uuid`
 - `title text`
 - `description text?`
@@ -450,22 +447,19 @@ User-authored local notes.
 ### `bookmarks`
 References to app content or user-relevant items.
 
-### Rule
-No hidden sync. No server-backed notes/bookmarks unless future specs explicitly revise product and privacy boundaries.
+Rule: no hidden sync. No server-backed notes/bookmarks unless future specs explicitly revise product and privacy boundaries.
 
 ## 5.6 Medical profile
 ### `medical_profile`
 Local restricted emergency-support data.
 
-### Rule
-Medical profile must remain local-only by default and use stronger local protection as described in files `22` and `29`.
+Rule: medical profile must remain local-only by default and use stronger local protection as described in files `22` and `29`.
 
 ## 5.7 Pack inventory
 ### `pack_inventory`
 Local record of installed, failed, purged, or downloading packs.
 
-### Rule
-A pack cannot be marked installed unless verification succeeds under file `15`.
+Rule: a pack cannot be marked installed unless verification succeeds under file `15`.
 
 ---
 
@@ -478,42 +472,28 @@ RLS must be enabled on all user-scoped and group-scoped server tables.
 Users may read and update their own profile according to approved fields.
 
 ## 6.3 Entitlements
-Users may read their own normalized entitlement state.
-Users may not directly write entitlement state.
-Entitlement writes happen through trusted backend/store validation flows.
+Users may read their own normalized entitlement state. Users may not directly write entitlement state. Entitlement writes happen through trusted backend/store validation flows.
 
 ## 6.4 Purchase receipts
-Users may read limited normalized purchase/restore state where needed.
-Raw operational validation details should remain service-only.
+Users may read limited normalized purchase/restore state where needed. Raw operational validation details should remain service-only.
 
 ## 6.5 Groups
-Users may read groups where they have active membership.
-Leaders may update approved group metadata where feature scope allows.
-Group creation must be performed by a trusted endpoint that creates group and initial leader membership atomically.
+Users may read groups where they have active membership. Leaders may update approved group metadata where feature scope allows. Group creation must be performed by a trusted endpoint that creates group and initial leader membership atomically.
 
 ## 6.6 Group members
-Users may read membership rows for groups where they are active members.
-Leaders may perform approved membership management actions.
-Users may not escalate their own role.
+Users may read membership rows for groups where they are active members. Leaders may perform approved membership management actions. Users may not escalate their own role.
 
 ## 6.7 Group check-ins
-Active group members may read check-ins for their group.
-Active group members may create their own check-ins.
-Users may not create check-ins for other users.
+Active group members may read check-ins for their group. Active group members may create their own check-ins. Users may not create check-ins for other users.
 
 ## 6.8 Group presence events
-Active group members may read presence events for their group where retention and visibility rules allow.
-Active group members may create only their own explicit-user-action events through trusted endpoints.
-Users may not create, revoke, or alter presence events for other users unless a future approved leader/admin workflow explicitly allows it.
-Expired or revoked events should not be returned in live-board queries as current state.
+Active group members may read presence events for their group where retention and visibility rules allow. Active group members may create only their own explicit-user-action events through trusted endpoints. Users may not create, revoke, or alter presence events for other users unless a future approved leader/admin workflow explicitly allows it. Expired or revoked events should not be returned in live-board queries as current state.
 
 ## 6.9 Regroup pins
-Active group members may read regroup pins for their group.
-Only active leaders may create or update active regroup pins.
+Active group members may read regroup pins for their group. Only active leaders may create or update active regroup pins.
 
 ## 6.10 Group itineraries
-Active group members may read group itinerary rows.
-Only active leaders or approved service roles may write itinerary rows.
+Active group members may read group itinerary rows. Only active leaders or approved service roles may write itinerary rows.
 
 ---
 
@@ -528,6 +508,8 @@ Only active leaders or approved service roles may write itinerary rows.
 | **I-013** | Group codes are exactly 6 uppercase alphanumeric characters, globally unique, and server-generated |
 | **I-014** | Group creation must create `groups` and initial active `LEADER` membership transactionally |
 | **I-015** | Group presence events must be explicit-user-action, TTL-bound, and never treated as a hidden tracking trail |
+| **I-016** | `group_presence_events.id` is the persisted primary key exposed as API `event_id` unless a synchronized contract migration changes it |
+| **I-017** | `text_pin` presence for group presence events is conditional on `event_type` and must match `CONTRACTS/group_presence_privacy_contract.yaml` |
 | **I-020** | Server-side entitlement state is authoritative; client may never invent or extend it |
 | **I-030** | A pack must not be marked `INSTALLED` until verification succeeds |
 | **I-040** | `ric_status=VALID` is impossible when a required pillar is missing |
@@ -572,26 +554,16 @@ Prefer additive migrations:
 - tighten constraints later.
 
 ## 9.2 Destructive-change rule
-Destructive changes require:
-- written rationale,
-- rollback plan,
-- fixture updates,
-- release gate review,
-- migration evidence.
+Destructive changes require written rationale, rollback plan, fixture updates, release gate review, and migration evidence.
 
 ## 9.3 Enum-change rule
-Enum changes require synchronized updates in:
-- file `13`,
-- file `14`,
-- Flutter models,
-- fixtures,
-- analytics,
-- tests,
-- relevant feature docs.
+Enum changes require synchronized updates in file `13`, file `14`, Flutter models, fixtures, analytics, tests, relevant feature docs, and affected contract artifacts.
 
 ## 9.4 RLS migration rule
-RLS changes are high-risk.
-They require explicit tests proving users cannot access unauthorized rows.
+RLS changes are high-risk. They require explicit tests proving users cannot access unauthorized rows.
+
+## 9.5 Group presence contract migration rule
+Any change to `group_presence_events` identifiers, freshness state, precision, conditional text/map fields, TTL, retention, or visibility must update this file, file `14`, file `20`, `CONTRACTS/group_presence_privacy_contract.yaml`, fixtures, RLS tests, and release evidence together.
 
 ---
 
@@ -615,7 +587,16 @@ Fixtures should cover:
 - pack states,
 - content version references.
 
-## 10.3 Privacy rule
+## 10.3 Group presence fixture requirements
+Group presence fixtures should include:
+- `safe_checkin` without required freeform `text_pin`,
+- `text_checkin` with `text_pin`,
+- `regroup_pin` with `text_pin` and `map_anchor_ref`,
+- `route_handoff` with `map_anchor_ref`,
+- fresh, stale, expired, and revoked states,
+- current API payload field `event_id` mapped from database `id`.
+
+## 10.4 Privacy rule
 Fixtures must not contain real private user data.
 
 ---
@@ -669,7 +650,7 @@ Before editing data-related code, an AI agent must:
 
 # Quality-first amendment — group creation and presence model
 
-This section records the direct data-model alignment required by file `31` and file `20`.
+This section records the direct data-model alignment required by file `31`, file `20`, and `CONTRACTS/group_presence_privacy_contract.yaml`.
 
 ## A. Governed group creation
 Group creation is a server-backed transactional operation. A successful group creation must produce:
@@ -686,7 +667,7 @@ Any normalized freshness or presence event must follow `CONTRACTS/group_presence
 
 The data layer must preserve these privacy properties:
 - foreground-first, user-action-linked sharing,
-- no passive background location trail,
+- no passive location history,
 - TTL-bound freshness,
 - explicit stale/expired/revoked states,
 - no raw precise location in ordinary check-ins,
