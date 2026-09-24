@@ -6,7 +6,7 @@
 - **Audience:** Founder, product lead, content lead, scholar-board contributors, Flutter engineers, QA, AI coding agents, reviewer agents, release agents
 - **Purpose:** Define the canonical feature contract for ritual guidance, ritual-session tracking, RIC (Ritual Integrity Checker) / resolver behavior, religious content structure, scholar-review dependency, UX surfaces, offline guarantees, monetization boundaries, analytics hooks, and release-readiness requirements.
 - **Authority level:** This file is the canonical source of truth for the Rituals feature family. If implementation, UI, or tests diverge from this file, this file wins unless a higher-level normative contract or approved decision record explicitly changes it.
-- **Primary dependencies:** `01-README-AND-MASTER-INDEX.md`, `03-PRODUCT-CHARTER-AND-SCOPE.md`, `04-DECISIONS-GLOSSARY-AND-CHANGE-CONTROL.md`, `07-FLUTTER-APP-ARCHITECTURE-AND-MODULE-BOUNDARIES.md`, `08-DESIGN-SYSTEM-THEMES-TOKENS-AND-COMPONENTS.md`, `09-PLATFORM-ADAPTATION-IOS-ANDROID-AND-NATIVE-BRIDGES.md`, `10-PERSONAS-IA-USER-JOURNEYS-AND-TASK-FLOWS.md`, `11-SCREENS-STATES-NAVIGATION-AND-UI-BLUEPRINTS.md`, `12-COPY-LOCALIZATION-RTL-AND-ACCESSIBILITY.md`, `13-DATA-MODEL-RLS-INVARIANTS-AND-MIGRATIONS.md`, `15-OFFLINE-PACKS-SYNC-ASSET-DELIVERY-AND-CACHE-POLICY.md`
+- **Primary dependencies:** `01_README_AND_MASTER_INDEX.md`, `03_PRODUCT_CHARTER_AND_SCOPE.md`, `04_DECISIONS_GLOSSARY_AND_CHANGE_CONTROL.md`, `07_FLUTTER_APP_ARCHITECTURE_AND_MODULE_BOUNDARIES.md`, `08_DESIGN_SYSTEM_THEMES_TOKENS_AND_COMPONENTS.md`, `09_PLATFORM_ADAPTATION_IOS_ANDROID_AND_NATIVE_BRIDGES.md`, `10_PERSONAS_IA_USER_JOURNEYS_AND_TASK_FLOWS.md`, `11_SCREENS_STATES_NAVIGATION_AND_UI_BLUEPRINTS.md`, `12_COPY_LOCALIZATION_RTL_AND_ACCESSIBILITY.md`, `13_DATA_MODEL_RLS_INVARIANTS_AND_MIGRATIONS.md`, `15_OFFLINE_PACKS_SYNC_ASSET_DELIVERY_AND_CACHE_POLICY.md`
 - **Related files:** `14`, `17`, `21`, `23`, `24`, `26`, `27`, `28`, `29`, `30`
 
 ---
@@ -106,7 +106,7 @@ Deeper governance mechanics such as:
 - emergency correction process,
 - rollback of published content,
 
-belong to `26-CONTENT-MODEL-SCHOLAR-REVIEW-AND-PUBLISHING-WORKFLOW.md`.
+belong to `26_CONTENT_MODEL_SCHOLAR_REVIEW_AND_PUBLISHING_WORKFLOW.md`.
 
 ---
 
