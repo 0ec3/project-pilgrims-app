@@ -6,7 +6,7 @@
 - **Audience:** Flutter engineers, mobile tech lead, design-system engineers, QA, AI coding agents, reviewer agents
 - **Purpose:** Define how the Flutter app must be organized, how modules are separated, how dependencies must flow, where shared code lives, how assets and localization are structured, and how UI styling is centralized so the codebase remains scalable, maintainable, and safe for AI-agent-driven development.
 - **Authority level:** This file is the canonical source for Flutter project structure, module boundaries, and shared-code rules. Feature or implementation files must not contradict this file.
-- **Primary dependencies:** `01-README-AND-MASTER-INDEX.md`, `02-AI-AGENT-RULES-AND-WORKFLOW.md`, `03-PRODUCT-CHARTER-AND-SCOPE.md`, `06-SYSTEM-ARCHITECTURE.md`
+- **Primary dependencies:** `01_README_AND_MASTER_INDEX.md`, `02_AI_AGENT_RULES_AND_WORKFLOW.md`, `03_PRODUCT_CHARTER_AND_SCOPE.md`, `06_SYSTEM_ARCHITECTURE.md`
 - **Related files:** `08`, `09`, `10`, `11`, `12`, `13`, `14`, `15`, `16`, `17`, `18`–`26`, `27`, `28`, `29`, `30`
 
 ---
@@ -46,7 +46,7 @@ A contributor should be able to find the correct place for a new widget, state h
 The codebase should tolerate feature growth without frequent large-scale refactors caused by weak boundaries.
 
 ## 2.3 Design-consistency goal
-The visual system must be centralized so palette, spacing, motion, glass effects, typography, and component styling can be changed from controlled theme/token layers rather than scattered widget edits.
+The visual system must be centralized so palette, spacing, motion, Soft Surface depth/effect presets, typography, and component styling can be changed from controlled theme/token layers rather than scattered widget edits.
 
 ## 2.4 AI-agent safety goal
 An AI coding agent should be able to inspect the repo, identify the correct module, and implement a change without introducing architectural confusion, duplicate code, or styling debt.
