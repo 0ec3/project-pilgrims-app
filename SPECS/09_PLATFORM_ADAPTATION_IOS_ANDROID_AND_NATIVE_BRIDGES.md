@@ -449,7 +449,7 @@ Both platforms must support:
 - practical touch targets
 
 ## 18.2 iOS-specific accessibility adaptation
-Respect platform accessibility states that materially affect material rendering, especially reduced transparency and increased contrast. Apple explicitly ties historical Liquid Glass behavior to these accessibility settings. ([developer.apple.com](https://developer.apple.com/documentation/technologyoverviews/adopting-historical Liquid Glass))
+Respect platform accessibility states that materially affect native material rendering, especially reduced transparency and increased contrast. Custom Pilgrims Soft Surface effects must simplify to clearer boundaries when these settings require it.
 
 ## 18.3 Android-specific accessibility adaptation
 Respect platform text scaling, contrast, talkback/navigation, and input-mode differences without requiring separate product logic.
@@ -466,7 +466,7 @@ Respect platform text scaling, contrast, talkback/navigation, and input-mode dif
 - pack state machine tests
 
 ## 19.2 iOS-specific tests
-- historical Liquid Glass / material fallback behavior with accessibility settings
+- native-material and Soft Surface fallback behavior with accessibility settings
 - Background Assets or iOS asset-delivery integration behavior if used
 - store purchase bridge behavior
 - map native wrapper behavior on supported iOS versions
@@ -580,7 +580,7 @@ Do not ship a platform where Light or Dark is materially incomplete for required
 This file must be updated whenever any of the following changes:
 - iOS adaptation rules
 - Android adaptation rules
-- historical Liquid Glass usage boundaries
+- Pilgrims Soft Surface and native-material adaptation boundaries
 - native bridge catalog
 - store integration boundary
 - asset-delivery platform implementation strategy
@@ -600,7 +600,7 @@ This file defines how Pilgrims Mobile App adapts to iOS and Android while preser
 It establishes:
 - what remains shared across platforms
 - what may adapt by platform
-- how historical Liquid Glass is used on iOS
+- how Pilgrims Soft Surface adapts to iOS conventions without becoming a separate visual identity
 - how Android should express the product without imitation
 - which native bridge families exist and what they own
 - how platform-specific purchase, asset, notification, location, BLE, and map behaviors are isolated
