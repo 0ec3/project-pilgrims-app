@@ -271,7 +271,7 @@ For each screen, explicitly consider:
 ## 7.1 Home Root
 Home Root is a recovery surface, not a feature dump.
 
-Priority order:
+### Task priority
 1. current ritual status / continue or start ritual,
 2. urgent shortcut cluster: Emergency, Phrasebook, Save My Gate, I’m Safe,
 3. saved gate / recent map action,
@@ -279,6 +279,38 @@ Priority order:
 5. planner/reminder summary,
 6. pack readiness summary,
 7. Settings/Tools entry.
+
+Task priority describes what must remain easiest to resume or reach; it does not require the first visible card to be the ritual card. Contextual ambient information such as prayer time may occupy a visual hero position as long as it does not obscure or slow access to higher-priority recovery actions.
+
+### Approved visual composition reference
+The supplied Home reference associated with Figma node `21:600` demonstrates this vertical composition:
+1. profile/greeting header with notification and Settings actions,
+2. prayer/context hero with current-prayer emphasis and prayer-time chips,
+3. five compact quick-action tiles,
+4. Umrah progress card with milestone stepper,
+5. paired Saved Gate and Jama’ah Group compact cards,
+6. Plan & Schedule section with date strip and timeline rows,
+7. bottom navigation with a centered floating action slot.
+
+The reference also demonstrates the current visual hierarchy:
+- white/light canvas,
+- dominant cyan/turquoise accent,
+- very rounded cards,
+- soft raised surfaces,
+- compact icon tiles,
+- restrained shadows,
+- cyan active navigation and action treatment,
+- orange secondary planner action treatment.
+
+This visual composition does **not** authorize new feature semantics. Labels, destinations, center action behavior, prayer calculation/source behavior, weather sourcing, group freshness, saved-gate truth, and planner actions remain governed by their owning feature/data/API specs.
+
+### Required responsive behavior
+- Quick actions may wrap, scroll, or adapt to available width rather than shrinking below usable touch targets.
+- The paired Saved Gate/Jama’ah Group cards may stack vertically when width or text scale requires it.
+- Planner rows must preserve title/time/action legibility at large text and under localization expansion.
+- Bottom navigation must preserve safe-area spacing and not allow the centered floating action to obscure labels or system gesture areas.
+- RTL must mirror directional layout where appropriate without changing real-world map/direction semantics.
+- Light and Dark must keep the same information hierarchy and component anatomy.
 
 Home must remain useful offline and must not request account or permissions before task-linked value is clear.
 
