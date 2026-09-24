@@ -3,16 +3,14 @@ name: Spec contract validation
 on:
   pull_request:
     paths:
-      - 'SPECS/CONTRACTS/**'
-      - 'SPECS/11_SCREENS_STATES_NAVIGATION_AND_UI_BLUEPRINTS.md'
+      - 'SPECS/**'
       - 'tools/specs/validate_spec_contracts.py'
       - '.github/workflows/spec-contracts.yml'
   push:
     branches:
       - main
     paths:
-      - 'SPECS/CONTRACTS/**'
-      - 'SPECS/11_SCREENS_STATES_NAVIGATION_AND_UI_BLUEPRINTS.md'
+      - 'SPECS/**'
       - 'tools/specs/validate_spec_contracts.py'
       - '.github/workflows/spec-contracts.yml'
 
