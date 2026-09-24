@@ -656,6 +656,29 @@ This section defines the minimum canonical shared component set.
 
 ---
 
+## 18.11 Home composition components from the approved visual reference
+
+The supplied approved Home visual reference establishes the following reusable composition patterns for the standard Home experience:
+
+- **Profile greeting header** — avatar/profile affordance, greeting + user name, notification action, and Settings action.
+- **Prayer/context hero** — large rounded cyan/turquoise contextual surface showing current prayer/status information, location context, weather/supportive context where available, and compact prayer-time selectors.
+- **Quick-action tile row** — compact icon-led actions with short labels; the visual reference demonstrates five slots: Bacaan, Save Gate, Tata Cara, Emergency, and Lainnya. Canonical feature routing and localization remain owned by feature/navigation specs.
+- **Ritual progress card** — progress percentage, elapsed/remaining context where available, horizontal progress visualization, and named ritual milestones.
+- **Compact context-summary cards** — paired Saved Gate and Jama’ah Group summaries with concise status metadata and a clear continuation action.
+- **Planner schedule card** — date strip, vertical timeline/progress treatment, task title/time, and stateful action button.
+- **Bottom navigation shell with central floating action slot** — Home, Ibadah, Group, and Map destinations plus one visually prominent centered action slot.
+
+These patterns are visual/component contracts only. They do not create new feature semantics. In particular, the centered floating action slot must be mapped to an already-approved product action before implementation; agents must not infer scanner, camera, QR, or other behavior solely from its iconography in a mockup.
+
+### 18.11.1 Home composition styling rules
+- Large Home sections use generous rounded corners and soft elevation rather than thin card borders alone.
+- Cyan/turquoise is the dominant active/accent family; orange may be used for planner/action status where semantically justified.
+- Small utility cards remain mostly light/opaque with restrained soft shadow.
+- The prayer/context hero may use the strongest accent surface on Home, but text contrast must remain explicit.
+- Repeated quick-action tiles and summary cards must use performance-safe low-cost Soft Surface effect tiers.
+- The same component anatomy must map intentionally into Dark Mode without naive inversion.
+- Profile imagery is dynamic user content and must not be treated as a static design-system asset.
+
 # 19. Component state rules
 
 ## 19.1 Required state coverage
