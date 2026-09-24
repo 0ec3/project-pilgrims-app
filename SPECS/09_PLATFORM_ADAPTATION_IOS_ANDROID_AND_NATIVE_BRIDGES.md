@@ -6,7 +6,7 @@
 - **Audience:** Flutter engineers, iOS engineers, Android engineers, design lead, QA, AI coding agents, reviewer agents
 - **Purpose:** Define how the shared product and Pilgrims Soft Surface design system adapt to iOS and Android while preserving one visual identity, and how native capabilities are exposed through controlled bridge interfaces.
 - **Authority level:** This file is the canonical source of truth for platform-specific UX adaptation, native-bridge boundaries, permission behavior, asset-delivery platform differences, store platform differences, and when platform divergence is allowed or required.
-- **Primary dependencies:** `01-README-AND-MASTER-INDEX.md`, `03-PRODUCT-CHARTER-AND-SCOPE.md`, `06-SYSTEM-ARCHITECTURE.md`, `07-FLUTTER-APP-ARCHITECTURE-AND-MODULE-BOUNDARIES.md`, `08-DESIGN-SYSTEM-THEMES-TOKENS-AND-COMPONENTS.md`, `15-OFFLINE-PACKS-SYNC-ASSET-DELIVERY-AND-CACHE-POLICY.md`, `16-MAP-ARCHITECTURE-POSITIONING-ROUTING-3D-AND-OFFLINE-WAYFINDING.md`
+- **Primary dependencies:** `01_README_AND_MASTER_INDEX.md`, `03_PRODUCT_CHARTER_AND_SCOPE.md`, `06_SYSTEM_ARCHITECTURE.md`, `07_FLUTTER_APP_ARCHITECTURE_AND_MODULE_BOUNDARIES.md`, `08_DESIGN_SYSTEM_THEMES_TOKENS_AND_COMPONENTS.md`, `15_OFFLINE_PACKS_SYNC_ASSET_DELIVERY_AND_CACHE_POLICY.md`, `16_MAP_ARCHITECTURE_POSITIONING_ROUTING_3_D_AND_OFFLINE_WAYFINDING.md`
 - **Related files:** `10`, `11`, `12`, `14`, `17`, `18`–`25`, `27`, `28`, `29`, `30`
 
 ---
@@ -423,14 +423,14 @@ Feature modules must not care whether the map is implemented with one native vie
 The app uses one information architecture.
 
 ## 17.2 iOS chrome guidance
-- tab and top chrome may lean into material/glass treatment
-- modal and sheet hierarchy should feel native to iOS
+- tab and top chrome render the shared Pilgrims Soft Surface semantic roles while using iOS-appropriate native presentation mechanics
+- modal and sheet hierarchy should feel native to iOS without creating an iOS-only visual identity
 - transitions should feel fluid and cohesive
 
 ## 17.3 Android chrome guidance
-- bars and navigation should use stronger material/elevated surfaces
+- bars and navigation render the same Pilgrims Soft Surface semantic roles with Android-appropriate native behavior, density, motion, and system integration
 - transitions should feel Android-appropriate and efficient
-- modal patterns should remain familiar to Android users
+- modal patterns should remain familiar to Android users without creating a separate visual identity
 
 ## 17.4 Shared semantics rule
 A primary action is still primary, a destructive action is still destructive, and emergency surfaces remain high priority on both platforms.
@@ -507,14 +507,14 @@ The app must degrade by capability rather than failing unpredictably.
 # 21. Platform QA scenarios
 
 ## 21.1 iOS QA must include
-- material/glass fallback under Reduce Transparency
+- Soft Surface/native-material fallback under Reduce Transparency
 - high-contrast and larger-text checks
-- map overlays with glass chrome and route readability
+- map overlays with Soft Surface/native overlay chrome and route readability
 - asset download/install behavior through the chosen iOS asset path
 - restore purchase and entitlement refresh
 
 ## 21.2 Android QA must include
-- elevated/material adaptation consistency
+- Pilgrims Soft Surface semantic consistency under Android adaptation
 - larger-text and talkback checks
 - low-end device performance checks
 - download/install behavior through the chosen Android asset path
