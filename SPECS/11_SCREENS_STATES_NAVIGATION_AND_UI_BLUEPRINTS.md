@@ -302,7 +302,11 @@ The reference also demonstrates the current visual hierarchy:
 - cyan active navigation and action treatment,
 - orange secondary planner action treatment.
 
-This visual composition does **not** authorize new feature semantics. Labels, destinations, center action behavior, prayer calculation/source behavior, weather sourcing, group freshness, saved-gate truth, and planner actions remain governed by their owning feature/data/API specs.
+This visual composition does **not** authorize new feature semantics. Labels, group freshness, saved-gate truth, and planner actions remain governed by their owning feature/data/API specs.
+
+Prayer-time calculation/source behavior and weather sourcing do not currently have an approved runtime owner in the normative feature/API system. Therefore the mockup establishes only visual anatomy for those subfields. Until change control assigns an owner and defines calculation/provider, timezone/location context, freshness, offline/stale behavior, privacy, analytics, and test/release evidence, implementation must omit those data-driven subfields or keep them as clearly non-runtime design reference content rather than guessing or synthesizing values.
+
+The centered floating action is likewise unassigned by the mockup. It must not be inferred as QR/scanner/camera or any other new behavior. The canonical shell remains five primary sections — Home, Rituals, Map, Group, and Tools. The visual slot must not remove or replace Tools; it becomes functional only if mapped to an already-approved canonical route/action and synchronized with this file and `CONTRACTS/screen_feature_traceability.yaml`.
 
 ### Required responsive behavior
 - Quick actions may wrap, scroll, or adapt to available width rather than shrinking below usable touch targets.
