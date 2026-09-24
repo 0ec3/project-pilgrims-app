@@ -6,7 +6,7 @@
 - **Audience:** Product lead, content lead, design lead, Flutter engineers, QA, AI coding agents, reviewer agents, translation contributors, religious governance contributors
 - **Purpose:** Define the canonical rules for user-facing copy, multilingual support, localization structure, RTL behavior, transliteration and translation policy, accessibility requirements, and inclusive communication so the app remains respectful, readable, culturally appropriate, and usable across supported audiences.
 - **Authority level:** This file is the canonical source of truth for app copy behavior, localization scope, RTL handling, and accessibility requirements. Screen designs, Flutter implementation, translations, and QA must not contradict this file.
-- **Primary dependencies:** `01-README-AND-MASTER-INDEX.md`, `03-PRODUCT-CHARTER-AND-SCOPE.md`, `08-DESIGN-SYSTEM-THEMES-TOKENS-AND-COMPONENTS.md`, `09-PLATFORM-SPEC-IOS-LIQUID-GLASS-ANDROID-ADAPTATION-AND-NATIVE-BRIDGES.md`, `10-PERSONAS-IA-USER-JOURNEYS-AND-TASK-FLOWS.md`, `11-SCREENS-STATES-NAVIGATION-AND-UI-BLUEPRINTS.md`
+- **Primary dependencies:** `01-README-AND-MASTER-INDEX.md`, `03-PRODUCT-CHARTER-AND-SCOPE.md`, `08-DESIGN-SYSTEM-THEMES-TOKENS-AND-COMPONENTS.md`, `09-PLATFORM-ADAPTATION-IOS-ANDROID-AND-NATIVE-BRIDGES.md`, `10-PERSONAS-IA-USER-JOURNEYS-AND-TASK-FLOWS.md`, `11-SCREENS-STATES-NAVIGATION-AND-UI-BLUEPRINTS.md`
 - **Related files:** `17`, `18`, `19`, `20`, `21`, `22`, `23`, `24`, `25`, `26`, `27`, `28`
 
 ---
