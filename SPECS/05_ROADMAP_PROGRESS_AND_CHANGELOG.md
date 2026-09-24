@@ -170,12 +170,12 @@ Expansion candidates must come from a healthy, evidenced base rather than unreso
 # 6. Current project snapshot
 
 ## 6.1 Current snapshot
-- **Current phase:** Phase 0 specification and contract hardening is materially complete; narrow Phase 1 bootstrap can begin once the CI workflow has an observed green run and the owner accepts remaining low-priority prose cleanup.
+- **Current phase:** Phase 0 specification and contract hardening is materially complete; narrow Phase 1 bootstrap may begin. The contract-validation workflow has an observed green run on the current PR branch; remaining implementation-readiness gaps are operational/product decisions, not missing baseline contract validation.
 - **Overall delivery confidence:** high for documentation maturity, contract-file coherence, and baseline CI enforcement; medium for implementation readiness because no aligned codebase, environments, runtime tests, or release evidence exist yet.
-- **Active focus areas:** signed pack/content prose alignment in files `15` and `26`, release-evidence template planning, implementation bootstrap planning.
+- **Active focus areas:** implementation bootstrap planning, release-evidence template planning, minimal governed ritual/RIC fixtures, and explicit resolution of Home runtime decisions that the approved visual reference does not own.
 - **Most critical blockers:** no implementation baseline yet; no finalized production tooling stack; no operationalized content-review tooling; no device-lab or release-evidence execution lane yet.
 - **Recently completed milestones:** specs `01`–`31`, contract artifact baseline, quality-first hardening amendments, archived 30-file draft marker, file `02` agent-workflow normalization, validator pass for 6 contract files, GitHub Actions workflow for contract validation, file `13` group-presence data-model alignment.
-- **Immediate next priority:** confirm the workflow run passes on GitHub, then begin narrow Phase 1 bootstrap with contract-aware implementation tasks.
+- **Immediate next priority:** begin narrow Phase 1 bootstrap with contract-aware implementation tasks while keeping unresolved Home runtime decisions non-functional until product ownership is approved.
 
 ## 6.2 Phase transition rule
 Broad Phase 1 feature development must not begin until:
@@ -188,7 +188,7 @@ Broad Phase 1 feature development must not begin until:
 
 Current status:
 - validator pass: complete,
-- CI contract workflow: complete, pending observed green run,
+- CI contract workflow: complete; green run observed on the current PR branch,
 - 47-screen traceability: complete in contract artifact,
 - entitlement and privacy/account server-write rules: complete in contract/API specs,
 - file `02` obsolete filename references: complete,
@@ -221,10 +221,18 @@ Current status:
 | B-001 | P0 | Implementation | No aligned Flutter/backend implementation baseline exists yet. | Bootstrap repo structure, packages, tokens, routes, schemas, and tests from specs. |
 | B-003 | P0 | Content correctness | Ritual/RIC implementation needs minimal governed fixture before correctness claims. | Add schema/fixture/review metadata under content governance. |
 | B-004 | P1 | Operations | Device-lab and release-evidence lane not operationalized. | Create release evidence templates, owner model, and device bucket execution path. |
+| B-005 | P1 | Home context/product ownership | The approved Home visual shows prayer-time/current-prayer/countdown/location/weather subcontent, but no normative runtime owner currently defines calculation/provider, timezone/location dependency, freshness, stale/offline behavior, privacy, analytics, or release evidence. | Product owner must either (a) explicitly add the capability with a named owning spec and end-to-end contract, or (b) keep those data-driven subfields omitted/non-runtime. Do not infer implementation from Figma. |
+| B-006 | P1 | Home shell/product ownership | The centered floating Home action slot has no canonical behavior. | Product owner must map it to an already-approved canonical route/action and update file `11` plus traceability if screen/navigation semantics change, or keep the slot non-functional/absent. Do not infer QR/scanner/camera behavior from iconography. |
 
 ---
 
 # 9. Changelog
+
+## 2026-09-24 — Final audit status correction and unresolved Home decisions
+- Corrected roadmap language that still said the contract-validation workflow was awaiting an observed green run; the current PR head has a completed successful workflow run.
+- Recorded the prayer/weather Home context runtime ownership gap as an explicit product decision instead of allowing implementation agents to infer calculation/provider behavior from the visual reference.
+- Recorded the centered floating Home action as an explicit unresolved product decision; it must not silently become QR/scanner/camera or displace the canonical Tools section.
+- No machine-readable contract changed because these items remain unresolved product ownership decisions rather than approved runtime semantics.
 
 ## 2026-09-24 — Final cross-spec quality audit hardening
 - Normalized remaining broken hyphenated spec filename references to canonical underscore filenames.
