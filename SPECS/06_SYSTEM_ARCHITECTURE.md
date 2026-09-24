@@ -6,7 +6,7 @@
 - **Audience:** Founder, tech lead, mobile lead, backend lead, design-system lead, QA lead, AI coding agents, reviewer agents
 - **Purpose:** Define the end-to-end technical architecture of Pilgrims Mobile App so that mobile, backend, storage, maps, packs, content, telemetry, and operational behaviors can be implemented consistently without hidden assumptions or avoidable refactors.
 - **Authority level:** This file is the system-level source of truth for component boundaries, runtime responsibilities, trust boundaries, and cross-system data flows. More specific files may refine details, but must not contradict this file.
-- **Primary dependencies:** `01-README-AND-MASTER-INDEX.md`, `02-AI-AGENT-RULES-AND-WORKFLOW.md`, `03-PRODUCT-CHARTER-AND-SCOPE.md`, `04-DECISIONS-GLOSSARY-AND-CHANGE-CONTROL.md`, `05-ROADMAP-PROGRESS-AND-CHANGELOG.md`
+- **Primary dependencies:** `01_README_AND_MASTER_INDEX.md`, `02_AI_AGENT_RULES_AND_WORKFLOW.md`, `03_PRODUCT_CHARTER_AND_SCOPE.md`, `04_DECISIONS_GLOSSARY_AND_CHANGE_CONTROL.md`, `05_ROADMAP_PROGRESS_AND_CHANGELOG.md`
 - **Related files:** `07`, `08`, `09`, `10`, `11`, `12`, `13`, `14`, `15`, `16`, `17`, `18`–`26`, `27`, `28`, `29`, `30`
 
 ---
