@@ -229,16 +229,15 @@ If a pack candidate fails verification, Home may show calm recovery status only 
 
 # 11. Platform and visual adaptation
 
-Onboarding, Home, and Simple Mode share the same product behavior on iOS and Android.
+Onboarding, Home, and Simple Mode share the same product behavior and the same **Pilgrims Soft Surface** visual identity on iOS and Android.
 
-On iOS, Liquid-Glass-like treatment is allowed only where it improves hierarchy and calmness without harming readability.
-Avoid glass/material treatment on dense onboarding text, emergency/safety surfaces, dense forms, and large-text/reduced-transparency contexts.
+Both Light and Dark are mandatory. System follows OS appearance.
 
-Android should use platform-appropriate solid/elevated surfaces rather than imitating iOS literally.
+Platform adaptation may change native navigation, sheet/modal mechanics, haptics, system chrome, transitions, or permission handoffs, but must not fork the Home/Simple Mode identity.
 
-Simple Mode should generally use stronger solids, reduced ornament, and clearer separators.
+Simple Mode may reduce decorative depth, glow, and layered effects when that improves clarity or performance. It must preserve semantic hierarchy, touch targets, feature truth, and appearance contrast.
 
----
+Home and urgent shortcuts must remain readable and discoverable in both themes. Emergency, saved-gate recovery, group recovery, and ritual-start surfaces prioritize explicit contrast over decorative depth.
 
 # 12. Data and local preferences
 
