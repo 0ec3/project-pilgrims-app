@@ -4,7 +4,7 @@
 - **Type:** Normative amendment and cross-spec hardening patch
 - **Priority:** Highest for conflicts listed here
 - **Audience:** Founder, product lead, engineering lead, design lead, backend engineer, Flutter engineer, QA, AI coding agents, release agents
-- **Purpose:** Convert audit findings into implementation-safe amendments without weakening the existing 01–30 spec system.
+- **Purpose:** Convert audit findings into implementation-safe amendments while keeping the current 01–31 normative spec system and machine-readable contracts coherent.
 - **Related files:** 03, 11, 13, 14, 15, 18–30, `SPECS/CONTRACTS/*`
 
 ---
@@ -297,17 +297,17 @@ If a screen contract and feature-family contract diverge, implementation must st
 
 ---
 
-# 11. Audit carry-forward checklist
+# 11. Audit carry-forward status
 
-The next implementation/repo changes should prioritize:
+| Item | Status | Current truth |
+|---|---|---|
+| Activate governed group creation and privacy endpoints in file `14` | Done | `POST /v1/groups` and the account/privacy request/status endpoints are active normative contracts. |
+| Align file `20` with governed in-app group creation | Done | Group creation is an authenticated, server-trusted leader flow. |
+| Define normalized `group_presence_events` where needed | Done | File `13`, file `14`, file `20`, and `CONTRACTS/group_presence_privacy_contract.yaml` agree on identifier mapping, TTL/freshness, privacy, and RLS expectations. |
+| Add signed manifest/artifact trust metadata | Done | Files `15`, `23`, `26`, `29`, `30`, and `CONTRACTS/content_pack_trust_chain_contract.yaml` define signed activation and last-known-good behavior. |
+| Define Privacy & Data and entitlement ownership | Done | File `24` owns the user-facing flow and entitlement truth; file `14` owns the HTTP contracts. |
+| Align testing/release/operations with release-gate taxonomy | Done | Files `27`, `28`, and `30` reference the machine-readable taxonomy and evidence boundaries. |
+| Add `group_creation_flow` and `privacy_data_flow` traceability | Done | File `11` and `CONTRACTS/screen_feature_traceability.yaml` contain the canonical screen IDs. |
+| Build implementation tests from contract artifacts | Pending implementation | Validator/test requirements are specified, but Flutter/backend implementation and runtime fixtures remain not started per file `05`. |
 
-1. Update file `14` to activate `POST /v1/groups` and add privacy endpoints.
-2. Update file `20` to replace the old group-creation-out-of-scope wording with governed in-app creation.
-3. Update file `13` with `group_presence_events` schema and RLS rules if shared presence needs normalized events.
-4. Update file `15` and file `26` with signed manifest/artifact metadata.
-5. Update file `24` with Privacy & Data flow details and capability policy ownership.
-6. Update file `27`, file `28`, and file `30` to reference the release-gate taxonomy.
-7. Update file `11` to include `group_creation_flow` and `privacy_data_flow` in the canonical screen inventory.
-8. Build tests from the machine-readable contract artifacts before feature implementation begins.
-
-This file intentionally records the amendment as a complete cross-spec patch so implementation can proceed safely even before each older prose section is individually rewritten.
+This amendment is now a cross-spec hardening record, not a substitute for older prose sections. Current domain specs and contracts must remain synchronized directly through normal change control.
