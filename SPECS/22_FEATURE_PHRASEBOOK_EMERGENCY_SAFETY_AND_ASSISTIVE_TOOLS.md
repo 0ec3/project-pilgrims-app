@@ -6,7 +6,7 @@
 - **Audience:** Founder, product lead, content lead, design lead, Flutter engineers, backend engineers, QA, AI coding agents, reviewer agents, release agents
 - **Purpose:** Define the canonical feature contract for the assistance-tools feature family, including Phrasebook behavior, big-text phrase cards, audio and TTS fallback posture, Emergency cards, medical profile handling, safety alerts and contextual advisories, urgent assistive shortcuts, local data behavior, monetization boundaries, analytics hooks, and release-readiness expectations.
 - **Authority level:** This file is the canonical source of truth for the Phrasebook, Emergency, Safety, and assistive-tools feature family. If implementation, UI, or tests diverge from this file, this file wins unless a higher-level normative contract or approved decision record explicitly changes it.
-- **Primary dependencies:** `01-README-AND-MASTER-INDEX.md`, `03-PRODUCT-CHARTER-AND-SCOPE.md`, `04-DECISIONS-GLOSSARY-AND-CHANGE-CONTROL.md`, `07-FLUTTER-APP-ARCHITECTURE-AND-MODULE-BOUNDARIES.md`, `08-DESIGN-SYSTEM-THEMES-TOKENS-AND-COMPONENTS.md`, `09-PLATFORM-SPEC-IOS-LIQUID-GLASS-ANDROID-ADAPTATION-AND-NATIVE-BRIDGES.md`, `10-PERSONAS-IA-USER-JOURNEYS-AND-TASK-FLOWS.md`, `11-SCREENS-STATES-NAVIGATION-AND-UI-BLUEPRINTS.md`, `12-COPY-LOCALIZATION-RTL-AND-ACCESSIBILITY.md`, `13-DATA-MODEL-RLS-INVARIANTS-AND-MIGRATIONS.md`, `14-API-REALTIME-AND-INTEGRATION-CONTRACTS.md`, `15-OFFLINE-PACKS-SYNC-ASSET-DELIVERY-AND-CACHE-POLICY.md`, `17-ANALYTICS-OBSERVABILITY-AND-PERFORMANCE-BUDGETS.md`, `20-FEATURE-GROUP-HUB-CHECKINS-REGROUP-AND-SHARED-COORDINATION.md`, `21-FEATURE-PLANNER-REMINDERS-WALLET-NOTES-AND-BOOKMARKS.md`
+- **Primary dependencies:** `01-README-AND-MASTER-INDEX.md`, `03-PRODUCT-CHARTER-AND-SCOPE.md`, `04-DECISIONS-GLOSSARY-AND-CHANGE-CONTROL.md`, `07-FLUTTER-APP-ARCHITECTURE-AND-MODULE-BOUNDARIES.md`, `08-DESIGN-SYSTEM-THEMES-TOKENS-AND-COMPONENTS.md`, `09-PLATFORM-ADAPTATION-IOS-ANDROID-AND-NATIVE-BRIDGES.md`, `10-PERSONAS-IA-USER-JOURNEYS-AND-TASK-FLOWS.md`, `11-SCREENS-STATES-NAVIGATION-AND-UI-BLUEPRINTS.md`, `12-COPY-LOCALIZATION-RTL-AND-ACCESSIBILITY.md`, `13-DATA-MODEL-RLS-INVARIANTS-AND-MIGRATIONS.md`, `14-API-REALTIME-AND-INTEGRATION-CONTRACTS.md`, `15-OFFLINE-PACKS-SYNC-ASSET-DELIVERY-AND-CACHE-POLICY.md`, `17-ANALYTICS-OBSERVABILITY-AND-PERFORMANCE-BUDGETS.md`, `20-FEATURE-GROUP-HUB-CHECKINS-REGROUP-AND-SHARED-COORDINATION.md`, `21-FEATURE-PLANNER-REMINDERS-WALLET-NOTES-AND-BOOKMARKS.md`
 - **Related files:** `23`, `24`, `25`, `27`, `28`, `29`, `30`
 
 ---
@@ -897,8 +897,10 @@ Phrase and emergency cards must support very large readable text, strong contras
 ## 18.7 Screen-reader rule
 Core actions such as play, copy, export, and urgent-card selection must have strong semantic labels and must remain understandable with assistive technologies.
 
-## 18.8 Reduced-transparency and contrast rule
+## 18.8 Reduced-transparency, contrast, and appearance rule
 If reduced transparency, high contrast, or similar accessibility settings are active, cards and urgent surfaces must prefer clarity over decorative material effects.
+
+Emergency, medical, big-text, and assistive surfaces must remain explicitly high-contrast and low-decoration in both Light and Dark. Soft Surface depth or glow must never become the only indicator of urgency, selection, error, or disabled state.
 
 ## 18.9 No map-only emergency dependency rule
 Emergency or assistive flows must not depend on map visibility, subtle color-only state, or small controls.
