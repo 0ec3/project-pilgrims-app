@@ -6,7 +6,7 @@
 - **Audience:** Founder, product lead, content lead, scholar-board contributors, Flutter engineers, QA, AI coding agents, reviewer agents, release agents
 - **Purpose:** Define the canonical feature contract for ritual guidance, ritual-session tracking, RIC (Ritual Integrity Checker) / resolver behavior, religious content structure, scholar-review dependency, UX surfaces, offline guarantees, monetization boundaries, analytics hooks, and release-readiness requirements.
 - **Authority level:** This file is the canonical source of truth for the Rituals feature family. If implementation, UI, or tests diverge from this file, this file wins unless a higher-level normative contract or approved decision record explicitly changes it.
-- **Primary dependencies:** `01-README-AND-MASTER-INDEX.md`, `03-PRODUCT-CHARTER-AND-SCOPE.md`, `04-DECISIONS-GLOSSARY-AND-CHANGE-CONTROL.md`, `07-FLUTTER-APP-ARCHITECTURE-AND-MODULE-BOUNDARIES.md`, `08-DESIGN-SYSTEM-THEMES-TOKENS-AND-COMPONENTS.md`, `09-PLATFORM-SPEC-IOS-LIQUID-GLASS-ANDROID-ADAPTATION-AND-NATIVE-BRIDGES.md`, `10-PERSONAS-IA-USER-JOURNEYS-AND-TASK-FLOWS.md`, `11-SCREENS-STATES-NAVIGATION-AND-UI-BLUEPRINTS.md`, `12-COPY-LOCALIZATION-RTL-AND-ACCESSIBILITY.md`, `13-DATA-MODEL-RLS-INVARIANTS-AND-MIGRATIONS.md`, `15-OFFLINE-PACKS-SYNC-ASSET-DELIVERY-AND-CACHE-POLICY.md`
+- **Primary dependencies:** `01-README-AND-MASTER-INDEX.md`, `03-PRODUCT-CHARTER-AND-SCOPE.md`, `04-DECISIONS-GLOSSARY-AND-CHANGE-CONTROL.md`, `07-FLUTTER-APP-ARCHITECTURE-AND-MODULE-BOUNDARIES.md`, `08-DESIGN-SYSTEM-THEMES-TOKENS-AND-COMPONENTS.md`, `09-PLATFORM-ADAPTATION-IOS-ANDROID-AND-NATIVE-BRIDGES.md`, `10-PERSONAS-IA-USER-JOURNEYS-AND-TASK-FLOWS.md`, `11-SCREENS-STATES-NAVIGATION-AND-UI-BLUEPRINTS.md`, `12-COPY-LOCALIZATION-RTL-AND-ACCESSIBILITY.md`, `13-DATA-MODEL-RLS-INVARIANTS-AND-MIGRATIONS.md`, `15-OFFLINE-PACKS-SYNC-ASSET-DELIVERY-AND-CACHE-POLICY.md`
 - **Related files:** `14`, `17`, `21`, `23`, `24`, `26`, `27`, `28`, `29`, `30`
 
 ---
@@ -683,7 +683,7 @@ Purpose:
 - missing-content fallback
 
 ## 21.3 Readability rule
-This screen must prioritize readability over decorative styling and must not use glass-heavy treatment on dense ritual content.
+This screen must prioritize readability over decorative styling and must not use decorative-depth-heavy treatment on dense ritual content. Ritual guidance and RIC must remain calm, high-contrast, and low-decoration in both Light and Dark.
 
 ---
 
