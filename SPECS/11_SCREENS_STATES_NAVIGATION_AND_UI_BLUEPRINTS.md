@@ -65,6 +65,11 @@ If data is stale, permission is missing, route confidence is low, a pack is not 
 ## 2.7 Screen-feature traceability is mandatory
 Every implemented screen must map to an owning feature file and critical flow list in `CONTRACTS/screen_feature_traceability.yaml`.
 
+## 2.8 Visual source-of-truth and appearance rule
+Screen behavior, IDs, navigation, and feature meaning come from this spec and owning feature specs. Figma mockups are visual references and must not silently add, remove, rename, or reassign canonical product behavior.
+
+Every implemented screen must support complete Light and Dark appearances through the file `08` design system. System appearance is an app-level preference that selects the OS-matched Light/Dark theme; it does not create a third visual contract.
+
 ---
 
 # 3. Canonical navigation model
@@ -390,7 +395,8 @@ Every screen must support:
 - screen reader labels and focus order,
 - non-color-only status meaning,
 - touch targets appropriate for tired or low-confidence users,
-- reduce transparency / increase contrast behavior from the design system.
+- reduced-transparency / increased-contrast behavior from the design system,
+- readable Light and Dark treatment with explicit boundaries for important states.
 
 ## 9.2 RTL and localization
 Layouts and copy must support RTL and localization expansion. Critical status strings must not be embedded as unlocalized widget literals.
