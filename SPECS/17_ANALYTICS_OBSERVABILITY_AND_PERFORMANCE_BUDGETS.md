@@ -341,6 +341,9 @@ Allowed parameters include coarse role, check-in method, live-board enabled stat
 - `privacy_export_request_fail`
 - `privacy_retention_summary_view`
 
+
+### Appearance preference
+Appearance changes should use the existing `settings_preference_change` event rather than introducing a new appearance-specific event. Allowed safe value: `appearance_mode` with enum `system | light | dark`. Do not log theme-derived user content or sensitive context.
 ---
 
 # 9. Core funnels
