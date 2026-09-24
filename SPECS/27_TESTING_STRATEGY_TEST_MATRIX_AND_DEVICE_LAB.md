@@ -205,7 +205,7 @@ Structural validation that confirms required contract artifacts exist, parse cor
 The product should use a strong test pyramid:
 - many unit and repository/domain tests,
 - many targeted widget tests,
-- selected golden tests for high-risk visual surfaces,
+- selected golden tests for high-risk visual surfaces in representative Light and Dark states,
 - selected integration tests for critical flows,
 - focused platform-native tests for bridges,
 - selective but mandatory real-device and field validation for highest-risk behaviors.
@@ -260,15 +260,18 @@ Includes:
 - pack verification failure states.
 
 ## 7.4 Layer 4 — Golden and visual-regression tests
-Selected high-risk surfaces only:
+Selected high-risk surfaces require representative Light and Dark coverage:
 - Home and Simple Home shells,
+- ritual guidance / RIC high-clarity surfaces,
 - emergency big-text cards,
 - phrasebook cards with Arabic + translated text,
+- map overlays and deterministic fallback states,
 - group stale/live and trusted-write failure cards,
 - paywall/lock states where honesty matters,
 - degraded pack/install states,
-- Privacy & Data flow states,
-- selected map fallback states where deterministic visuals are possible.
+- Privacy & Data flow states.
+
+Golden coverage is risk-based; it must not create a combinatorial snapshot explosion.
 
 ## 7.5 Layer 5 — Integration tests
 Includes:
@@ -370,6 +373,7 @@ Must verify:
 
 Test planning must consider:
 - platform: iOS, Android,
+- appearance: System, Light, Dark,
 - device class: minimum supported, mid-tier, large-screen where supported,
 - OS version: minimum supported, current stable, recent prior,
 - locale: English, Arabic/RTL, Indonesian where supported,
@@ -383,6 +387,18 @@ Test planning must consider:
 - pack state: not installed, downloading, verifying, installed, failed, purged,
 - content/advisory state: current, stale, expired, rollback candidate,
 - permission state: granted, denied, limited, not determined.
+
+## 9.1 Appearance-switch matrix rule
+Representative tests must verify:
+- switching System → Light → Dark while the app is running,
+- switching with non-root navigation state present,
+- preserving active feature/domain state,
+- restart persistence,
+- large text,
+- RTL where relevant,
+- contrast/reduced-motion/reduced-transparency settings where relevant.
+
+Use risk-based pairwise/representative combinations rather than multiplying every matrix dimension together.
 
 ---
 
@@ -458,7 +474,8 @@ Each release candidate affecting critical flows must include at least:
 - one representative iOS physical device,
 - one representative Android physical device,
 - minimum-supported or lower-mid-tier hardware where available,
-- accessibility settings verification on at least one platform for affected surfaces.
+- accessibility settings verification on at least one platform for affected surfaces,
+- representative Light and Dark proof for user-visible design-system changes.
 
 ## 11.2 Physical proof required
 Physical proof is required for:
