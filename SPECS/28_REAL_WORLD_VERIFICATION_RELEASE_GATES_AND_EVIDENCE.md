@@ -285,6 +285,17 @@ Evidence must prove:
 
 ---
 
+# 6.7 Appearance evidence
+When a change affects shared visual tokens, component styling, or appearance behavior, the evidence bundle must include:
+- representative Light and Dark physical-device screenshots or video for affected high-risk surfaces,
+- accessibility/large-text checks where relevant,
+- theme switching without navigation/domain-state reset,
+- clear notation when Dark palette calibration is derived rather than directly sourced from a verified Figma dark variant.
+
+Screenshots are supporting evidence only; behavioral and accessibility checks remain required.
+
+---
+
 # 7. Required gate checklist
 
 A release candidate cannot proceed to production rollout unless the evidence bundle includes:
