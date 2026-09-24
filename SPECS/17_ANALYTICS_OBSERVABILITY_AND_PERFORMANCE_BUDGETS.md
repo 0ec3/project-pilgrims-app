@@ -458,6 +458,10 @@ Backend logs should include structured operational fields:
 
 # 13. Performance budgets
 
+Pilgrims Soft Surface rendering must stay within the existing runtime budgets. Layered outer/inset shadows, highlights, ambient glow, scrims, or blur must use shared effect tiers and low-cost variants for dense/repeated surfaces. Decorative effects must simplify before they are allowed to cause scrolling, animation, startup, or map-control jank.
+
+Light/Dark appearance switching must not trigger unnecessary domain reloads or navigation reconstruction.
+
 Initial budgets:
 - cold start to first meaningful Home: p95 ≤ 2.5s on representative devices,
 - emergency root open from Home: p95 ≤ 300ms after app ready,
