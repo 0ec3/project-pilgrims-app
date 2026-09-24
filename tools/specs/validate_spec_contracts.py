@@ -12,8 +12,55 @@ except ImportError as exc:  # pragma: no cover
     raise SystemExit("PyYAML is required. Install with: python -m pip install pyyaml") from exc
 
 ROOT = Path(__file__).resolve().parents[2]
-CONTRACT_DIR = ROOT / "SPECS" / "CONTRACTS"
-SCREEN_SPEC = ROOT / "SPECS" / "11_SCREENS_STATES_NAVIGATION_AND_UI_BLUEPRINTS.md"
+SPEC_DIR = ROOT / "SPECS"
+CONTRACT_DIR = SPEC_DIR / "CONTRACTS"
+SCREEN_SPEC = SPEC_DIR / "11_SCREENS_STATES_NAVIGATION_AND_UI_BLUEPRINTS.md"
+
+EXPECTED_NORMATIVE_SPECS = [
+    "01_README_AND_MASTER_INDEX.md",
+    "02_AI_AGENT_RULES_AND_WORKFLOW.md",
+    "03_PRODUCT_CHARTER_AND_SCOPE.md",
+    "04_DECISIONS_GLOSSARY_AND_CHANGE_CONTROL.md",
+    "05_ROADMAP_PROGRESS_AND_CHANGELOG.md",
+    "06_SYSTEM_ARCHITECTURE.md",
+    "07_FLUTTER_APP_ARCHITECTURE_AND_MODULE_BOUNDARIES.md",
+    "08_DESIGN_SYSTEM_THEMES_TOKENS_AND_COMPONENTS.md",
+    "09_PLATFORM_ADAPTATION_IOS_ANDROID_AND_NATIVE_BRIDGES.md",
+    "10_PERSONAS_IA_USER_JOURNEYS_AND_TASK_FLOWS.md",
+    "11_SCREENS_STATES_NAVIGATION_AND_UI_BLUEPRINTS.md",
+    "12_COPY_LOCALIZATION_RTL_AND_ACCESSIBILITY.md",
+    "13_DATA_MODEL_RLS_INVARIANTS_AND_MIGRATIONS.md",
+    "14_API_REALTIME_AND_INTEGRATION_CONTRACTS.md",
+    "15_OFFLINE_PACKS_SYNC_ASSET_DELIVERY_AND_CACHE_POLICY.md",
+    "16_MAP_ARCHITECTURE_POSITIONING_ROUTING_3_D_AND_OFFLINE_WAYFINDING.md",
+    "17_ANALYTICS_OBSERVABILITY_AND_PERFORMANCE_BUDGETS.md",
+    "18_FEATURE_RITUALS_RIC_AND_RELIGIOUS_CONTENT.md",
+    "19_FEATURE_MAPS_SAVE_MY_GATE_AND_3_D_WAYFINDING.md",
+    "20_FEATURE_GROUP_HUB_CHECKINS_REGROUP_AND_SHARED_COORDINATION.md",
+    "21_FEATURE_PLANNER_REMINDERS_WALLET_NOTES_AND_BOOKMARKS.md",
+    "22_FEATURE_PHRASEBOOK_EMERGENCY_SAFETY_AND_ASSISTIVE_TOOLS.md",
+    "23_FEATURE_OFFLINE_PACKS_AUDIO_AND_CONTENT_DISTRIBUTION.md",
+    "24_FEATURE_ACCOUNT_SUBSCRIPTIONS_ENTITLEMENTS_AND_SETTINGS.md",
+    "25_FEATURE_ONBOARDING_HOME_AND_SIMPLE_MODE.md",
+    "26_CONTENT_MODEL_SCHOLAR_REVIEW_AND_PUBLISHING_WORKFLOW.md",
+    "27_TESTING_STRATEGY_TEST_MATRIX_AND_DEVICE_LAB.md",
+    "28_REAL_WORLD_VERIFICATION_RELEASE_GATES_AND_EVIDENCE.md",
+    "29_SECURITY_PRIVACY_COMPLIANCE_AND_RISK_REGISTER.md",
+    "30_DELIVERY_RUNBOOK_INCIDENTS_ROLLBACK_AND_OPERATIONS.md",
+    "31_QUALITY_FIRST_HARDENING_AMENDMENTS.md",
+]
+
+OLD_FILE_09 = "09_PLATFORM_SPEC_IOS_LIQUID_GLASS_ANDROID_ADAPTATION_AND_NATIVE_BRIDGES.md"
+FORBIDDEN_ACTIVE_DESIGN_TERMS = (
+    "liquid glass",
+    "effect.glass",
+    "surfaceglass",
+    "glass card",
+    "glass-heavy",
+    "glass-like",
+    "dark theme if supported",
+    "light/dark modes if used",
+)
 
 REQUIRED = [
     "entitlement_capability_policy.yaml",
@@ -62,6 +109,45 @@ def mapping(data: dict, key: str, source: str) -> dict:
     if not isinstance(value, dict) or not value:
         fail(f"{source} must define non-empty mapping: {key}")
     return value
+
+
+def validate_repository_spec_references() -> None:
+    expected_paths = [SPEC_DIR / name for name in EXPECTED_NORMATIVE_SPECS]
+    for path in expected_paths:
+        if not path.exists():
+            fail(f"Missing normative spec: {path.relative_to(ROOT)}")
+
+    old_path = SPEC_DIR / OLD_FILE_09
+    if old_path.exists():
+        fail(f"Superseded file 09 still exists: {old_path.relative_to(ROOT)}")
+
+    scan_paths = [ROOT / "README.md", *expected_paths]
+    legacy_filename_pattern = re.compile(r"`(?:SPECS/)?\d{2}-[A-Z0-9][A-Z0-9_-]*\.md`")
+
+    for path in scan_paths:
+        text = path.read_text(encoding="utf-8")
+        if OLD_FILE_09 in text:
+            fail(f"Stale old file 09 reference in {path.relative_to(ROOT)}")
+        legacy_match = legacy_filename_pattern.search(text)
+        if legacy_match:
+            fail(
+                f"Stale hyphenated spec filename reference in {path.relative_to(ROOT)}: "
+                f"{legacy_match.group(0)}"
+            )
+
+        # D-004 and changelog history may retain the phrase Liquid Glass only in files 04 and 05.
+        allow_historical_liquid_glass = path.name in {
+            "04_DECISIONS_GLOSSARY_AND_CHANGE_CONTROL.md",
+            "05_ROADMAP_PROGRESS_AND_CHANGELOG.md",
+        }
+        lower = text.lower()
+        for term in FORBIDDEN_ACTIVE_DESIGN_TERMS:
+            if term == "liquid glass" and allow_historical_liquid_glass:
+                continue
+            if term in lower:
+                fail(
+                    f"Active superseded design terminology in {path.relative_to(ROOT)}: {term}"
+                )
 
 
 def validate_entitlements(data: dict) -> None:
@@ -174,12 +260,27 @@ def validate_screen_traceability(data: dict, entitlements: dict) -> None:
 
     if SCREEN_SPEC.exists():
         spec_text = SCREEN_SPEC.read_text(encoding="utf-8")
+        spec_screen_ids = set(re.findall(r"—\s*`([a-z0-9_]+)`", spec_text))
+        if spec_screen_ids:
+            missing_from_contract = sorted(spec_screen_ids - set(traceability))
+            extra_in_contract = sorted(set(traceability) - spec_screen_ids)
+            if missing_from_contract:
+                fail(
+                    "screen_feature_traceability.yaml missing file 11 screens: "
+                    + ", ".join(missing_from_contract)
+                )
+            if extra_in_contract:
+                fail(
+                    "screen_feature_traceability.yaml contains screens absent from file 11: "
+                    + ", ".join(extra_in_contract)
+                )
         match = re.search(r"currently contains (\d+) canonical screens", spec_text)
         if match and int(match.group(1)) != len(traceability):
             fail(f"File 11 screen count mismatch: {match.group(1)} != {len(traceability)}")
 
 
 def main() -> int:
+    validate_repository_spec_references()
     loaded = {name: load_yaml(CONTRACT_DIR / name) for name in REQUIRED}
     validate_entitlements(loaded["entitlement_capability_policy.yaml"])
     validate_group_presence(loaded["group_presence_privacy_contract.yaml"])
