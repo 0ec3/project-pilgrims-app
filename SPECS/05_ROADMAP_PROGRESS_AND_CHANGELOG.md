@@ -209,7 +209,7 @@ Current status:
 | Group coordination | `20`, `13`, `14`, `group_presence_privacy_contract.yaml` | 2 | P1 | Done / monitor | Not started | Validator passed; file `13` aligned | Implement create/join/check-in as server-trusted writes with contract-backed fixtures. |
 | Ritual/RIC content | `18`, `26` | 1 | P0 | Done | Not started | Planned | Add minimal governed fixture before implementation claims correctness. |
 | Offline packs | `15`, `23`, `content_pack_trust_chain_contract.yaml` | 1 | P0 | Done / contract-backed | Not started | Validator passed | Reflect signed manifest verification and LKG activation path in implementation and tests. |
-| Design system | `08`, `09`, `11`, `12` | 1 | P0 | Done / needs implementation tokens | Not started | Planned | Convert tokens and components into concrete Flutter package baseline. |
+| Design system | `08`, `09`, `11`, `12` | 1 | P0 | Done / needs implementation tokens | Not started | Planned | Implement Figma-aligned Pilgrims Soft Surface semantic tokens, mandatory Light/Dark themes, and System/Light/Dark appearance handling in the Flutter design-system baseline. |
 | Release evidence | `27`, `28`, `29`, `30`, `release_gate_taxonomy.yaml` | 3 | P0 | Done / contract-backed | Not started | Validator passed | Create evidence templates and CI/device-lab lanes. |
 
 ---
@@ -227,6 +227,15 @@ Current status:
 ---
 
 # 9. Changelog
+
+## 2026-09-24 — Figma-aligned Pilgrims Soft Surface and dual-appearance contract
+- Superseded the former Liquid-Glass-led visual doctrine while preserving D-004 as historical decision record.
+- Adopted D-006: the approved Figma direction is the visual reference and file `08` now owns the canonical **Pilgrims Soft Surface** design language.
+- Made System / Light / Dark appearance a first-class product contract; Light and Dark are both mandatory.
+- Renamed file `09` to `09_PLATFORM_ADAPTATION_IOS_ANDROID_AND_NATIVE_BRIDGES.md` so platform adaptation and native bridges remain style-neutral.
+- Preserved existing product behavior, IA, accessibility, offline, entitlement, privacy, religious-content, and native-bridge truth.
+- Flutter implementation remains **not started**; this change updates specification truth and verification expectations only.
+
 
 ## 2026-06-12 — Group presence data-model prose aligned
 - Updated file `13` to use current underscore dependencies in document metadata.
