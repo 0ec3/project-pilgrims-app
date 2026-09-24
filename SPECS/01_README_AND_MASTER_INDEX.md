@@ -97,8 +97,8 @@ The documentation system is now organized as 31 normative markdown specs plus ma
 ## 4.2 Architecture and engineering
 - `06_SYSTEM_ARCHITECTURE.md` — runtime zones, system boundaries, failure domains.
 - `07_FLUTTER_APP_ARCHITECTURE_AND_MODULE_BOUNDARIES.md` — package/layer rules and forbidden patterns.
-- `08_DESIGN_SYSTEM_THEMES_TOKENS_AND_COMPONENTS.md` — visual system, tokens, components, glass rules.
-- `09_PLATFORM_SPEC_IOS_LIQUID_GLASS_ANDROID_ADAPTATION_AND_NATIVE_BRIDGES.md` — platform expression and native bridge rules.
+- `08_DESIGN_SYSTEM_THEMES_TOKENS_AND_COMPONENTS.md` — Pilgrims Soft Surface visual system, Light/Dark appearance, tokens, depth/effects, and components.
+- `09_PLATFORM_ADAPTATION_IOS_ANDROID_AND_NATIVE_BRIDGES.md` — iOS/Android adaptation, system behavior, and native bridge rules.
 
 ## 4.3 Product, UX, and accessibility
 - `10_PERSONAS_IA_USER_JOURNEYS_AND_TASK_FLOWS.md` — personas, IA, journeys, task flows.
