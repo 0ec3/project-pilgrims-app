@@ -356,7 +356,7 @@ Settings Root must include:
 - Account & profile,
 - Support this App / purchase and restore,
 - Privacy & Data,
-- App preferences,
+- App preferences, including Appearance,
 - Packs & downloads,
 - Notifications & permissions,
 - Help / About / App info.
@@ -365,7 +365,27 @@ Settings Root must include:
 Settings must not become a random dumping ground. Feature-specific controls should live in the owning feature unless the setting is global.
 
 ## 10.4 Local preference behavior
-Simple Mode, language preference, dismissal states, and selected app preferences remain local unless future specs approve server sync.
+Simple Mode, Appearance, language preference, dismissal states, and selected app preferences remain local unless future specs approve server sync.
+
+## 10.5 Appearance preference
+Settings Root must expose **Appearance** under App preferences with exactly:
+- System,
+- Light,
+- Dark.
+
+Behavior:
+- default: System,
+- available to guests and signed-in users,
+- not entitlement-gated,
+- no network dependency,
+- persisted locally,
+- applied immediately,
+- survives restart,
+- does not reset navigation or active feature state,
+- independent from Simple Mode,
+- does not alter auth, entitlement, protected-data, or offline truth.
+
+System follows the OS appearance. Light and Dark force the corresponding complete themes defined by file `08`.
 
 ---
 
@@ -516,6 +536,7 @@ This feature family should emit privacy-safe events for:
 - entitlement_refresh_complete,
 - entitlement_refresh_fail,
 - settings_view,
+- settings_preference_change (including safe `appearance_mode: system | light | dark`),
 - privacy_data_view,
 - account_deletion_request_start,
 - account_deletion_request_complete,
@@ -552,7 +573,10 @@ Tests must cover:
 - export request success/failure/offline states,
 - retention summary copy,
 - sign-out preserving local-only data,
-- large text and screen reader behavior.
+- large text and screen reader behavior,
+- System / Light / Dark switching while the app is running and after restart,
+- theme switching while navigation/feature state is active,
+- independence between Appearance and Simple Mode.
 
 ## 15.2 Release evidence
 Release evidence must include:
@@ -575,7 +599,8 @@ This feature family is ready when:
 - local-only data boundaries are clear,
 - purchase/restore behavior is platform-aware and calm,
 - analytics are privacy-safe,
-- accessibility and release evidence are complete.
+- accessibility and release evidence are complete,
+- Appearance exposes System / Light / Dark as a local, non-entitled, immediate preference.
 
 ---
 
