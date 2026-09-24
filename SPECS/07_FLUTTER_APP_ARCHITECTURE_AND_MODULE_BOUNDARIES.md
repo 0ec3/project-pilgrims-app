@@ -151,7 +151,7 @@ Canonical design system implementation package.
 - design tokens,
 - theme definitions,
 - typography system,
-- glass/material/effect presets,
+- Pilgrims Soft Surface depth/effect presets,
 - common component implementations,
 - motion tokens,
 - semantic colors,
@@ -605,46 +605,49 @@ Priority flows such as ritual guidance, emergency tools, map wayfinding, and Sim
 
 # 16. Design-system architecture in Flutter
 
-The detailed design system lives in file `08`, but this file defines the implementation boundary.
-
 ## 16.1 Design-system ownership
-The design-system package or module must own:
-- semantic color definitions,
-- typography tokens,
-- spacing tokens,
-- radius tokens,
-- shadows/effects,
-- blur/material presets,
-- motion tokens,
-- reusable app components,
-- platform-adapted component styling.
+`packages/pilgrims_design_system` (or its approved single-package equivalent) owns the canonical Pilgrims Soft Surface implementation.
+
+It owns:
+- foundation tokens,
+- semantic Light/Dark token mappings,
+- component tokens,
+- depth/effect presets,
+- typography roles and fallbacks,
+- shared component styling,
+- platform-adaptation hooks.
 
 ## 16.2 Centralized theming rule
-No feature widget may define repeated visual constants that belong in the design system.
+The app must construct complete Light and Dark themes centrally. The app shell owns appearance selection with exactly three user-facing modes:
+- System,
+- Light,
+- Dark.
 
-## 16.3 Style application rule
-Feature UI should consume styles through:
-- theme extensions,
-- semantic tokens,
-- shared component APIs,
-- centralized motion/effect definitions.
+System is the recommended default. The selection is local-only, available to guests, non-entitled, network-independent, applied immediately, and persisted across restart.
 
-## 16.4 Local override rule
-A one-off local style override is allowed only when:
-- it is truly screen-specific,
-- it does not duplicate a pattern likely to recur,
-- it does not undermine visual consistency,
-- it is documented or promoted into a shared token/component if reuse emerges.
+## 16.3 Appearance state ownership
+Appearance state belongs at the app-shell/design-system boundary, not inside feature modules.
 
-## 16.5 Forbidden styling behaviors
+Changing appearance must:
+- not recreate navigation state,
+- not reset active feature flows,
+- not change Simple Mode semantics,
+- not change entitlement, auth, offline, or protected-data truth.
+
+## 16.4 Style application rule
+Feature widgets consume semantic or component roles through Flutter theme access and approved `ThemeExtension`-style APIs. They must not consume raw Figma variable names, raw primitive palette names, or platform-specific effect constants directly.
+
+## 16.5 Local override rule
+A local visual override is allowed only when it expresses a documented semantic state that cannot be represented by the shared component contract. Repeated overrides must be promoted into the design system.
+
+## 16.6 Forbidden styling behaviors
 Forbidden:
-- direct repeated hex values across widgets,
-- ad hoc animation durations repeated in feature code,
-- each screen creating its own card/button/input style system,
-- scattering blur/material settings throughout the app,
-- feature-specific fonts or text scales without design-system approval.
-
----
+- hardcoded repeated colors, spacing, radii, shadows, highlights, glows, or animation values in feature widgets,
+- per-screen Light/Dark logic,
+- feature-level `ThemeMode` ownership,
+- checking platform/theme values only to fork visual identity,
+- copying Figma-generated reference code directly into Flutter architecture,
+- creating raw multi-shadow stacks in dense/repeated lists when a performance-safe effect tier exists.
 
 # 17. Text and localization architecture
 
