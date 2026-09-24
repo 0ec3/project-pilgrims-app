@@ -466,7 +466,7 @@ Features that are accessible only in calm settings are not sufficient for this p
 Do not rely only on QA at the end to “make things accessible.”
 
 ## 15.4 Accessibility must survive platform adaptation
-Custom material treatments, glass surfaces, map overlays, and motion must not break accessibility.
+Custom material, depth, overlay, transparency, glow, map-overlay, and motion treatments must not break accessibility. Platform-native material behavior may differ, but accessibility meaning and fallback quality must remain shared.
 
 ---
 
@@ -476,7 +476,9 @@ Custom material treatments, glass surfaces, map overlays, and motion must not br
 The app must support larger text sizes without breaking critical flows.
 
 ## 16.2 Contrast
-Critical text and actions must maintain strong contrast.
+Critical text and actions must maintain strong contrast in both Light and Dark.
+
+Dark Mode must preserve semantic hierarchy rather than use naive inversion. Important surface boundaries, text/icon contrast, focus, selection, error, stale, disabled, route, and emergency states must remain explicit and must not depend on shadow alone.
 
 ## 16.3 Touch target size
 Interactive elements must remain easy to tap, especially in emergency and walking contexts.
@@ -487,8 +489,12 @@ Important labels, actions, status changes, and section headings must be exposed 
 ## 16.5 Reduced motion
 Motion should reduce gracefully where supported or required.
 
-## 16.6 Reduced transparency
-Material/glass surfaces must degrade safely to more solid surfaces when transparency reduction or higher contrast is required.
+## 16.6 Reduced transparency and decorative-effect reduction
+When transparency reduction, increased contrast, or comparable accessibility settings require clearer presentation:
+- transparent or native-material overlays must become more opaque where needed,
+- custom depth, shadow, inner-highlight, glow, and decorative effects must simplify when they reduce clarity,
+- hierarchy and text/icon contrast must remain understandable in both Light and Dark,
+- selected, error, stale, disabled, route, emergency, and focus states must never rely on depth or color alone.
 
 ## 16.7 Keyboard/focus accessibility where relevant
 Focus order and visibility must remain coherent in contexts where keyboard or non-touch navigation matters.
@@ -635,8 +641,8 @@ RTL support must use Flutter direction-aware widgets and layout primitives rathe
 ## 22.4 Focus visibility rule
 Custom components must preserve visible focus and selected states.
 
-## 22.5 Motion/transparency rule
-Custom material/glass behavior must integrate with reduced-motion and reduced-transparency preferences.
+## 22.5 Motion/transparency/depth rule
+Custom material, depth, glow, overlay, and transparency behavior must integrate with reduced-motion, reduced-transparency, and increased-contrast preferences. Accessibility fallbacks must preserve state meaning and interaction hierarchy in both Light and Dark.
 
 ---
 
@@ -664,8 +670,8 @@ Must include:
 Must include:
 - large text
 - screen reader basics on major flows
-- contrast review on critical surfaces
-- reduced transparency/reduced motion checks where relevant
+- contrast review on critical surfaces in Light and Dark
+- reduced transparency/reduced motion/increased-contrast checks where relevant
 - tap target checks on urgent actions
 
 ## 23.4 Critical-flow QA
