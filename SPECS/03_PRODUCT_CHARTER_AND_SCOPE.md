@@ -6,7 +6,7 @@
 - **Audience:** Founder, product lead, engineering lead, design lead, QA, AI coding agents, reviewer agents, content/religious governance contributors
 - **Purpose:** Define what the product is, who it serves, what value it must deliver, what is in scope, what is out of scope, and what product rules must govern all future implementation decisions.
 - **Authority level:** If a proposed feature, screen, data model, API, or workflow conflicts with this file, this file wins unless an approved decision record changes it.
-- **Primary dependencies:** `01-README-AND-MASTER-INDEX.md`, `02-AI-AGENT-RULES-AND-WORKFLOW.md`
+- **Primary dependencies:** `01_README_AND_MASTER_INDEX.md`, `02_AI_AGENT_RULES_AND_WORKFLOW.md`
 - **Related files:** `04`, `05`, `10`, `11`, `18`–`26`, `28`, `29`
 
 ---
@@ -277,16 +277,17 @@ The following feature areas are in the compact spec system and are considered ac
 
 ## 8.2 Included cross-cutting concerns
 The following are also explicitly in scope:
-- iOS-specific visual adaptation inspired by Liquid Glass where appropriate
-- Android adaptation without forced imitation
-- centralized theme and design-token architecture
-- localization and RTL
-- accessibility
-- analytics and observability
-- security and privacy
-- real-world release verification
+- one shared cross-platform visual identity called **Pilgrims Soft Surface**, grounded in the approved current Figma direction and governed textually by file `08`,
+- mandatory Light Mode and Dark Mode, plus a System appearance option that follows OS appearance,
+- platform-appropriate iOS and Android behavior without forking the product identity,
+- centralized theme, semantic-token, depth/effect, and component architecture,
+- localization and RTL,
+- accessibility,
+- offline-first behavior,
+- performance and observability,
+- real-world verification and release evidence.
 
----
+The approved Figma source is a visual reference, not a product/IA authority. Product scope, canonical feature names, navigation, screen IDs, entitlement behavior, religious meaning, and localization remain governed by their owning specs.
 
 # 9. Explicitly out of scope for the initial product
 
@@ -369,13 +370,18 @@ The product should not depend on a business model based on exploiting pilgrim da
 
 This section captures key improvements discussed earlier that should influence the product direction.
 
-## 11.1 Controlled platform styling
-The UI should support iOS-specific visual refinement inspired by Apple’s Liquid Glass direction, but only where readability and clarity remain strong.
+## 11.1 Figma-first Pilgrims Soft Surface styling
+The current approved visual direction is the project-owned **Pilgrims Soft Surface** language defined in file `08`.
 
-This means:
-- glass-like surfaces may be used for navigation chrome, overlays, and selected controls,
-- dense ritual text, emergency information, and critical route instructions should prefer clearer, stronger surfaces,
-- platform adaptation should feel intentional rather than decorative.
+The app should use:
+- mostly opaque, calm surfaces,
+- soft raised/inset depth and restrained ambient accent treatment,
+- rounded, touch-friendly geometry,
+- semantic surface roles instead of per-screen effect invention,
+- one coherent visual identity across iOS and Android,
+- mandatory Light and Dark appearances, with System as the recommended default.
+
+Decorative depth must never outrank readability, route clarity, ritual correctness, emergency clarity, large-text usability, or accessible boundaries. Exact Dark Mode values must be intentionally calibrated rather than claimed as Figma-derived unless a dark Figma source is explicitly verified.
 
 ## 11.2 3D map utility, not just 3D appearance
 The product’s mapping direction should aim for utility closer to an Al-Maqsad-like experience, not simply 3D visuals.
@@ -538,26 +544,26 @@ Trust and dignity matter more than extracting short-term revenue from anxious us
 This file defines the product truth, but later files refine it.
 
 ## 18.1 Files that refine product behavior
-- `10-PERSONAS-IA-USER-JOURNEYS-AND-TASK-FLOWS.md`
-- `11-SCREENS-STATES-NAVIGATION-AND-UI-BLUEPRINTS.md`
-- `12-COPY-LOCALIZATION-RTL-AND-ACCESSIBILITY.md`
+- `10_PERSONAS_IA_USER_JOURNEYS_AND_TASK_FLOWS.md`
+- `11_SCREENS_STATES_NAVIGATION_AND_UI_BLUEPRINTS.md`
+- `12_COPY_LOCALIZATION_RTL_AND_ACCESSIBILITY.md`
 - `18` through `26` feature-family files
 
 ## 18.2 Files that implement technical consequences
-- `06-SYSTEM-ARCHITECTURE.md`
-- `07-FLUTTER-APP-ARCHITECTURE-AND-MODULE-BOUNDARIES.md`
-- `08-DESIGN-SYSTEM-THEMES-TOKENS-AND-COMPONENTS.md`
-- `09-PLATFORM-SPEC-IOS-LIQUID-GLASS-ANDROID-ADAPTATION-AND-NATIVE-BRIDGES.md`
-- `13-DATA-MODEL-RLS-INVARIANTS-AND-MIGRATIONS.md`
-- `14-API-REALTIME-AND-INTEGRATION-CONTRACTS.md`
-- `15-OFFLINE-PACKS-SYNC-ASSET-DELIVERY-AND-CACHE-POLICY.md`
-- `16-MAP-ARCHITECTURE-POSITIONING-ROUTING-3D-AND-OFFLINE-WAYFINDING.md`
+- `06_SYSTEM_ARCHITECTURE.md`
+- `07_FLUTTER_APP_ARCHITECTURE_AND_MODULE_BOUNDARIES.md`
+- `08_DESIGN_SYSTEM_THEMES_TOKENS_AND_COMPONENTS.md`
+- `09_PLATFORM_ADAPTATION_IOS_ANDROID_AND_NATIVE_BRIDGES.md`
+- `13_DATA_MODEL_RLS_INVARIANTS_AND_MIGRATIONS.md`
+- `14_API_REALTIME_AND_INTEGRATION_CONTRACTS.md`
+- `15_OFFLINE_PACKS_SYNC_ASSET_DELIVERY_AND_CACHE_POLICY.md`
+- `16_MAP_ARCHITECTURE_POSITIONING_ROUTING_3_D_AND_OFFLINE_WAYFINDING.md`
 
 ## 18.3 Files that prove product quality
-- `27-TESTING-STRATEGY-TEST-MATRIX-AND-DEVICE-LAB.md`
-- `28-REAL-WORLD-VERIFICATION-RELEASE-GATES-AND-EVIDENCE.md`
-- `29-SECURITY-PRIVACY-COMPLIANCE-AND-RISK-REGISTER.md`
-- `30-DELIVERY-RUNBOOK-INCIDENTS-ROLLBACK-AND-OPERATIONS.md`
+- `27_TESTING_STRATEGY_TEST_MATRIX_AND_DEVICE_LAB.md`
+- `28_REAL_WORLD_VERIFICATION_RELEASE_GATES_AND_EVIDENCE.md`
+- `29_SECURITY_PRIVACY_COMPLIANCE_AND_RISK_REGISTER.md`
+- `30_DELIVERY_RUNBOOK_INCIDENTS_ROLLBACK_AND_OPERATIONS.md`
 
 ---
 

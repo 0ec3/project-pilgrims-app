@@ -6,7 +6,7 @@
 - **Audience:** Product lead, content lead, design lead, Flutter engineers, QA, AI coding agents, reviewer agents, translation contributors, religious governance contributors
 - **Purpose:** Define the canonical rules for user-facing copy, multilingual support, localization structure, RTL behavior, transliteration and translation policy, accessibility requirements, and inclusive communication so the app remains respectful, readable, culturally appropriate, and usable across supported audiences.
 - **Authority level:** This file is the canonical source of truth for app copy behavior, localization scope, RTL handling, and accessibility requirements. Screen designs, Flutter implementation, translations, and QA must not contradict this file.
-- **Primary dependencies:** `01-README-AND-MASTER-INDEX.md`, `03-PRODUCT-CHARTER-AND-SCOPE.md`, `08-DESIGN-SYSTEM-THEMES-TOKENS-AND-COMPONENTS.md`, `09-PLATFORM-SPEC-IOS-LIQUID-GLASS-ANDROID-ADAPTATION-AND-NATIVE-BRIDGES.md`, `10-PERSONAS-IA-USER-JOURNEYS-AND-TASK-FLOWS.md`, `11-SCREENS-STATES-NAVIGATION-AND-UI-BLUEPRINTS.md`
+- **Primary dependencies:** `01_README_AND_MASTER_INDEX.md`, `03_PRODUCT_CHARTER_AND_SCOPE.md`, `08_DESIGN_SYSTEM_THEMES_TOKENS_AND_COMPONENTS.md`, `09_PLATFORM_ADAPTATION_IOS_ANDROID_AND_NATIVE_BRIDGES.md`, `10_PERSONAS_IA_USER_JOURNEYS_AND_TASK_FLOWS.md`, `11_SCREENS_STATES_NAVIGATION_AND_UI_BLUEPRINTS.md`
 - **Related files:** `17`, `18`, `19`, `20`, `21`, `22`, `23`, `24`, `25`, `26`, `27`, `28`
 
 ---
@@ -379,6 +379,18 @@ The exact content model is defined in content-governance docs, but UI must suppo
 ## 11.5 Consistency rule
 Do not use inconsistent spellings for the same term across the app without documented reason.
 
+## 11.6 Script-aware typography fallback
+Localization must not assume that a font visible in the approved Figma reference supports every supported script.
+
+File `08` owns font stacks and semantic text roles. This file requires those stacks to preserve:
+- correct Arabic shaping and diacritics,
+- readable Latin-script English and Indonesian,
+- stable mixed Arabic/Latin bidirectional runs,
+- semantic hierarchy across fallback fonts,
+- large-text accessibility and required weight coverage.
+
+Feature code and localization files must not select ad hoc font families to work around missing glyphs. Missing-script or missing-weight coverage is a design-system defect to fix centrally and verify with realistic localized content.
+
 ---
 
 # 12. Locale and formatting rules
@@ -466,7 +478,7 @@ Features that are accessible only in calm settings are not sufficient for this p
 Do not rely only on QA at the end to “make things accessible.”
 
 ## 15.4 Accessibility must survive platform adaptation
-Custom material treatments, glass surfaces, map overlays, and motion must not break accessibility.
+Custom material, depth, overlay, transparency, glow, map-overlay, and motion treatments must not break accessibility. Platform-native material behavior may differ, but accessibility meaning and fallback quality must remain shared.
 
 ---
 
@@ -476,7 +488,9 @@ Custom material treatments, glass surfaces, map overlays, and motion must not br
 The app must support larger text sizes without breaking critical flows.
 
 ## 16.2 Contrast
-Critical text and actions must maintain strong contrast.
+Critical text and actions must maintain strong contrast in both Light and Dark.
+
+Dark Mode must preserve semantic hierarchy rather than use naive inversion. Important surface boundaries, text/icon contrast, focus, selection, error, stale, disabled, route, and emergency states must remain explicit and must not depend on shadow alone.
 
 ## 16.3 Touch target size
 Interactive elements must remain easy to tap, especially in emergency and walking contexts.
@@ -487,8 +501,12 @@ Important labels, actions, status changes, and section headings must be exposed 
 ## 16.5 Reduced motion
 Motion should reduce gracefully where supported or required.
 
-## 16.6 Reduced transparency
-Material/glass surfaces must degrade safely to more solid surfaces when transparency reduction or higher contrast is required.
+## 16.6 Reduced transparency and decorative-effect reduction
+When transparency reduction, increased contrast, or comparable accessibility settings require clearer presentation:
+- transparent or native-material overlays must become more opaque where needed,
+- custom depth, shadow, inner-highlight, glow, and decorative effects must simplify when they reduce clarity,
+- hierarchy and text/icon contrast must remain understandable in both Light and Dark,
+- selected, error, stale, disabled, route, emergency, and focus states must never rely on depth or color alone.
 
 ## 16.7 Keyboard/focus accessibility where relevant
 Focus order and visibility must remain coherent in contexts where keyboard or non-touch navigation matters.
@@ -635,8 +653,8 @@ RTL support must use Flutter direction-aware widgets and layout primitives rathe
 ## 22.4 Focus visibility rule
 Custom components must preserve visible focus and selected states.
 
-## 22.5 Motion/transparency rule
-Custom material/glass behavior must integrate with reduced-motion and reduced-transparency preferences.
+## 22.5 Motion/transparency/depth rule
+Custom material, depth, glow, overlay, and transparency behavior must integrate with reduced-motion, reduced-transparency, and increased-contrast preferences. Accessibility fallbacks must preserve state meaning and interaction hierarchy in both Light and Dark.
 
 ---
 
@@ -664,8 +682,8 @@ Must include:
 Must include:
 - large text
 - screen reader basics on major flows
-- contrast review on critical surfaces
-- reduced transparency/reduced motion checks where relevant
+- contrast review on critical surfaces in Light and Dark
+- reduced transparency/reduced motion/increased-contrast checks where relevant
 - tap target checks on urgent actions
 
 ## 23.4 Critical-flow QA

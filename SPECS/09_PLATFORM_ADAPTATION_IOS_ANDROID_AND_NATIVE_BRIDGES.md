@@ -1,77 +1,69 @@
-# 09 — PLATFORM SPEC, IOS LIQUID GLASS, ANDROID ADAPTATION, AND NATIVE BRIDGES
+# 09 — PLATFORM ADAPTATION, IOS, ANDROID, AND NATIVE BRIDGES
 
 ## Document status
 - **Type:** Normative platform adaptation and native-boundary document
 - **Priority:** Highest
 - **Audience:** Flutter engineers, iOS engineers, Android engineers, design lead, QA, AI coding agents, reviewer agents
-- **Purpose:** Define how the shared product and design system must adapt to iOS and Android, how Liquid Glass should be applied on Apple platforms, how Android should remain platform-appropriate without forced imitation, and how native capabilities must be exposed through controlled bridge interfaces.
+- **Purpose:** Define how the shared product and Pilgrims Soft Surface design system adapt to iOS and Android while preserving one visual identity, and how native capabilities are exposed through controlled bridge interfaces.
 - **Authority level:** This file is the canonical source of truth for platform-specific UX adaptation, native-bridge boundaries, permission behavior, asset-delivery platform differences, store platform differences, and when platform divergence is allowed or required.
-- **Primary dependencies:** `01-README-AND-MASTER-INDEX.md`, `03-PRODUCT-CHARTER-AND-SCOPE.md`, `06-SYSTEM-ARCHITECTURE.md`, `07-FLUTTER-APP-ARCHITECTURE-AND-MODULE-BOUNDARIES.md`, `08-DESIGN-SYSTEM-THEMES-TOKENS-AND-COMPONENTS.md`, `15-OFFLINE-PACKS-SYNC-ASSET-DELIVERY-AND-CACHE-POLICY.md`, `16-MAP-ARCHITECTURE-POSITIONING-ROUTING-3D-AND-OFFLINE-WAYFINDING.md`
+- **Primary dependencies:** `01_README_AND_MASTER_INDEX.md`, `03_PRODUCT_CHARTER_AND_SCOPE.md`, `06_SYSTEM_ARCHITECTURE.md`, `07_FLUTTER_APP_ARCHITECTURE_AND_MODULE_BOUNDARIES.md`, `08_DESIGN_SYSTEM_THEMES_TOKENS_AND_COMPONENTS.md`, `15_OFFLINE_PACKS_SYNC_ASSET_DELIVERY_AND_CACHE_POLICY.md`, `16_MAP_ARCHITECTURE_POSITIONING_ROUTING_3_D_AND_OFFLINE_WAYFINDING.md`
 - **Related files:** `10`, `11`, `12`, `14`, `17`, `18`–`25`, `27`, `28`, `29`, `30`
 
 ---
 
 # 1. Purpose of this file
 
-This file exists because platform differences in this project are not cosmetic details. They affect:
-- visual system behavior,
-- interaction patterns,
-- motion,
-- asset delivery,
-- store entitlements,
-- permissions,
-- notifications,
-- map rendering,
-- BLE and positioning,
-- testing and release behavior.
+This file defines platform adaptation and native-boundary behavior for Pilgrims Mobile App.
 
-Without a dedicated platform spec, teams and AI agents often make one of two mistakes:
-- they force the same behavior everywhere and create a product that feels wrong on one platform,
-- or they let platform-specific improvisation spread until the app becomes two disconnected products.
+File `08` owns the canonical visual language, Pilgrims Soft Surface, including Light/Dark theme semantics, surface/depth roles, tokens, and shared component styling.
 
-This file prevents both mistakes.
+This file owns:
+- platform-specific interaction and presentation adaptation,
+- native navigation and system behavior differences,
+- native permission and settings handoffs,
+- store, notification, location, Bluetooth, map, asset-delivery, and system-capability bridges,
+- platform-specific testing and support expectations.
 
-It defines:
-- what must remain shared,
-- what may differ by platform,
-- how iOS Liquid Glass should be applied,
-- how Android should adapt without imitation,
-- how native functionality must be isolated behind stable bridges,
-- which platform-specific technical choices are implementation details versus product-level differences.
-
----
+The app must feel like PILGRIMS on both platforms. Platform adaptation may be behaviorally native without creating separate iOS and Android visual identities.
 
 # 2. Platform philosophy
 
-## 2.1 One product, two native expressions
-The app should feel like one product with one product logic, one information architecture, one ethical boundary, and one feature set where possible.
+## 2.1 One product, two platform expressions
+The app has one product logic, one information architecture, one ethical boundary, one feature set where possible, and one canonical Pilgrims Soft Surface visual identity.
 
 ## 2.2 Shared product core
-These must remain aligned across iOS and Android unless a future decision explicitly changes them:
-- product scope
-- feature families
-- data model semantics
-- API contracts
-- entitlement rules
-- offline-first behavior
-- map-domain behavior
-- accessibility intent
-- terminology
+These remain aligned across iOS and Android unless an approved decision changes them:
+- product scope,
+- feature families,
+- data semantics,
+- API contracts,
+- entitlement rules,
+- offline-first behavior,
+- map-domain behavior,
+- accessibility intent,
+- terminology,
+- semantic visual roles,
+- mandatory Light/Dark appearance support.
 
-## 2.3 Platform-appropriate expression
+## 2.3 Platform-appropriate behavior
 These may adapt by platform:
-- navigation chrome treatment
-- material/surface expression
-- motion feel
-- control styling
-- modal presentation style
-- certain native permission or settings flows
-- implementation of bridges to stores, notifications, asset delivery, maps, BLE, and platform services
+- navigation mechanics and native chrome behavior,
+- modal/sheet presentation,
+- haptics,
+- transition feel,
+- system bars,
+- permission/settings handoffs,
+- store APIs,
+- notifications,
+- location/BLE,
+- asset delivery,
+- map/native capability integration.
 
-## 2.4 Anti-imitation rule
-Android must not become a visual clone of iOS. iOS must not be reduced to generic Material styling. The app should use shared semantics with platform-appropriate expression. Flutter’s adaptive guidance explicitly supports platform-specific adaptations rather than assuming all design choices are automatic. ([docs.flutter.dev](https://docs.flutter.dev/ui/adaptive-responsive/platform-adaptations))
+## 2.4 Shared visual-identity rule
+Platform adaptation must not split the visual product identity into an iOS-only doctrine and an Android fallback. Both platforms consume the same Pilgrims Soft Surface semantic/component system from file `08`.
 
----
+## 2.5 Appearance rule
+System, Light, and Dark are supported on both platforms. Platform-specific system behavior may differ, but Light/Dark completeness and semantic meaning must not.
 
 # 3. Platform scope categories
 
@@ -150,96 +142,57 @@ The following are non-negotiable across iOS and Android.
 # 5. Platform adaptation categories in detail
 
 ## 5.1 Navigation chrome
-Same navigation meaning, platform-adapted surface and motion.
+Navigation meaning is shared. Native behavior, system bar treatment, transition mechanics, and modal conventions may adapt by platform while consuming the same semantic Soft Surface roles.
 
 ## 5.2 Control surfaces
-Buttons, chips, overlays, sheets, and bars may adapt shape/material/motion while preserving semantic roles.
+Buttons, chips, overlays, sheets, and bars may adapt interaction feel and native presentation details while preserving component meaning and appearance semantics.
 
 ## 5.3 Modal and sheet presentation
-Must follow shared information hierarchy, but may use iOS-appropriate or Android-appropriate presentation patterns.
+Information hierarchy stays shared. Presentation mechanics may follow iOS- or Android-appropriate conventions.
 
 ## 5.4 Map overlays
-Map overlay controls may use stronger glass/material treatment on iOS and stronger elevated/material surfaces on Android, but route clarity and tap reliability remain the same requirement.
+Map controls use the shared Pilgrims Soft Surface map-overlay roles in both Light and Dark. Platform differences must never reduce route clarity, confidence honesty, label readability, or tap reliability.
 
 ## 5.5 Permission prompts and settings handoff
-Must respect native permission models and platform-specific settings affordances.
+Native permission models and system-settings affordances are platform-specific. Product copy and explanation remain consistent with files `11` and `12`.
 
 ---
 
 # 6. iOS adaptation strategy
 
 ## 6.1 iOS design goals
-On iOS, the app should feel:
-- refined,
-- calm,
-- modern,
-- structurally aligned with Apple platform expectations,
-- visually layered without reducing clarity.
+On iOS, the app should feel refined, calm, modern, and natural within Apple platform conventions while remaining recognizably PILGRIMS.
 
-## 6.2 iOS-specific design direction
-Apple’s current guidance frames Liquid Glass as a system material to adopt thoughtfully, especially in standard components, bars, and controls, rather than as indiscriminate translucency over all content. ([developer.apple.com](https://developer.apple.com/documentation/technologyoverviews/adopting-liquid-glass))
+## 6.2 iOS expression rule
+Use the shared Pilgrims Soft Surface semantic system. iOS may use native translucent/system material where platform conventions make it appropriate, but transparency is not the product identity and must not replace the semantic surface hierarchy.
 
-## 6.3 Liquid Glass usage rule on iOS
-Liquid-Glass-like treatment is allowed where it improves hierarchy and premium feel without harming readability.
+## 6.3 iOS structural behavior
+iOS may favor native-feeling navigation transitions, sheets, haptics, system-bar behavior, and platform control conventions where they do not conflict with product truth.
 
-### Preferred zones
-- top bars / navigation chrome
-- bottom bars / tab bars
-- map overlay control clusters
-- contextual floating action trays
-- lightweight modal headers
-- selected chip/filter surfaces
-
-### Discouraged or forbidden zones
-- long-form ritual text
-- dense instructions
-- safety-critical alerts
-- emergency sheets/cards
-- dense settings forms
-- any surface where transparency lowers comprehension
-
-## 6.4 iOS structural behavior
-Where appropriate, iOS should favor:
-- more fluid material transitions
-- stronger sense of layered chrome
-- modal presentation that feels native to iOS hierarchy
-- motion that feels cohesive with system conventions
+## 6.4 iOS appearance behavior
+System appearance follows iOS system appearance. Explicit Light or Dark user override must apply immediately and persist locally.
 
 ## 6.5 Accessibility rule on iOS
-When system settings such as Reduce Transparency or higher contrast are active, glass/material surfaces must degrade to stronger solid surfaces while preserving hierarchy and affordance. Apple explicitly notes that Liquid Glass adapts with accessibility settings such as Reduce Transparency and Increase Contrast. ([developer.apple.com](https://developer.apple.com/documentation/technologyoverviews/adopting-liquid-glass))
+Reduced motion, reduced transparency, increased contrast, text-size, and assistive-technology settings must simplify decorative depth/material and strengthen boundaries without changing semantics.
 
 ---
 
 # 7. Android adaptation strategy
 
 ## 7.1 Android design goals
-On Android, the app should feel:
-- calm,
-- clear,
-- premium,
-- fast,
-- natural within Android conventions.
+On Android, the app should feel refined, calm, modern, and natural within Android conventions while remaining recognizably PILGRIMS.
 
 ## 7.2 Android expression rule
-Android should use the shared semantic design system with platform-appropriate elevated/material surfaces rather than imitating Apple’s Liquid Glass literally.
+Android uses the same Pilgrims Soft Surface semantic system and must not be treated as a secondary solid-surface fallback. Native behavior may adapt where Android conventions require it.
 
 ## 7.3 Android structural behavior
-Android may favor:
-- stronger solid/elevated surfaces
-- Android-appropriate navigation transitions
-- Material-adjacent control behavior where it supports usability
-- clearer emphasis on contrast and tactile feedback in critical controls
+Android may favor platform-appropriate navigation transitions, predictive/back behavior where applicable, sheets/dialogs, haptics, system bars, and permission/settings patterns.
 
-## 7.4 Android visual differentiation rule
-The product identity remains shared, but Android is allowed to express it through:
-- different surface treatment
-- different transition feel
-- Android-appropriate haptic or system-integration expectations
+## 7.4 Android appearance behavior
+System appearance follows Android system appearance. Explicit Light or Dark user override must apply immediately and persist locally.
 
 ## 7.5 Accessibility rule on Android
-The Android experience must preserve high contrast, large text support, reduced motion handling, and robust focus/touch target behavior independent of any visual adaptation differences.
-
----
+Contrast, large text, reduced-motion equivalents, accessibility services, and system capabilities must be respected. Decorative depth cannot become the only boundary or state cue.
 
 # 8. Shared design system vs platform adaptation boundary
 
@@ -470,14 +423,14 @@ Feature modules must not care whether the map is implemented with one native vie
 The app uses one information architecture.
 
 ## 17.2 iOS chrome guidance
-- tab and top chrome may lean into material/glass treatment
-- modal and sheet hierarchy should feel native to iOS
+- tab and top chrome render the shared Pilgrims Soft Surface semantic roles while using iOS-appropriate native presentation mechanics
+- modal and sheet hierarchy should feel native to iOS without creating an iOS-only visual identity
 - transitions should feel fluid and cohesive
 
 ## 17.3 Android chrome guidance
-- bars and navigation should use stronger material/elevated surfaces
+- bars and navigation render the same Pilgrims Soft Surface semantic roles with Android-appropriate native behavior, density, motion, and system integration
 - transitions should feel Android-appropriate and efficient
-- modal patterns should remain familiar to Android users
+- modal patterns should remain familiar to Android users without creating a separate visual identity
 
 ## 17.4 Shared semantics rule
 A primary action is still primary, a destructive action is still destructive, and emergency surfaces remain high priority on both platforms.
@@ -496,7 +449,7 @@ Both platforms must support:
 - practical touch targets
 
 ## 18.2 iOS-specific accessibility adaptation
-Respect platform accessibility states that materially affect material rendering, especially reduced transparency and increased contrast. Apple explicitly ties Liquid Glass behavior to these accessibility settings. ([developer.apple.com](https://developer.apple.com/documentation/technologyoverviews/adopting-liquid-glass))
+Respect platform accessibility states that materially affect native material rendering, especially reduced transparency and increased contrast. Custom Pilgrims Soft Surface effects must simplify to clearer boundaries when these settings require it.
 
 ## 18.3 Android-specific accessibility adaptation
 Respect platform text scaling, contrast, talkback/navigation, and input-mode differences without requiring separate product logic.
@@ -513,7 +466,7 @@ Respect platform text scaling, contrast, talkback/navigation, and input-mode dif
 - pack state machine tests
 
 ## 19.2 iOS-specific tests
-- Liquid Glass / material fallback behavior with accessibility settings
+- native-material and Soft Surface fallback behavior with accessibility settings
 - Background Assets or iOS asset-delivery integration behavior if used
 - store purchase bridge behavior
 - map native wrapper behavior on supported iOS versions
@@ -554,14 +507,14 @@ The app must degrade by capability rather than failing unpredictably.
 # 21. Platform QA scenarios
 
 ## 21.1 iOS QA must include
-- material/glass fallback under Reduce Transparency
+- Soft Surface/native-material fallback under Reduce Transparency
 - high-contrast and larger-text checks
-- map overlays with glass chrome and route readability
+- map overlays with Soft Surface/native overlay chrome and route readability
 - asset download/install behavior through the chosen iOS asset path
 - restore purchase and entitlement refresh
 
 ## 21.2 Android QA must include
-- elevated/material adaptation consistency
+- Pilgrims Soft Surface semantic consistency under Android adaptation
 - larger-text and talkback checks
 - low-end device performance checks
 - download/install behavior through the chosen Android asset path
@@ -578,59 +531,56 @@ The app must degrade by capability rather than failing unpredictably.
 
 # 22. Recommendations adopted into this platform spec
 
-## 22.1 Recommendation — controlled Liquid Glass on iOS only where structurally appropriate
-The platform spec now explicitly limits glass-heavy treatment to bars, overlays, and selected chrome instead of dense content blocks.
+## 22.1 Recommendation — one Pilgrims visual identity
+Both platforms use Pilgrims Soft Surface from file `08`; platform adaptation changes native behavior, not brand identity.
 
-## 22.2 Recommendation — Android adaptation without imitation
-Android now explicitly uses shared semantics with platform-appropriate material/elevated expression rather than a forced iOS clone.
+## 22.2 Recommendation — mandatory dual appearance
+System, Light, and Dark must work on iOS and Android, including critical surfaces and platform chrome.
 
 ## 22.3 Recommendation — native bridges as typed interfaces, not scattered channels
-All platform integrations are now defined through dedicated bridge families with explicit ownership.
+Store, notifications, location, Bluetooth, map, asset-delivery, and system-capability integrations remain typed and mockable.
 
-## 22.4 Recommendation — asset delivery remains abstracted from the product contract
-The file keeps Background Assets / app-managed downloads / Android delivery mechanisms beneath the same pack-manager abstraction.
+## 22.4 Recommendation — asset delivery remains abstracted from product contract
+Platform delivery implementations may differ while pack/product semantics remain shared.
 
-## 22.5 Recommendation — platform differences are explicit categories
-This prevents hidden divergence while still allowing necessary native behavior.
-
----
+## 22.5 Recommendation — platform differences remain explicit categories
+Shared invariant, shared semantics/different presentation, platform-specific implementation, and necessity-driven platform-only behavior remain the governing classification.
 
 # 23. Anti-patterns forbidden by this platform spec
 
-The following are forbidden unless explicitly approved.
+## 23.1 Forking visual identity by platform
+Do not create separate iOS and Android design doctrines.
 
-## 23.1 Applying Liquid Glass indiscriminately to dense or critical content
-Forbidden.
-
-## 23.2 Forcing Android to visually mimic iOS materials everywhere
-Forbidden.
+## 23.2 Treating native material as product identity
+Native translucent/material effects may be used where appropriate, but they do not replace Pilgrims Soft Surface semantics.
 
 ## 23.3 Direct platform-channel usage inside feature widgets
-Forbidden.
+Feature widgets must depend on platform abstractions.
 
 ## 23.4 Giant all-purpose native bridges
-Forbidden.
+Keep bridge responsibilities bounded.
 
-## 23.5 Letting platform-specific code define product business rules without documentation
-Forbidden.
+## 23.5 Letting platform-specific code define product business rules
+Native code must not invent product truth.
 
 ## 23.6 Requiring platform-only capabilities for baseline product usefulness
-Forbidden.
+Graceful fallback remains mandatory.
 
 ## 23.7 Platform divergence that changes feature meaning without an approved decision
-Forbidden.
+Presentation may differ; product semantics may not drift.
 
-## 23.8 Treating purchase success on device as equivalent to trusted entitlement success
-Forbidden.
+## 23.8 Treating purchase success on device as trusted entitlement success
+Server-trusted entitlement rules remain authoritative.
 
----
+## 23.9 Partial appearance support
+Do not ship a platform where Light or Dark is materially incomplete for required flows.
 
 # 24. When this file must be updated
 
 This file must be updated whenever any of the following changes:
 - iOS adaptation rules
 - Android adaptation rules
-- Liquid Glass usage boundaries
+- Pilgrims Soft Surface and native-material adaptation boundaries
 - native bridge catalog
 - store integration boundary
 - asset-delivery platform implementation strategy
@@ -650,7 +600,7 @@ This file defines how Pilgrims Mobile App adapts to iOS and Android while preser
 It establishes:
 - what remains shared across platforms
 - what may adapt by platform
-- how Liquid Glass is used on iOS
+- how Pilgrims Soft Surface adapts to iOS conventions without becoming a separate visual identity
 - how Android should express the product without imitation
 - which native bridge families exist and what they own
 - how platform-specific purchase, asset, notification, location, BLE, and map behaviors are isolated

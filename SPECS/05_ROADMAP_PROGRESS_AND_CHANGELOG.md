@@ -170,12 +170,12 @@ Expansion candidates must come from a healthy, evidenced base rather than unreso
 # 6. Current project snapshot
 
 ## 6.1 Current snapshot
-- **Current phase:** Phase 0 specification and contract hardening is materially complete; narrow Phase 1 bootstrap can begin once the CI workflow has an observed green run and the owner accepts remaining low-priority prose cleanup.
+- **Current phase:** Phase 0 specification and contract hardening is materially complete; narrow Phase 1 bootstrap may begin. The contract-validation workflow has an observed green run on the current PR branch; remaining implementation-readiness gaps are operational/product decisions, not missing baseline contract validation.
 - **Overall delivery confidence:** high for documentation maturity, contract-file coherence, and baseline CI enforcement; medium for implementation readiness because no aligned codebase, environments, runtime tests, or release evidence exist yet.
-- **Active focus areas:** signed pack/content prose alignment in files `15` and `26`, release-evidence template planning, implementation bootstrap planning.
+- **Active focus areas:** implementation bootstrap planning, release-evidence template planning, minimal governed ritual/RIC fixtures, and explicit resolution of Home runtime decisions that the approved visual reference does not own.
 - **Most critical blockers:** no implementation baseline yet; no finalized production tooling stack; no operationalized content-review tooling; no device-lab or release-evidence execution lane yet.
 - **Recently completed milestones:** specs `01`–`31`, contract artifact baseline, quality-first hardening amendments, archived 30-file draft marker, file `02` agent-workflow normalization, validator pass for 6 contract files, GitHub Actions workflow for contract validation, file `13` group-presence data-model alignment.
-- **Immediate next priority:** confirm the workflow run passes on GitHub, then begin narrow Phase 1 bootstrap with contract-aware implementation tasks.
+- **Immediate next priority:** begin narrow Phase 1 bootstrap with contract-aware implementation tasks while keeping unresolved Home runtime decisions non-functional until product ownership is approved.
 
 ## 6.2 Phase transition rule
 Broad Phase 1 feature development must not begin until:
@@ -188,7 +188,7 @@ Broad Phase 1 feature development must not begin until:
 
 Current status:
 - validator pass: complete,
-- CI contract workflow: complete, pending observed green run,
+- CI contract workflow: complete; green run observed on the current PR branch,
 - 47-screen traceability: complete in contract artifact,
 - entitlement and privacy/account server-write rules: complete in contract/API specs,
 - file `02` obsolete filename references: complete,
@@ -202,14 +202,14 @@ Current status:
 | Module | Related specs/contracts | Phase target | Priority | Spec status | Implementation status | Validation status | Next required action |
 |---|---|---:|---:|---|---|---|---|
 | Governance/source of truth | `01`, `02`, `04`, `05`, `31`, `CONTRACTS/README` | 0 | P0 | Done / monitor | Not started | Validator and CI wired where contract-backed | Keep outdated historical references archived and current references normalized. |
-| Contract validator | `tools/specs/validate_spec_contracts.py`, `CONTRACTS/*`, `.github/workflows/spec-contracts.yml` | 0 | P0 | Done / monitor | Script and workflow exist | Passed locally; CI workflow present | Confirm first green workflow run and expand checks as contracts evolve. |
+| Contract validator | `tools/specs/validate_spec_contracts.py`, `CONTRACTS/*`, `.github/workflows/spec-contracts.yml` | 0 | P0 | Done / monitor | Script and workflow exist | GitHub Actions green observed; validator also checks canonical spec filenames/design migration | Keep validation green and expand checks only when new machine-checkable invariants are introduced. |
 | Screen traceability | `11`, `screen_feature_traceability.yaml` | 0 | P0 | Done / monitor | Not started | Validator passed | Keep all 47 canonical screens mapped and evidence-owned. |
 | Entitlements/account | `24`, `entitlement_capability_policy.yaml` | 1 | P0 | Done / hardening | Not started | Validator passed | Implement free/auth/Supporter capability gates exactly from contract. |
 | API/privacy endpoints | `14`, `24`, `29`, `31` | 1 | P0 | Done / hardening | Not started | Spec-reviewed | Implement idempotency, rate-limit, audit, alert, and evidence rules from file `14`. |
 | Group coordination | `20`, `13`, `14`, `group_presence_privacy_contract.yaml` | 2 | P1 | Done / monitor | Not started | Validator passed; file `13` aligned | Implement create/join/check-in as server-trusted writes with contract-backed fixtures. |
 | Ritual/RIC content | `18`, `26` | 1 | P0 | Done | Not started | Planned | Add minimal governed fixture before implementation claims correctness. |
 | Offline packs | `15`, `23`, `content_pack_trust_chain_contract.yaml` | 1 | P0 | Done / contract-backed | Not started | Validator passed | Reflect signed manifest verification and LKG activation path in implementation and tests. |
-| Design system | `08`, `09`, `11`, `12` | 1 | P0 | Done / needs implementation tokens | Not started | Planned | Convert tokens and components into concrete Flutter package baseline. |
+| Design system | `08`, `09`, `11`, `12` | 1 | P0 | Done / needs implementation tokens | Not started | Planned | Implement Figma-aligned Pilgrims Soft Surface semantic tokens, mandatory Light/Dark themes, and System/Light/Dark appearance handling in the Flutter design-system baseline. |
 | Release evidence | `27`, `28`, `29`, `30`, `release_gate_taxonomy.yaml` | 3 | P0 | Done / contract-backed | Not started | Validator passed | Create evidence templates and CI/device-lab lanes. |
 
 ---
@@ -219,14 +219,39 @@ Current status:
 | Blocker ID | Severity | Area | Description | Required resolution |
 |---|---|---|---|---|
 | B-001 | P0 | Implementation | No aligned Flutter/backend implementation baseline exists yet. | Bootstrap repo structure, packages, tokens, routes, schemas, and tests from specs. |
-| B-002 | P1 | CI validation | Contract validation workflow exists; first successful GitHub Actions run should be observed and kept required for contract-affecting changes. | Confirm the workflow run passes and keep it enabled for relevant paths. |
 | B-003 | P0 | Content correctness | Ritual/RIC implementation needs minimal governed fixture before correctness claims. | Add schema/fixture/review metadata under content governance. |
 | B-004 | P1 | Operations | Device-lab and release-evidence lane not operationalized. | Create release evidence templates, owner model, and device bucket execution path. |
-| B-005 | P2 | Prose cleanup | File `31` carry-forward checklist still uses a plain future-work list rather than a status table. | Convert file `31` checklist to a status table when connector constraints or local patching make it safe. |
+| B-005 | P1 | Home context/product ownership | The approved Home visual shows prayer-time/current-prayer/countdown/location/weather subcontent, but no normative runtime owner currently defines calculation/provider, timezone/location dependency, freshness, stale/offline behavior, privacy, analytics, or release evidence. | Product owner must either (a) explicitly add the capability with a named owning spec and end-to-end contract, or (b) keep those data-driven subfields omitted/non-runtime. Do not infer implementation from Figma. |
+| B-006 | P1 | Home shell/product ownership | The centered floating Home action slot has no canonical behavior. | Product owner must map it to an already-approved canonical route/action and update file `11` plus traceability if screen/navigation semantics change, or keep the slot non-functional/absent. Do not infer QR/scanner/camera behavior from iconography. |
 
 ---
 
 # 9. Changelog
+
+## 2026-09-24 — Final audit status correction and unresolved Home decisions
+- Corrected roadmap language that still said the contract-validation workflow was awaiting an observed green run; the current PR head has a completed successful workflow run.
+- Recorded the prayer/weather Home context runtime ownership gap as an explicit product decision instead of allowing implementation agents to infer calculation/provider behavior from the visual reference.
+- Recorded the centered floating Home action as an explicit unresolved product decision; it must not silently become QR/scanner/camera or displace the canonical Tools section.
+- No machine-readable contract changed because these items remain unresolved product ownership decisions rather than approved runtime semantics.
+
+## 2026-09-24 — Final cross-spec quality audit hardening
+- Normalized remaining broken hyphenated spec filename references to canonical underscore filenames.
+- Removed residual active glass-specific platform/architecture wording so D-006 consistently governs one Pilgrims Soft Surface identity across iOS and Android.
+- Clarified that prayer-time/weather data and the centered Home floating slot are visual evidence only until an approved runtime owner/action exists; the mockup does not replace the canonical Tools section or authorize QR/scanner/camera behavior.
+- Made script-aware font fallback an explicit design-system/localization contract for Arabic, English, Indonesian, mixed-script, and large-text coverage.
+- Reconciled Notes/Bookmarks entitlement prose with file `24` and `CONTRACTS/entitlement_capability_policy.yaml`; `NOTES_BOOKMARKS_EXTENDED` is canonical.
+- Converted file `31` carry-forward items into truthful status, leaving implementation tests pending because Flutter/backend implementation has not started.
+- Expanded the validator to catch canonical filename/design-migration drift and made the CI workflow run for all `SPECS/**` changes.
+- Machine-readable product contracts were not changed because this audit found prose/reference drift rather than contract-semantic drift.
+
+## 2026-09-24 — Figma-aligned Pilgrims Soft Surface and dual-appearance contract
+- Superseded the former Liquid-Glass-led visual doctrine while preserving D-004 as historical decision record.
+- Adopted D-006: the approved Figma direction is the visual reference and file `08` now owns the canonical **Pilgrims Soft Surface** design language.
+- Made System / Light / Dark appearance a first-class product contract; Light and Dark are both mandatory.
+- Renamed file `09` to `09_PLATFORM_ADAPTATION_IOS_ANDROID_AND_NATIVE_BRIDGES.md` so platform adaptation and native bridges remain style-neutral.
+- Preserved existing product behavior, IA, accessibility, offline, entitlement, privacy, religious-content, and native-bridge truth.
+- Flutter implementation remains **not started**; this change updates specification truth and verification expectations only.
+
 
 ## 2026-06-12 — Group presence data-model prose aligned
 - Updated file `13` to use current underscore dependencies in document metadata.

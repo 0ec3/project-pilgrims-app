@@ -6,7 +6,7 @@
 - **Audience:** Founder, product lead, design lead, Flutter engineers, backend engineers, QA, AI coding agents, reviewer agents, release agents
 - **Purpose:** Define the canonical feature contract for the personal tools feature family, including Planner behavior, local reminders, Wallet artifact storage, Notes, Bookmarks, capture surfaces, itinerary overlays, Supporter enrichments, offline guarantees, export/share behavior, analytics hooks, and release-readiness expectations.
 - **Authority level:** This file is the canonical source of truth for the Planner/Reminders/Wallet/Notes/Bookmarks feature family. If implementation, UI, or tests diverge from this file, this file wins unless a higher-level normative contract or approved decision record explicitly changes it.
-- **Primary dependencies:** `01-README-AND-MASTER-INDEX.md`, `03-PRODUCT-CHARTER-AND-SCOPE.md`, `04-DECISIONS-GLOSSARY-AND-CHANGE-CONTROL.md`, `07-FLUTTER-APP-ARCHITECTURE-AND-MODULE-BOUNDARIES.md`, `08-DESIGN-SYSTEM-THEMES-TOKENS-AND-COMPONENTS.md`, `09-PLATFORM-SPEC-IOS-LIQUID-GLASS-ANDROID-ADAPTATION-AND-NATIVE-BRIDGES.md`, `10-PERSONAS-IA-USER-JOURNEYS-AND-TASK-FLOWS.md`, `11-SCREENS-STATES-NAVIGATION-AND-UI-BLUEPRINTS.md`, `12-COPY-LOCALIZATION-RTL-AND-ACCESSIBILITY.md`, `13-DATA-MODEL-RLS-INVARIANTS-AND-MIGRATIONS.md`, `14-API-REALTIME-AND-INTEGRATION-CONTRACTS.md`, `15-OFFLINE-PACKS-SYNC-ASSET-DELIVERY-AND-CACHE-POLICY.md`, `17-ANALYTICS-OBSERVABILITY-AND-PERFORMANCE-BUDGETS.md`, `18-FEATURE-RITUALS-RIC-AND-RELIGIOUS-CONTENT.md`, `19-FEATURE-MAPS-SAVE-MY-GATE-AND-3D-WAYFINDING.md`, `20-FEATURE-GROUP-HUB-CHECKINS-REGROUP-AND-SHARED-COORDINATION.md`
+- **Primary dependencies:** `01_README_AND_MASTER_INDEX.md`, `03_PRODUCT_CHARTER_AND_SCOPE.md`, `04_DECISIONS_GLOSSARY_AND_CHANGE_CONTROL.md`, `07_FLUTTER_APP_ARCHITECTURE_AND_MODULE_BOUNDARIES.md`, `08_DESIGN_SYSTEM_THEMES_TOKENS_AND_COMPONENTS.md`, `09_PLATFORM_ADAPTATION_IOS_ANDROID_AND_NATIVE_BRIDGES.md`, `10_PERSONAS_IA_USER_JOURNEYS_AND_TASK_FLOWS.md`, `11_SCREENS_STATES_NAVIGATION_AND_UI_BLUEPRINTS.md`, `12_COPY_LOCALIZATION_RTL_AND_ACCESSIBILITY.md`, `13_DATA_MODEL_RLS_INVARIANTS_AND_MIGRATIONS.md`, `14_API_REALTIME_AND_INTEGRATION_CONTRACTS.md`, `15_OFFLINE_PACKS_SYNC_ASSET_DELIVERY_AND_CACHE_POLICY.md`, `17_ANALYTICS_OBSERVABILITY_AND_PERFORMANCE_BUDGETS.md`, `18_FEATURE_RITUALS_RIC_AND_RELIGIOUS_CONTENT.md`, `19_FEATURE_MAPS_SAVE_MY_GATE_AND_3_D_WAYFINDING.md`, `20_FEATURE_GROUP_HUB_CHECKINS_REGROUP_AND_SHARED_COORDINATION.md`
 - **Related files:** `22`, `23`, `24`, `25`, `27`, `28`, `29`, `30`
 
 ---
@@ -234,10 +234,10 @@ Supporter-linked value may include:
 - richer export options,
 - smart links back into source screens.
 
-## 7.3 Current entitlement naming rule
-The current API contract example uses `NOTES_BOOKMARKS_EXTENDED` for the richer note/bookmark capability.
-Older legacy materials may refer to `NOTES_BOOKMARKS`.
-Until the entitlement-governance file is normalized, implementation should treat the current API contract as authoritative and preserve compatibility awareness in feature code and tests.
+## 7.3 Canonical entitlement naming rule
+The canonical richer note/bookmark capability is `notes_bookmarks.extended` in `CONTRACTS/entitlement_capability_policy.yaml`, using entitlement key `NOTES_BOOKMARKS_EXTENDED` as owned by file `24` and exposed by file `14`.
+
+Older historical material may mention `NOTES_BOOKMARKS`; that alias is non-canonical and must not be invented, accepted as new feature truth, or used for gating unless a documented compatibility migration updates file `24`, file `14`, this file, and the entitlement contract together.
 
 ## 7.4 Ethical gating rule
 Free users must not be prevented from:

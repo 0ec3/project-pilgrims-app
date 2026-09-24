@@ -83,6 +83,9 @@ Private support data should stay on the device by default unless server truth is
 ## 3.3 Minimize data collection
 Collect only the minimum data needed for a defined product purpose. Do not “collect now, decide later.”
 
+## 3.3.1 Appearance preference privacy
+Appearance (`system | light | dark`) is an ordinary local UI preference. It does not require server persistence, account linkage, Supporter entitlement, or sensitive telemetry. If analytics records a preference change, use the safe enum only through the existing settings preference event.
+
 ## 3.4 Separate operational truth from private support data
 Protected shared state such as entitlements, group membership, group creation, and server-backed deletion/export status may be server-governed.
 Private support data such as notes, ritual progress, medical profile, planner context, and saved anchors should remain local unless an approved decision changes that boundary.

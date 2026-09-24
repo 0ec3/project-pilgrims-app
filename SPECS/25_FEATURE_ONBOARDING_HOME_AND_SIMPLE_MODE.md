@@ -144,6 +144,46 @@ If an active group snapshot exists, Home may surface latest regroup context, saf
 ## 6.5 Stale/protected-state honesty
 If group, entitlement, pack, or other remote/supportive data is stale, unavailable, or unverified, Home must reflect that honestly where it matters.
 
+## 6.6 Approved Home visual anatomy
+The supplied approved Home visual reference establishes the current standard Home anatomy without changing feature ownership:
+
+1. profile/greeting header,
+2. prayer/context hero,
+3. compact quick-action row,
+4. Umrah progress,
+5. Saved Gate + Jama’ah Group summaries,
+6. Plan & Schedule,
+7. persistent bottom navigation with a centered floating action slot.
+
+The prayer/context hero is contextual/ambient information, not a replacement for ritual recovery priority. Current ritual actions and urgent recovery must remain immediately discoverable even when the prayer hero is visually dominant.
+
+### Prayer/context hero
+The visual reference shows:
+- location context,
+- current prayer name,
+- countdown/current time context,
+- optional weather/context tile,
+- compact daily prayer-time chips.
+
+The design does not establish prayer-time calculation authority, weather provider, freshness rules, or online/offline truth. No current normative feature/API spec owns those runtime capabilities. Until approved change control establishes ownership and defines calculation/provider, timezone/location context, freshness, offline/stale behavior, privacy, analytics, and test/release evidence, Home must omit those data-driven subfields or treat them strictly as non-runtime visual reference content; implementation must not guess or synthesize values.
+
+### Quick-action row
+The visual reference demonstrates five labeled tiles: `Bacaan`, `Save Gate`, `Tata Cara`, `Emergency`, and `Lainnya`.
+
+These are visual examples only. Final localized labels and destinations must map to canonical feature routes and terminology; agents must not create new top-level features solely to preserve screenshot text.
+
+### Ritual progress
+The visual reference demonstrates a percentage-complete summary, a compact time indicator, a progress bar, and named milestones such as Ihram, Thawaf, Sa’i, Tahallul, and completion. Ritual truth and milestone ordering remain owned by file `18`.
+
+### Saved Gate and Jama’ah Group summaries
+The visual reference demonstrates paired compact cards. Their status text must use real freshness/state truth from map/group domains and must not imply live tracking.
+
+### Plan & Schedule
+The visual reference demonstrates a date strip, vertical timeline, completed/upcoming state distinction, time range, and explicit stateful action button. Planner behavior remains owned by file `21`.
+
+### Bottom navigation
+The visual reference demonstrates Home, Ibadah, Group, and Map as visible labels plus one centered floating action slot. This does not change the canonical five-section shell in files `10` and `11`: Home, Rituals, Map, Group, and Tools. The slot must not replace or silently hide Tools, and its iconography does not define behavior. It must not become QR/scanner/camera or another new action by inference. Before it is functional, it must map to an already-approved canonical route/action and be reflected in file `11` and traceability where applicable.
+
 ---
 
 # 7. Urgent shortcut architecture
@@ -229,16 +269,15 @@ If a pack candidate fails verification, Home may show calm recovery status only 
 
 # 11. Platform and visual adaptation
 
-Onboarding, Home, and Simple Mode share the same product behavior on iOS and Android.
+Onboarding, Home, and Simple Mode share the same product behavior and the same **Pilgrims Soft Surface** visual identity on iOS and Android.
 
-On iOS, Liquid-Glass-like treatment is allowed only where it improves hierarchy and calmness without harming readability.
-Avoid glass/material treatment on dense onboarding text, emergency/safety surfaces, dense forms, and large-text/reduced-transparency contexts.
+Both Light and Dark are mandatory. System follows OS appearance.
 
-Android should use platform-appropriate solid/elevated surfaces rather than imitating iOS literally.
+Platform adaptation may change native navigation, sheet/modal mechanics, haptics, system chrome, transitions, or permission handoffs, but must not fork the Home/Simple Mode identity.
 
-Simple Mode should generally use stronger solids, reduced ornament, and clearer separators.
+Simple Mode may reduce decorative depth, glow, and layered effects when that improves clarity or performance. It must preserve semantic hierarchy, touch targets, feature truth, and appearance contrast.
 
----
+Home and urgent shortcuts must remain readable and discoverable in both themes. Emergency, saved-gate recovery, group recovery, and ritual-start surfaces prioritize explicit contrast over decorative depth.
 
 # 12. Data and local preferences
 
@@ -246,6 +285,7 @@ Local preference authority lives in file `24`, and device-local persistence cate
 
 Representative local values:
 - onboarding completion state,
+- Appearance mode (`system | light | dark`),
 - onboarding version seen,
 - selected language/locale override,
 - Simple Mode enabled state,

@@ -65,6 +65,13 @@ If data is stale, permission is missing, route confidence is low, a pack is not 
 ## 2.7 Screen-feature traceability is mandatory
 Every implemented screen must map to an owning feature file and critical flow list in `CONTRACTS/screen_feature_traceability.yaml`.
 
+## 2.8 Visual source-of-truth and appearance rule
+Screen behavior, IDs, navigation, and feature meaning come from this spec and owning feature specs. Figma mockups are visual references and must not silently add, remove, rename, or reassign canonical product behavior.
+
+Every implemented screen must support complete Light and Dark appearances through the file `08` design system. System appearance is an app-level preference that selects the OS-matched Light/Dark theme; it does not create a third visual contract.
+
+Where the current Figma reference has no verified Dark variant, screen blueprints must use the semantic Dark mappings from file `08` and must not invent or label unverified dark values as Figma-derived.
+
 ---
 
 # 3. Canonical navigation model
@@ -264,7 +271,7 @@ For each screen, explicitly consider:
 ## 7.1 Home Root
 Home Root is a recovery surface, not a feature dump.
 
-Priority order:
+### Task priority
 1. current ritual status / continue or start ritual,
 2. urgent shortcut cluster: Emergency, Phrasebook, Save My Gate, I’m Safe,
 3. saved gate / recent map action,
@@ -272,6 +279,42 @@ Priority order:
 5. planner/reminder summary,
 6. pack readiness summary,
 7. Settings/Tools entry.
+
+Task priority describes what must remain easiest to resume or reach; it does not require the first visible card to be the ritual card. Contextual ambient information such as prayer time may occupy a visual hero position as long as it does not obscure or slow access to higher-priority recovery actions.
+
+### Approved visual composition reference
+The supplied Home reference associated with Figma node `21:600` demonstrates this vertical composition:
+1. profile/greeting header with notification and Settings actions,
+2. prayer/context hero with current-prayer emphasis and prayer-time chips,
+3. five compact quick-action tiles,
+4. Umrah progress card with milestone stepper,
+5. paired Saved Gate and Jama’ah Group compact cards,
+6. Plan & Schedule section with date strip and timeline rows,
+7. bottom navigation with a centered floating action slot.
+
+The reference also demonstrates the current visual hierarchy:
+- white/light canvas,
+- dominant cyan/turquoise accent,
+- very rounded cards,
+- soft raised surfaces,
+- compact icon tiles,
+- restrained shadows,
+- cyan active navigation and action treatment,
+- orange secondary planner action treatment.
+
+This visual composition does **not** authorize new feature semantics. Labels, group freshness, saved-gate truth, and planner actions remain governed by their owning feature/data/API specs.
+
+Prayer-time calculation/source behavior and weather sourcing do not currently have an approved runtime owner in the normative feature/API system. Therefore the mockup establishes only visual anatomy for those subfields. Until change control assigns an owner and defines calculation/provider, timezone/location context, freshness, offline/stale behavior, privacy, analytics, and test/release evidence, implementation must omit those data-driven subfields or keep them as clearly non-runtime design reference content rather than guessing or synthesizing values.
+
+The centered floating action is likewise unassigned by the mockup. It must not be inferred as QR/scanner/camera or any other new behavior. The canonical shell remains five primary sections — Home, Rituals, Map, Group, and Tools. The visual slot must not remove or replace Tools; it becomes functional only if mapped to an already-approved canonical route/action and synchronized with this file and `CONTRACTS/screen_feature_traceability.yaml`.
+
+### Required responsive behavior
+- Quick actions may wrap, scroll, or adapt to available width rather than shrinking below usable touch targets.
+- The paired Saved Gate/Jama’ah Group cards may stack vertically when width or text scale requires it.
+- Planner rows must preserve title/time/action legibility at large text and under localization expansion.
+- Bottom navigation must preserve safe-area spacing and not allow the centered floating action to obscure labels or system gesture areas.
+- RTL must mirror directional layout where appropriate without changing real-world map/direction semantics.
+- Light and Dark must keep the same information hierarchy and component anatomy.
 
 Home must remain useful offline and must not request account or permissions before task-linked value is clear.
 
@@ -390,7 +433,8 @@ Every screen must support:
 - screen reader labels and focus order,
 - non-color-only status meaning,
 - touch targets appropriate for tired or low-confidence users,
-- reduce transparency / increase contrast behavior from the design system.
+- reduced-transparency / increased-contrast behavior from the design system,
+- readable Light and Dark treatment with explicit boundaries for important states.
 
 ## 9.2 RTL and localization
 Layouts and copy must support RTL and localization expansion. Critical status strings must not be embedded as unlocalized widget literals.

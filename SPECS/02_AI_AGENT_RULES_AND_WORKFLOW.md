@@ -81,10 +81,11 @@ The agent must identify the task type and read the relevant canonical documents.
 Read:
 - `SPECS/07_FLUTTER_APP_ARCHITECTURE_AND_MODULE_BOUNDARIES.md`
 - `SPECS/08_DESIGN_SYSTEM_THEMES_TOKENS_AND_COMPONENTS.md`
-- `SPECS/09_PLATFORM_SPEC_IOS_LIQUID_GLASS_ANDROID_ADAPTATION_AND_NATIVE_BRIDGES.md`
+- `SPECS/09_PLATFORM_ADAPTATION_IOS_ANDROID_AND_NATIVE_BRIDGES.md`
 - `SPECS/10_PERSONAS_IA_USER_JOURNEYS_AND_TASK_FLOWS.md`
 - `SPECS/11_SCREENS_STATES_NAVIGATION_AND_UI_BLUEPRINTS.md`
 - `SPECS/12_COPY_LOCALIZATION_RTL_AND_ACCESSIBILITY.md`
+- the approved Figma visual reference when the task changes current visual styling, tokens, shared components, or screen composition
 - relevant feature-family file
 - `SPECS/CONTRACTS/screen_feature_traceability.yaml` when screens, navigation, analytics, accessibility evidence, or entitlement dependencies are touched.
 
@@ -101,7 +102,7 @@ Read:
 Read:
 - `SPECS/06_SYSTEM_ARCHITECTURE.md`
 - `SPECS/07_FLUTTER_APP_ARCHITECTURE_AND_MODULE_BOUNDARIES.md`
-- `SPECS/09_PLATFORM_SPEC_IOS_LIQUID_GLASS_ANDROID_ADAPTATION_AND_NATIVE_BRIDGES.md`
+- `SPECS/09_PLATFORM_ADAPTATION_IOS_ANDROID_AND_NATIVE_BRIDGES.md`
 - `SPECS/11_SCREENS_STATES_NAVIGATION_AND_UI_BLUEPRINTS.md`
 - `SPECS/13_DATA_MODEL_RLS_INVARIANTS_AND_MIGRATIONS.md`
 - `SPECS/14_API_REALTIME_AND_INTEGRATION_CONTRACTS.md`
@@ -310,6 +311,8 @@ Feature widgets must not directly depend on low-level infrastructure or unrelate
 ## 8.5 Do not create one-off styling debt
 Do not solve urgent UI problems with one-off hardcoded fixes that bypass the design system.
 
+For visual work, agents must inspect the current canonical design-system contract and the approved Figma reference before inventing new surface, depth, color, typography, or appearance patterns. Figma is visual evidence only; it must not override product scope, IA, screen IDs, localization, or feature semantics owned by the normative specs.
+
 ## 8.6 Respect platform adaptation rules
 If a style or interaction differs on iOS and Android, follow the platform spec rather than improvising.
 
@@ -420,7 +423,7 @@ After implementing a change, the agent must:
 Update `SPECS/07_FLUTTER_APP_ARCHITECTURE_AND_MODULE_BOUNDARIES.md`, `SPECS/05_ROADMAP_PROGRESS_AND_CHANGELOG.md`, and possibly feature-family files and test docs.
 
 ## 15.2 If themes, tokens, or components change
-Update `SPECS/08_DESIGN_SYSTEM_THEMES_TOKENS_AND_COMPONENTS.md`, `SPECS/09_PLATFORM_SPEC_IOS_LIQUID_GLASS_ANDROID_ADAPTATION_AND_NATIVE_BRIDGES.md` if platform behavior changes, `SPECS/11_SCREENS_STATES_NAVIGATION_AND_UI_BLUEPRINTS.md` if screen blueprints change, impacted feature-family docs, and `SPECS/05_ROADMAP_PROGRESS_AND_CHANGELOG.md`.
+Update `SPECS/08_DESIGN_SYSTEM_THEMES_TOKENS_AND_COMPONENTS.md`, `SPECS/09_PLATFORM_ADAPTATION_IOS_ANDROID_AND_NATIVE_BRIDGES.md` if platform behavior changes, `SPECS/11_SCREENS_STATES_NAVIGATION_AND_UI_BLUEPRINTS.md` if screen blueprints change, impacted feature-family docs, and `SPECS/05_ROADMAP_PROGRESS_AND_CHANGELOG.md`.
 
 ## 15.3 If data model changes
 Update `SPECS/13_DATA_MODEL_RLS_INVARIANTS_AND_MIGRATIONS.md`, `SPECS/14_API_REALTIME_AND_INTEGRATION_CONTRACTS.md`, impacted feature-family docs, `SPECS/27_TESTING_STRATEGY_TEST_MATRIX_AND_DEVICE_LAB.md`, `SPECS/28_REAL_WORLD_VERIFICATION_RELEASE_GATES_AND_EVIDENCE.md`, `SPECS/05_ROADMAP_PROGRESS_AND_CHANGELOG.md`, and affected files in `SPECS/CONTRACTS/`.

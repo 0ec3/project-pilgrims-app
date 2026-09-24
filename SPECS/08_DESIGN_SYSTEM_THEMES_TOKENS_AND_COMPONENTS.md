@@ -6,7 +6,7 @@
 - **Audience:** Design lead, Flutter engineers, design-system engineers, QA, AI coding agents, reviewer agents
 - **Purpose:** Define the canonical visual system of the app, the token architecture, theme architecture, component contracts, platform adaptation rules, accessibility requirements, and Flutter implementation boundaries so the app remains visually consistent, maintainable, and safe for AI-assisted development.
 - **Authority level:** This file is the canonical source of truth for visual semantics, theme structure, token categories, component styling, and how UI styling must be implemented in Flutter. Feature modules and screens must not silently override this system.
-- **Primary dependencies:** `01-README-AND-MASTER-INDEX.md`, `03-PRODUCT-CHARTER-AND-SCOPE.md`, `06-SYSTEM-ARCHITECTURE.md`, `07-FLUTTER-APP-ARCHITECTURE-AND-MODULE-BOUNDARIES.md`
+- **Primary dependencies:** `01_README_AND_MASTER_INDEX.md`, `03_PRODUCT_CHARTER_AND_SCOPE.md`, `06_SYSTEM_ARCHITECTURE.md`, `07_FLUTTER_APP_ARCHITECTURE_AND_MODULE_BOUNDARIES.md`
 - **Related files:** `09`, `10`, `11`, `12`, `16`, `17`, `18`–`25`, `27`, `28`
 
 ---
@@ -15,28 +15,33 @@
 
 This file defines how the app should look, feel, scale, and stay maintainable over time.
 
-It exists because this project has strong visual and operational constraints:
-- the app must feel calm, trustworthy, readable, and practical,
-- the app must support an iOS-specific adaptation inspired by Apple’s Liquid Glass design direction
-- the app must still feel coherent on Android rather than becoming a poor imitation of iOS
-- the app must remain legible in stressful and low-vision conditions,
-- the Flutter codebase must avoid hardcoded style duplication,
-- AI coding agents must be guided toward consistent component use and tokenized implementation,
-- the visual system must remain easy to evolve without major refactors.
+The canonical current visual language is **Pilgrims Soft Surface**. It is a project-owned system grounded in the approved current Figma direction and translated into reusable semantic contracts rather than copied as screenshot-specific styling.
 
-This file therefore defines:
+Pilgrims Soft Surface is characterized by:
+- mostly opaque canvas and card surfaces,
+- calm rounded geometry,
+- soft raised and inset depth,
+- restrained outer shadows and inner highlights,
+- controlled cyan/turquoise/blue accent and ambient glow,
+- strong readable text and icon contrast,
+- dimensional layering that remains subtle under stress,
+- one shared product identity across iOS and Android.
+
+The visual identity is **not** defined by transparency or blur. Soft-relief or neumorphic-inspired depth techniques may be used descriptively, but “Neumorphism” is not the canonical product/design-system name.
+
+The approved Figma target is visual evidence, not product-behavior authority. It must not override product scope, feature names, IA, screen IDs, entitlement truth, localization, accessibility, offline guarantees, or governed religious meaning owned by other normative specs.
+
+This file defines:
 - design principles,
-- theme architecture,
-- token categories,
-- color and typography semantics,
-- motion/effect rules,
-- glass/material usage rules,
+- Light/Dark appearance architecture,
+- foundation, semantic, component, and appearance token layers,
+- typography and multilingual fallback rules,
+- surface/depth/effect rules,
 - component families and states,
-- accessibility rules,
-- platform adaptation rules,
+- accessibility requirements,
+- platform adaptation boundaries,
+- performance-safe implementation guidance,
 - Flutter implementation boundaries.
-
----
 
 # 2. Design-system goals
 
@@ -63,215 +68,218 @@ The system must reduce the chance that AI agents invent new styling patterns, du
 # 3. Design principles
 
 ## 3.1 Content first
-The design must keep user content and actions more important than decorative surface treatment.
+User content, guidance, and actions are more important than decorative surface treatment.
 
 ## 3.2 Calm before expressive
-The app may be polished and elegant, but never at the expense of focus and clarity.
+The app may be polished and dimensional, but never at the expense of focus, readability, or confidence.
 
 ## 3.3 Semantic styling over raw values
-Widgets should be styled using semantic roles and tokens, not raw color literals, arbitrary spacing values, or copied effects.
+Widgets must use semantic and component roles, not raw Figma values, palette names, arbitrary spacing, or copied shadow stacks.
 
 ## 3.4 Reuse before reinvention
-If a UI pattern appears more than once or represents a stable product behavior, it should become a shared component or shared tokenized variant.
+If a visual pattern repeats or represents stable product behavior, it belongs in shared tokens/components rather than local screen styling.
 
-## 3.5 Legibility over translucency
-Apple’s Liquid Glass guidance focuses on adopting the new material thoughtfully, and Apple’s design guidance emphasizes legibility and continuity rather than indiscriminate translucency. ([developer.apple.com](https://developer.apple.com/documentation/technologyoverviews/adopting-liquid-glass))
+## 3.5 Legibility over decorative depth
+Raised, inset, glow, border, highlight, blur, or transparency effects are optional presentation tools. Text, icon, route, ritual, emergency, and state clarity are mandatory.
 
-## 3.6 One product, selective platform expression
-The app should feel like one product across platforms, but not by forcing identical styling everywhere.
+## 3.6 One product, selective platform behavior
+Pilgrims Soft Surface is shared across iOS and Android. Platform adaptation may change native behavior, interaction convention, system chrome, haptics, and presentation mechanics, but not fork the product into separate visual identities.
 
 ## 3.7 Stress-safe hierarchy
-The design must remain scannable and obvious when the user is tired, rushed, or anxious.
+The design must remain obvious when the user is tired, rushed, anxious, elderly, distracted, or using accessibility settings.
 
----
+## 3.8 Appearance parity
+Light and Dark are equally required product appearances. Neither may be treated as a secondary skin with missing components, unreadable states, or degraded critical flows.
 
 # 4. Visual identity direction
 
-## 4.1 Overall visual tone
-The visual language should feel:
-- clean,
-- respectful,
-- premium but not flashy,
-- modern but not experimental,
-- calm under pressure,
-- lightweight in cognitive load.
+## 4.1 Canonical name
+The project-owned canonical design-language name is **Pilgrims Soft Surface**.
 
-## 4.2 Surface strategy
-The visual system should use a combination of:
-- strong solid surfaces for dense or critical content,
-- soft elevated surfaces for sectional grouping,
-- controlled glass/material surfaces for chrome, overlays, and selected floating controls,
-- clear tonal hierarchy rather than excessive ornament.
+Do not rename the system canonically to “Neumorphism.” That term may only describe specific soft-relief depth techniques where useful.
 
-## 4.3 Information-density strategy
-High-density information should be broken into calm, modular panels and progressive disclosure patterns rather than one giant content wall.
+## 4.2 Figma grounding rule
+The approved current Figma design is the visual reference for the present styling direction.
 
-## 4.4 Map styling strategy
-Map UI chrome should remain clear and lightweight. Controls layered over maps may use material/glass treatment when contrast remains strong, but route clarity and labels must stay more important than decorative styling.
+The current reference is treated as light-oriented calibration unless an explicit verified Dark Mode design is available. Therefore:
+- Light theme may be calibrated directly from verified Figma variables and repeated design decisions,
+- Dark theme is a required semantic counterpart of the same identity,
+- exact Dark values must be intentionally designed and verified,
+- no spec or implementation may claim fabricated Dark values are “from Figma.”
 
----
+Figma-generated code, local layer colors, one-off shadows, or font artifacts must not be promoted blindly into canonical Flutter tokens.
+
+## 4.3 Surface roles
+The design system must define reusable semantic surface roles including:
+- canvas/background,
+- base surface,
+- raised surface,
+- inset/recessed surface,
+- floating surface,
+- interactive surface,
+- selected/active surface,
+- critical solid surface,
+- modal/sheet surface,
+- map overlay surface.
+
+## 4.4 Depth and effect roles
+The design system must define semantic effect roles including:
+- subtle outer shadow,
+- raised shadow,
+- inset shadow,
+- inner highlight,
+- ambient accent glow,
+- subtle border,
+- strong boundary,
+- focus ring,
+- scrim,
+- no decorative effect.
+
+Representative semantic names may include:
+- `effect.surface.subtle`,
+- `effect.surface.raised`,
+- `effect.surface.inset`,
+- `effect.surface.floating`,
+- `effect.surface.active`,
+- `effect.surface.critical`,
+- `effect.focus`,
+- `effect.none`.
+
+Feature code must not reconstruct these roles from raw shadow parameters.
+
+## 4.5 Information-density strategy
+High-density information must use calm modular grouping and progressive disclosure. Repeated list surfaces should prefer low-cost, low-relief presets over layered decorative effects.
+
+## 4.6 Critical-surface strategy
+Ritual guidance, RIC, emergency, medical, active wayfinding, and trusted-write failure surfaces must prefer explicit contrast, strong boundaries, and solid/low-relief treatment in both appearances.
+
+## 4.7 Map styling strategy
+Map controls may use Soft Surface floating/overlay roles, but route geometry, labels, confidence state, floor state, and fallback instructions always outrank decorative depth.
 
 # 5. Token architecture
 
-Material Design 3 defines tokens as reusable design decisions that can be used across design tools and code, and Flutter’s current architecture guidance supports centralized app theming and separation of concerns. ([m3.material.io](https://m3.material.io/foundations/design-tokens))
+The design system separates reusable decisions into five layers.
 
-## 5.1 Token philosophy
-Every reusable visual decision should exist as one of the following:
-- a foundation token,
-- a semantic token,
-- a component token,
-- or a platform-adaptation token.
+## 5.1 Foundation tokens
+Foundation tokens are primitives and scales:
+- base palette,
+- typography scale,
+- spacing scale,
+- radius/shape scale,
+- icon-size scale,
+- border-width scale,
+- depth primitives,
+- opacity primitives,
+- motion durations,
+- motion curves.
 
-## 5.2 Foundation tokens
-Foundation tokens define reusable primitive scales.
+Foundation tokens are implementation inputs, not feature-widget APIs.
 
-Categories:
-- base color palette
-- typography scale
-- spacing scale
-- shape/radius scale
-- elevation scale
-- opacity scale
-- blur scale
-- motion duration scale
-- motion curve scale
-- icon size scale
-- border width scale
+## 5.2 Semantic tokens
+Semantic tokens translate primitives into meaning. Required families include:
+- `color.canvas`,
+- `color.surface.base`,
+- `color.surface.raised`,
+- `color.surface.inset`,
+- `color.surface.floating`,
+- `color.surface.interactive`,
+- `color.surface.selected`,
+- `color.surface.critical`,
+- `color.surface.modal`,
+- `color.surface.mapOverlay`,
+- `color.text.primary`,
+- `color.text.secondary`,
+- `color.text.inverse`,
+- `color.icon.primary`,
+- `color.border.subtle`,
+- `color.border.strong`,
+- `color.action.primary`,
+- `color.action.secondary`,
+- `color.status.success`,
+- `color.status.warning`,
+- `color.status.critical`,
+- `color.map.routePrimary`,
+- `color.map.anchorSaved`,
+- `color.focus`,
+- `color.scrim`,
+- semantic spacing and motion roles,
+- semantic Soft Surface effect roles from section 4.4.
 
-## 5.3 Semantic tokens
-Semantic tokens translate primitives into meaning.
+## 5.3 Component tokens
+Component tokens define stable anatomy and variants for buttons, cards/surface containers, navigation/chrome, quick actions, inputs, progress, map controls, ritual surfaces, emergency surfaces, group/state cards, and account/settings rows. They must source semantic roles rather than raw primitives.
 
-Examples:
-- `color.surface.primary`
-- `color.surface.elevated`
-- `color.text.primary`
-- `color.text.secondary`
-- `color.action.primary`
-- `color.action.destructive`
-- `color.status.success`
-- `color.status.warning`
-- `color.status.critical`
-- `color.map.routePrimary`
-- `color.map.anchorSaved`
-- `space.section.large`
-- `motion.transition.standard`
-- `effect.glass.chrome`
+## 5.4 Appearance mappings
+Every appearance-sensitive semantic token must map intentionally for Light and Dark.
 
-## 5.4 Component tokens
-These express component-specific variants while still sourcing from semantic tokens.
+Geometry normally remains appearance-independent: spacing, radii, touch targets, information hierarchy, and component anatomy.
 
-Examples:
-- button heights
-- card padding variants
-- input corner radius
-- icon-button blur/elevation style
-- banner emphasis levels
-- route-chip size and icon spacing
+Mode-sensitive properties may include surface colors, text/icon colors, border intensity, shadow/highlight strength, ambient glow, scrims, system chrome brightness, and map overlay treatment.
 
-## 5.5 Platform-adaptation tokens
-These support platform-specific values without forking the whole product system.
+## 5.5 Platform adaptation
+Platform adaptation may refine native behavior and presentation mechanics while consuming the same semantic/component roles. Platform tokens must not become separate iOS/Android brand systems.
 
-Examples:
-- iOS navigation-bar material token
-- iOS floating-control glass opacity/blur token
-- Android elevated-surface tonal variant token
-- platform-specific transition presets
+## 5.6 Figma variable translation rule
+Verified Figma variables and repeated design decisions may inform foundation/semantic mappings. One-off decorative values, generated code values, or component-local artifacts remain local evidence unless repeated use and semantic need justify promotion.
 
----
+## 5.7 Feature-consumption rule
+Feature modules consume semantic/component roles only. They must not depend directly on primitive palette names, raw Figma variable names, raw effect parameters, or screenshot-derived constants.
 
 # 6. Theme architecture in Flutter
 
 ## 6.1 Theme ownership
-All app theming must be defined centrally in the design-system layer.
+All appearance construction is centralized in the design-system layer.
 
-## 6.2 Required theme layers
-The Flutter design system should expose at least:
-- base theme foundations,
-- light theme,
-- dark theme if supported,
-- semantic extensions,
-- component theme mappings,
-- platform-adaptation overlays or extensions.
+## 6.2 Mandatory appearance modes
+The product must support exactly these user-facing appearance modes:
+- **System** — follows the OS appearance,
+- **Light** — forces the complete Light theme,
+- **Dark** — forces the complete Dark theme.
 
-## 6.3 Recommended implementation pattern
-Use Flutter theming plus custom `ThemeExtension` structures for domain-specific semantic tokens and effects, because Flutter’s theming model supports extension-based custom theme data in a scalable way. ([docs.flutter.dev](https://docs.flutter.dev/ui/design/material))
+System is the recommended default.
 
-## 6.4 Required theme outputs
-The design-system layer should expose:
-- `ColorScheme` mapping where appropriate,
-- custom theme extensions for app-specific semantic colors,
-- text-theme mapping,
-- spacing/effect accessors,
-- component theme definitions,
-- platform-specific material presets.
+## 6.3 Appearance behavior contract
+Appearance selection must work without account or network, require no Supporter entitlement, persist locally, apply immediately, survive restart, preserve navigation and active feature state, and remain independent from Simple Mode.
 
-## 6.5 Forbidden theme behavior
-Forbidden:
-- defining parallel shadow/color systems in feature modules,
-- bypassing theme extensions by using hardcoded literals,
-- per-screen “mini theme systems” that duplicate central tokens.
+## 6.4 Required theme layers
+The Flutter design system must expose shared foundation tokens, complete Light and Dark themes, semantic theme extensions, component theme mappings, Soft Surface effect presets, and platform adaptation hooks.
 
----
+## 6.5 Recommended implementation pattern
+Use Flutter theming plus custom `ThemeExtension` structures for app-specific semantic colors, surface/depth roles, spacing, motion, and map/status semantics. The app shell maps the persisted Appearance preference to `ThemeMode.system`, `ThemeMode.light`, or `ThemeMode.dark`. Feature modules must not own `ThemeMode`.
+
+## 6.6 Required theme outputs
+Expose `ColorScheme` mappings where appropriate, semantic surface/text/icon/border/status/map colors, typography, spacing/shape accessors, effect/depth accessors, component themes, focus/scrim behavior, and platform behavioral adapters.
+
+## 6.7 Theme-switch integrity
+Switching appearance must not recreate domain state, reset navigation, restart an active ritual, discard map/group state, or alter entitlement/auth/offline truth.
+
+## 6.8 Forbidden theme behavior
+Forbidden: optional/partial Dark Mode, naive inversion, feature-level mini-themes, scattered hardcoded appearance checks, raw Figma values in feature code, or visual changes that alter product semantics.
 
 # 7. Color system
 
-Material 3 organizes color through roles rather than ad hoc raw color values, which aligns with the maintainability and semantic requirements of this project. ([m3.material.io](https://m3.material.io/styles/color/roles))
-
 ## 7.1 Color-system goals
-The color system must:
-- support calm readability,
-- create clear hierarchy,
-- communicate status semantically,
-- work across light/dark modes if used,
-- remain stable under localization and accessibility changes,
-- support map overlays and emergency signals responsibly.
+The color system must preserve calm readability, clear hierarchy, semantic status, complete Light/Dark support, localization/accessibility stability, map/emergency clarity, and restrained brand-cyan identity.
 
-## 7.2 Color-token layers
-### Primitive palette tokens
-Examples:
-- neutral 0–100
-- brand primary range
-- accent/supportive range
-- success range
-- warning range
-- critical range
-- map-specific route/anchor/reference range
+## 7.2 Primitive palette
+A primitive palette may include verified brand/accent values and neutral/status scales. Figma values may inform this layer only after they are verified as true variables or repeated decisions. Do not promote every local layer color globally.
 
-### Semantic color roles
-Examples:
-- background
-- surface
-- surfaceElevated
-- surfaceFloating
-- surfaceGlass
-- textPrimary
-- textSecondary
-- textInverse
-- iconPrimary
-- borderSubtle
-- borderStrong
-- actionPrimary
-- actionSecondary
-- actionGhost
-- statusSuccess
-- statusWarning
-- statusCritical
-- focusRing
-- scrim
+## 7.3 Semantic color roles
+Define paired Light/Dark mappings for canvas; base/raised/inset/floating/interactive/selected/critical/modal/map-overlay surfaces; primary/secondary/inverse text; icons; subtle/strong borders; actions; success/warning/critical states; route/anchor/confidence roles; focus ring; and scrim.
 
-## 7.3 Color-role rules
-Colors must be referenced through semantic roles in feature code, not primitive palette names.
+## 7.4 Light appearance rule
+Light appearance may be calibrated directly from the approved light-oriented Figma reference where variables and repeated design decisions are verified.
 
-## 7.4 Status-color usage rules
-Status colors must always be supported by iconography, copy, or structural cues. Color alone must not carry critical meaning.
+## 7.5 Dark appearance rule
+Dark appearance preserves the same semantic hierarchy and component anatomy without naive inversion. It must use tonal separation, borders, highlights, and restrained shadows together; avoid crushed black-on-black cards; preserve strong contrast; keep state boundaries explicit; avoid excessive cyan glow; and strengthen boundaries when accessibility settings require them.
 
-## 7.5 Critical-content rule
-Emergency and safety content must use strong, unambiguous contrast and not rely on low-contrast material surfaces.
+## 7.6 Status-color rule
+Color alone must never carry critical meaning. Status requires copy, iconography, structure, or another non-color cue.
 
-## 7.6 Map-color rule
-Map tokens may define special route/anchor/status colors, but these should still be centralized and contrast-tested.
+## 7.7 Critical-content rule
+Emergency, medical, ritual-critical, RIC, route-critical, and trusted-write failure content must use explicit high-clarity surface/text/boundary combinations in both appearances.
 
----
+## 7.8 Map-color rule
+Map route, anchor, confidence, and fallback roles remain centralized and contrast-tested against both map imagery and Light/Dark overlay surfaces.
 
 # 8. Typography system
 
@@ -312,8 +320,17 @@ Feature code should use semantic text roles such as:
 - Dense secondary metadata must remain readable and not become tiny by default.
 - Text styles must scale correctly under larger text settings.
 
-## 8.5 Font-family rule
+## 8.5 Font-family and script-fallback rule
 The app may define a branded typography choice, but it must preserve multilingual readability and fallback safety.
+
+The design-system layer owns script-aware font-family stacks. At minimum:
+- Latin-script UI and Arabic-script UI must have verified fallback coverage appropriate to their scripts,
+- Arabic shaping, diacritics, punctuation, mixed Arabic/Latin runs, required weights, and large-text scaling must be verified before a font is promoted into the canonical stack,
+- a font observed in Figma or a local design export must not be assumed globally suitable for every supported script,
+- mixed-script content may fall back within the same semantic text role without changing information hierarchy,
+- feature modules must not hardcode font families or create feature-local fallback stacks.
+
+Exact font-family choices remain an implementation/design-system decision until verified; the contract here is coverage, readability, and centralized ownership.
 
 ## 8.6 Forbidden typography behaviors
 Forbidden:
@@ -367,93 +384,58 @@ Feature code should prefer semantic spacing helpers or tokens rather than arbitr
 # 10. Shape and corner-radius system
 
 ## 10.1 Goals
-Shape should reinforce friendliness and calmness without becoming overly soft or playful.
+Shape supports a calm, approachable, touch-friendly identity without decorative noise.
 
 ## 10.2 Required shape tokens
-The system should define a limited set of radii and shape roles.
-
-Examples:
-- radius none
-- radius small
-- radius medium
-- radius large
-- radius extraLarge
-- radius pill
-- radius full
+Define reusable radius tiers for compact controls, standard controls, cards/surfaces, sheets/modals, and pills/full rounding.
 
 ## 10.3 Usage rules
-- Cards, sheets, and overlays should use predictable radius tiers.
-- Buttons and chips should follow variant-specific radius rules.
-- Floating glass controls may use a more rounded family if consistent with platform adaptation.
+Geometry normally remains identical between Light and Dark. Platform adaptation may refine native container behavior without changing product identity.
 
 ---
 
-# 11. Elevation, shadow, opacity, and border system
+# 11. Depth, shadow, highlight, border, glow, opacity, and scrim system
 
-## 11.1 Goals
-Use depth sparingly to clarify hierarchy rather than dramatize the interface.
+## 11.1 Goal
+Depth clarifies hierarchy and interaction rather than simulating physical material for its own sake.
 
-## 11.2 Required effect tokens
-- elevation levels
-- shadow presets
-- border emphasis levels
-- opacity presets
-- scrim strengths
+## 11.2 Required effect roles
+Provide limited reusable tiers for subtle outer shadow, raised shadow, inset shadow, inner highlight, ambient accent glow, subtle border, strong boundary, focus ring, scrim, and none.
 
-## 11.3 Usage rules
-- Elevated surfaces should remain legible and not muddy text contrast.
-- Glass surfaces may use less traditional shadow language than solid cards, but depth rules must remain explicit.
-- Borders should be semantic and not randomly chosen per feature.
+## 11.3 Appearance-aware depth
+Light and Dark may map the same semantic effect role to different shadow/highlight/border intensities. Dark Mode must not rely on dark shadow alone for boundaries.
+
+## 11.4 Performance-safe effect tiers
+Define normal presets for prominent surfaces, low-cost variants for dense/repeated lists, simplified fallbacks for performance-constrained contexts, and `effect.none` where decorative depth reduces clarity.
+
+A component must not reproduce every Figma shadow layer if doing so risks scrolling, animation, or map-control jank. Visual fidelity preserves hierarchy, shape, color relationship, depth intent, and component identity—not every effect layer regardless of runtime cost.
 
 ---
 
-# 12. Glass/material system
-
-Apple’s current design direction emphasizes Liquid Glass as a system material and advises adopting it thoughtfully in controls, bars, and structures rather than using it indiscriminately. Apple also notes that accessibility settings such as Reduce Transparency and Increase Contrast interact with this material system. ([developer.apple.com](https://developer.apple.com/documentation/technologyoverviews/adopting-liquid-glass))
+# 12. Pilgrims Soft Surface depth system
 
 ## 12.1 Purpose
-This app supports a controlled glass/material design language, especially on iOS.
+Pilgrims Soft Surface provides calm dimensional grouping through mostly opaque surfaces, tonal separation, raised/inset depth, subtle boundaries, and restrained accent glow.
 
-## 12.2 Design rule
-Glass is a material system, not a blanket stylistic theme.
+## 12.2 Surface-role rule
+Components choose a semantic surface role based on hierarchy and interaction meaning, not screenshot resemblance.
 
-## 12.3 Approved glass usage zones
-Glass or liquid-like material may be used for:
-- navigation bars and top chrome
-- tab bars and bottom chrome
-- floating action trays
-- map overlay controls
-- filter chips or route chips where contrast is controlled
-- modal headers or lightweight overlay containers
-- contextual toolbars
+## 12.3 Approved decorative treatment
+Soft-relief depth may be used on Home dashboard cards, quick actions, selected navigation/chrome, lightweight floating controls, planner/group summaries, non-critical sectional containers, and map controls when contrast remains explicit.
 
-## 12.4 Forbidden or strongly discouraged glass usage zones
-Glass should not be the default for:
-- long ritual text blocks
-- dense instructions
-- emergency cards
-- safety-critical warnings
-- dense forms
-- complex list rows with lots of metadata
-- low-contrast map labels or route instructions
+## 12.4 Low-decoration zones
+Prefer solid or low-relief surfaces for long ritual guidance, RIC reasoning/results, emergency/medical content, active wayfinding instructions, dense forms, critical warnings, trusted-write failures, and large-text layouts where depth reduces clarity.
 
-## 12.5 Required glass token categories
-- blur level
-- fill opacity
-- tint strategy
-- border/highlight strategy
-- shadow/depth preset
-- content-on-glass color roles
-- pressed/hover/focus states
-- reduced-transparency fallback style
+## 12.5 Accessibility fallback
+Custom material, depth, overlay, transparency, glow, and decorative effects must degrade to clearer high-contrast surfaces when accessibility settings require it.
 
-## 12.6 Accessibility fallback rules
-When transparency reduction or contrast enhancement is active, glass surfaces must degrade to stronger solid/elevated surfaces with preserved hierarchy. Apple specifically notes that Liquid Glass adapts with accessibility settings such as Reduce Transparency and Increase Contrast. ([developer.apple.com](https://developer.apple.com/forums/forums/topics/design-topic))
+Soft Surface depth must never be the only cue for selected, error, stale, disabled, route, emergency, or focus state.
+
+## 12.6 Transparency rule
+Transparency/blur may still be used selectively for platform-native overlays or contextual effects, but it is not the product identity and must have an opaque/clear fallback.
 
 ## 12.7 Platform rule
-Glass treatment is strongest on iOS. Android should receive a coherent elevated/material adaptation, not a forced clone.
-
----
+iOS and Android share the same Pilgrims Soft Surface identity. Platform-specific surface behavior is subordinate to the shared semantic system and file `09`.
 
 # 13. Motion and animation system
 
@@ -539,33 +521,23 @@ The design system should standardize:
 
 # 16. Accessibility system rules
 
-Flutter’s accessibility and adaptive-input guidance emphasizes accessibility features, semantics, keyboard navigation, and input diversity. ([docs.flutter.dev](https://docs.flutter.dev/ui/adaptive-responsive/best-practices))
-
 ## 16.1 Required accessibility considerations
-The design system must support:
-- scalable text
-- sufficient color contrast
-- focus visibility
-- touch target consistency
-- screen-reader semantics
-- keyboard/focus navigation where relevant
-- reduced motion
-- reduced transparency fallback
-- RTL support
+The design system must support scalable text, sufficient contrast in Light/Dark, visible focus, practical touch targets, screen-reader semantics, keyboard/focus navigation where relevant, reduced motion, reduced transparency for remaining transparent/native material, increased-contrast treatment, RTL/bidi-safe structure, and non-color-only status meaning.
 
-## 16.2 Contrast rule
-No approved component variant may ship if its default state produces unreliable legibility in its intended context.
+## 16.2 Appearance contrast rule
+No component is complete until important states are readable in both Light and Dark. Dark Mode may not reduce the contrast standard or make boundaries depend on shadow alone.
 
 ## 16.3 Focus rule
-Interactive controls must have visible focus treatment and not rely purely on platform defaults if those defaults become insufficient under custom styling.
+Interactive controls require an explicit semantic focus treatment visible across both appearances and accessibility contrast settings.
 
 ## 16.4 Touch target rule
-Controls must maintain practical target sizes, especially in stress-sensitive flows.
+Controls maintain practical target sizes in standard and Simple Mode, especially in stress-sensitive flows.
 
-## 16.5 Emergency-mode rule
-Emergency mode must define extra-large, high-clarity variants for text and actions.
+## 16.5 Effect-degradation rule
+When accessibility settings require stronger clarity, decorative depth, glow, transparency, and motion simplify without changing information hierarchy or state meaning.
 
----
+## 16.6 Emergency and critical-flow rule
+Emergency, medical, ritual-critical, RIC, active-wayfinding, and trusted-write failure surfaces use high-clarity variants. Decorative depth cannot delay or obscure the primary action.
 
 # 17. Component architecture
 
@@ -641,7 +613,7 @@ This section defines the minimum canonical shared component set.
 ## 18.4 Content containers
 - Solid card
 - Elevated card
-- Glass card
+- Raised / inset / floating Soft Surface card variants
 - Sheet/container surface
 - Panel container
 - Inline info strip
@@ -692,6 +664,33 @@ This section defines the minimum canonical shared component set.
 - Settings section row
 
 ---
+
+## 18.11 Home composition components from the approved visual reference
+
+The supplied approved Home visual reference establishes the following reusable composition patterns for the standard Home experience:
+
+- **Profile greeting header** — avatar/profile affordance, greeting + user name, notification action, and Settings action.
+- **Prayer/context hero** — large rounded cyan/turquoise contextual surface showing current prayer/status information, location context, weather/supportive context where available, and compact prayer-time selectors.
+- **Quick-action tile row** — compact icon-led actions with short labels; the visual reference demonstrates five slots: Bacaan, Save Gate, Tata Cara, Emergency, and Lainnya. Canonical feature routing and localization remain owned by feature/navigation specs.
+- **Ritual progress card** — progress percentage, elapsed/remaining context where available, horizontal progress visualization, and named ritual milestones.
+- **Compact context-summary cards** — paired Saved Gate and Jama’ah Group summaries with concise status metadata and a clear continuation action.
+- **Planner schedule card** — date strip, vertical timeline/progress treatment, task title/time, and stateful action button.
+- **Bottom navigation shell with central floating action slot** — Home, Ibadah, Group, and Map destinations plus one visually prominent centered action slot.
+
+These patterns are visual/component contracts only. They do not create new feature semantics.
+
+The prayer/context subcontent shown in the mockup does not establish prayer-time calculation or weather as runtime product capabilities. Until an approved owning contract defines source/calculation, timezone/location handling, freshness, offline/stale behavior, and privacy, those data-driven subfields must be omitted or remain clearly non-runtime visual reference content; agents must not synthesize or wire guessed values/providers.
+
+The centered floating action slot must be mapped to an already-approved canonical action before implementation; agents must not infer scanner, camera, QR, or other behavior solely from its iconography. The canonical app shell still contains Home, Rituals, Map, Group, and Tools as owned by files `10` and `11`; the visual slot does not remove or replace Tools.
+
+### 18.11.1 Home composition styling rules
+- Large Home sections use generous rounded corners and soft elevation rather than thin card borders alone.
+- Cyan/turquoise is the dominant active/accent family; orange may be used for planner/action status where semantically justified.
+- Small utility cards remain mostly light/opaque with restrained soft shadow.
+- The prayer/context hero may use the strongest accent surface on Home, but text contrast must remain explicit.
+- Repeated quick-action tiles and summary cards must use performance-safe low-cost Soft Surface effect tiers.
+- The same component anatomy must map intentionally into Dark Mode without naive inversion.
+- Profile imagery is dynamic user content and must not be treated as a static design-system asset.
 
 # 19. Component state rules
 
@@ -796,26 +795,23 @@ Exact filenames may differ, but this separation of tokens, themes, components, p
 
 # 22. Platform adaptation rules
 
-Flutter’s adaptive design guidance and Apple’s design documentation both support explicit platform adaptation rather than pretending every platform should feel identical. ([docs.flutter.dev](https://docs.flutter.dev/ui/adaptive-responsive))
+## 22.1 Shared identity
+Pilgrims Soft Surface is the single visual identity across iOS and Android.
 
-## 22.1 Shared core, selective expression
-The app should keep a shared semantic design system while allowing platform-adapted component behavior and surface treatment.
+## 22.2 Platform adaptation may change
+Native navigation behavior, modal/sheet mechanics, haptics, system bars, transition feel, permission UI/settings handoff, and platform-native map/store/notification/location/BLE/asset-delivery behavior may differ.
 
-## 22.2 iOS rules
-- Stronger glass/material presence in bars, overlays, and floating controls.
-- Strong continuity and smooth material transitions.
-- Respect system conventions around bars, controls, and presentations.
-- Always preserve readability over glass treatment.
+## 22.3 Platform adaptation must not change
+Semantic surface roles, component meaning, core hierarchy, the Light/Dark requirement, critical-state meaning, or product/feature semantics must remain shared.
 
-## 22.3 Android rules
-- Use elevated/material surfaces rather than trying to mimic iOS glass everywhere.
-- Preserve the product’s calm premium feel using the shared semantic system.
-- Use platform-appropriate motion, layout, and surface treatment.
+## 22.4 iOS rule
+Use iOS-appropriate interaction and presentation conventions while rendering the same semantic Pilgrims Soft Surface roles. Native translucent system material may be used where appropriate, but it is not the app’s defining visual identity.
 
-## 22.4 Shared behavior rule
-Product semantics, hierarchy, and core component meaning should remain aligned across platforms even when styling differs.
+## 22.5 Android rule
+Use Android-appropriate interaction and presentation conventions while rendering the same semantic Pilgrims Soft Surface roles. Android must not be treated as a secondary “solid fallback” product.
 
----
+## 22.6 Shared behavior rule
+File `09` owns platform adaptation and native bridges. File `08` owns visual identity and theme semantics.
 
 # 23. Design-system quality gates
 
@@ -843,58 +839,64 @@ Product semantics, hierarchy, and core component meaning should remain aligned a
 
 # 24. Anti-patterns forbidden by this design system
 
-The following are forbidden unless explicitly approved.
-
 ## 24.1 Hardcoded repeated colors in feature widgets
-Forbidden.
+Use semantic tokens.
 
 ## 24.2 Hardcoded repeated text styles in feature widgets
-Forbidden.
+Use canonical typography roles.
 
-## 24.3 One-off glass effects created per screen
-Forbidden.
+## 24.3 One-off depth/effect stacks per screen
+Use shared Pilgrims Soft Surface effect roles and tiers.
 
 ## 24.4 Multiple unofficial card/button systems inside feature modules
-Forbidden.
+Promote stable variants into shared components.
 
-## 24.5 Styling based on raw palette names instead of semantic roles
-Forbidden.
+## 24.5 Styling based on raw palette or Figma variable names
+Feature code consumes semantic/component roles only.
 
-## 24.6 Using low-contrast glass under dense critical text
-Forbidden.
+## 24.6 Decorative depth under dense critical text
+Critical content uses explicit readable boundaries and low-relief/solid treatment.
 
-## 24.7 Motion values invented ad hoc per interaction
-Forbidden.
+## 24.7 Naive Dark Mode inversion
+Dark is an intentionally mapped semantic theme, not an inverted Light theme.
 
-## 24.8 Color-only status communication for important states
-Forbidden.
+## 24.8 Appearance branching inside feature modules
+Theme selection belongs to the app shell/design system.
 
-## 24.9 Per-feature icon sizing systems
-Forbidden.
+## 24.9 Motion values invented ad hoc
+Use shared motion roles.
 
-## 24.10 Treating platform adaptation as copy-paste visual mimicry
-Forbidden.
+## 24.10 Color-only or depth-only status communication
+Important states require non-color and non-depth cues.
 
----
+## 24.11 Per-feature icon sizing systems
+Use centralized icon roles.
 
-# 25. Design-system recommendations adopted from earlier analysis
+## 24.12 Platform identity fork
+Do not create separate iOS and Android product identities.
 
-## 25.1 Recommendation — controlled Liquid Glass, not universal translucency
-The system now explicitly limits glass usage to appropriate structural and overlay zones.
+## 24.13 Raw Figma export leakage
+Do not copy generated code, raw shadow stacks, local layer colors, or component-local font choices directly into feature implementation without semantic translation.
+
+# 25. Design-system recommendations adopted from current direction
+
+## 25.1 Recommendation — Pilgrims Soft Surface as the canonical visual language
+Use mostly opaque surfaces, soft raised/inset depth, restrained accent glow, rounded geometry, and explicit semantic boundaries.
 
 ## 25.2 Recommendation — semantic token architecture first
-The system prioritizes semantic roles so future palette or style changes can happen centrally.
+Translate verified Figma primitives and repeated decisions into foundation → semantic → component → appearance mappings before screen implementation.
 
-## 25.3 Recommendation — map overlay clarity
-Map overlays are explicitly treated as a distinct styling context so controls can feel premium without harming route clarity.
+## 25.3 Recommendation — mandatory dual appearance
+System, Light, and Dark are first-class product behavior. Light and Dark must both be complete and release-tested.
 
-## 25.4 Recommendation — simple mode and emergency mode variants
-The system requires design support for stress-reduced and extra-readable contexts.
+## 25.4 Recommendation — map overlay clarity
+Map controls use the shared surface/effect system without competing with routes, labels, confidence, or fallback guidance.
 
-## 25.5 Recommendation — platform adaptation through shared semantics
-The app keeps one product identity while allowing platform-appropriate surface and motion behavior.
+## 25.5 Recommendation — Simple Mode and emergency variants
+Simple Mode may reduce decorative depth to lower cognitive load; emergency/critical contexts default to high-clarity treatment.
 
----
+## 25.6 Recommendation — platform adaptation through shared semantics
+iOS and Android may adapt native behavior while retaining one visual identity.
 
 # 26. When this file must be updated
 
@@ -902,7 +904,7 @@ This file must be updated when any of the following changes:
 - token categories or structure
 - theme architecture
 - color or typography system direction
-- glass/material usage rules
+- surface/depth usage rules
 - component inventory or component contracts
 - accessibility requirements tied to styling
 - platform adaptation behavior
@@ -922,7 +924,7 @@ It establishes:
 - the token architecture,
 - the theme architecture,
 - the color, typography, spacing, shape, and motion systems,
-- the controlled glass/material rules,
+- the controlled surface/depth rules,
 - the accessibility requirements,
 - the shared component inventory,
 - the Flutter implementation boundaries for tokens, themes, and components.

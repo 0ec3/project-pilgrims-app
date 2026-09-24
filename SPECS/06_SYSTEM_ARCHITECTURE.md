@@ -6,7 +6,7 @@
 - **Audience:** Founder, tech lead, mobile lead, backend lead, design-system lead, QA lead, AI coding agents, reviewer agents
 - **Purpose:** Define the end-to-end technical architecture of Pilgrims Mobile App so that mobile, backend, storage, maps, packs, content, telemetry, and operational behaviors can be implemented consistently without hidden assumptions or avoidable refactors.
 - **Authority level:** This file is the system-level source of truth for component boundaries, runtime responsibilities, trust boundaries, and cross-system data flows. More specific files may refine details, but must not contradict this file.
-- **Primary dependencies:** `01-README-AND-MASTER-INDEX.md`, `02-AI-AGENT-RULES-AND-WORKFLOW.md`, `03-PRODUCT-CHARTER-AND-SCOPE.md`, `04-DECISIONS-GLOSSARY-AND-CHANGE-CONTROL.md`, `05-ROADMAP-PROGRESS-AND-CHANGELOG.md`
+- **Primary dependencies:** `01_README_AND_MASTER_INDEX.md`, `02_AI_AGENT_RULES_AND_WORKFLOW.md`, `03_PRODUCT_CHARTER_AND_SCOPE.md`, `04_DECISIONS_GLOSSARY_AND_CHANGE_CONTROL.md`, `05_ROADMAP_PROGRESS_AND_CHANGELOG.md`
 - **Related files:** `07`, `08`, `09`, `10`, `11`, `12`, `13`, `14`, `15`, `16`, `17`, `18`–`26`, `27`, `28`, `29`, `30`
 
 ---
@@ -706,18 +706,24 @@ The rest of the app should depend on stable map-domain interfaces, not on direct
 # 21. Platform strategy
 
 ## 21.1 Shared product architecture, selective platform adaptation
-The app uses a shared cross-platform architecture but allows selective platform-specific behavior where the product or platform requires it.
+The app uses one shared product architecture and one canonical visual identity, **Pilgrims Soft Surface**, across iOS and Android.
 
-## 21.2 iOS design adaptation
-The architecture must support iOS-specific visual treatment consistent with the platform spec, including controlled glass/material usage where appropriate.
+Platform differences are allowed for native navigation behavior, sheet/modal conventions, haptics, system bars, transitions, permission/settings handoffs, store APIs, notifications, location/BLE, asset delivery, and map/native capabilities. They must not create separate product identities.
+
+## 21.2 Design adaptation
+File `08` owns visual language, semantic tokens, component styling, and mandatory Light/Dark appearance. File `09` owns platform adaptation and native bridges.
+
+The architecture must support:
+- System / Light / Dark appearance,
+- local persisted appearance preference,
+- immediate theme switching without navigation-state reset,
+- one shared semantic surface/depth model with platform-specific implementation details only where needed.
 
 ## 21.3 Platform-style boundary
-Platform-specific styling must be implemented through the design system and platform adaptation layer, not ad hoc in feature screens.
+Platform-specific behavior and system integration must be implemented through the design system and platform adaptation layer, not ad hoc in feature screens. Feature modules consume semantic/component roles and must not branch on raw platform or raw palette values merely to recreate visual styling.
 
 ## 21.4 Native bridge boundary
-Native-only or platform-sensitive capabilities should be surfaced through explicit bridge interfaces so the Flutter domain and feature layers remain stable.
-
----
+Native integrations remain isolated behind typed, mockable platform bridge interfaces. Visual-system changes must not weaken store, notifications, location, Bluetooth, map, asset-delivery, or system-capability boundaries.
 
 # 22. Networking architecture
 
@@ -930,9 +936,9 @@ Refines:
 
 ## 29.3 File `09` — Platform adaptation
 Refines:
-- iOS Liquid Glass usage rules,
-- Android-specific adaptation,
-- native bridges.
+- iOS/Android platform adaptation while preserving the shared Pilgrims Soft Surface identity,
+- native interaction and system-behavior differences,
+- typed native bridges.
 
 ## 29.4 File `13` — Data model
 Refines:

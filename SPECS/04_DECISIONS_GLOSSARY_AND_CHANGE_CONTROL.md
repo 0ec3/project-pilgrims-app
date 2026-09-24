@@ -79,6 +79,7 @@ Use these terms consistently:
 | Group | Small pilgrim coordination group. | Not a social network or tracking circle. |
 | Regroup pin | Explicit group meeting point/instruction. | Not passive live tracking. |
 | Live board | Optional richer group status board. | Must preserve stale-state honesty and privacy. |
+| Pilgrims Soft Surface | Canonical project-owned visual language. | Figma-aligned soft-surface/depth identity; do not rename canonically to “Neumorphism.” |
 
 ## 4.2 Forbidden aliases
 Do not introduce these terms as canonical names:
@@ -116,15 +117,24 @@ They may appear only when explicitly documenting forbidden behavior.
 - **Decision:** Repeated style values must be centralized rather than hardcoded across feature widgets.
 
 ## 5.4 D-004 — Controlled iOS Liquid Glass adaptation
-- **Status:** accepted
+- **Status:** superseded
 - **Area:** design/platform
-- **Decision:** Use controlled iOS-specific glass/material adaptation where appropriate without compromising readability.
+- **Decision:** Historically, the project used controlled iOS-specific glass/material adaptation where appropriate without compromising readability.
+- **Superseded by:** D-006
 
 ## 5.5 D-005 — 31-spec plus machine-readable contract governance
 - **Status:** accepted
 - **Area:** documentation governance
 - **Decision:** Treat `README.md`, `SPECS/01_README_AND_MASTER_INDEX.md`, specs `01`–`31`, `SPECS/CONTRACTS/*`, and `tools/specs/validate_spec_contracts.py` as the current normative specification system.
 - **Consequences:** Archived 30-file drafts are non-normative. AI agents must not use them to infer current filenames, authority hierarchy, scope, dependencies, or release gates.
+
+## 5.6 D-006 — Figma-first Pilgrims Soft Surface design language and mandatory dual-appearance theming
+- **Status:** accepted
+- **Date:** 2026-09-24
+- **Area:** design/platform
+- **Context:** The project now has an approved Figma visual direction whose current styling is soft-surface/soft-relief rather than transparency-led Liquid Glass as the product identity. Both iOS and Android require one coherent PILGRIMS identity, and Light and Dark support are now mandatory.
+- **Decision:** The approved Figma design is the current visual reference; file `08` defines the canonical **Pilgrims Soft Surface** design-system contract; the app must support System, Light, and Dark appearance modes; file `09` is visual-style-neutral and owns platform adaptation/native bridges; platform behavior may differ where native conventions require it, but product visual identity must not fork by platform.
+- **Consequences:** Active glass-specific token/component terminology is superseded; feature modules consume semantic/component tokens rather than raw Figma values; settings gains a local, non-entitled Appearance preference; visual testing and release evidence require representative Light/Dark coverage; Dark Mode is a semantic counterpart of the same identity and must not be implemented as naive inversion. Figma sample copy, IA, feature names, and product semantics do not override their owning normative specs.
 
 ---
 
