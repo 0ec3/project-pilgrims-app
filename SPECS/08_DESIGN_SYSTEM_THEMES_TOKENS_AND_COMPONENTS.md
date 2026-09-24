@@ -6,7 +6,7 @@
 - **Audience:** Design lead, Flutter engineers, design-system engineers, QA, AI coding agents, reviewer agents
 - **Purpose:** Define the canonical visual system of the app, the token architecture, theme architecture, component contracts, platform adaptation rules, accessibility requirements, and Flutter implementation boundaries so the app remains visually consistent, maintainable, and safe for AI-assisted development.
 - **Authority level:** This file is the canonical source of truth for visual semantics, theme structure, token categories, component styling, and how UI styling must be implemented in Flutter. Feature modules and screens must not silently override this system.
-- **Primary dependencies:** `01-README-AND-MASTER-INDEX.md`, `03-PRODUCT-CHARTER-AND-SCOPE.md`, `06-SYSTEM-ARCHITECTURE.md`, `07-FLUTTER-APP-ARCHITECTURE-AND-MODULE-BOUNDARIES.md`
+- **Primary dependencies:** `01_README_AND_MASTER_INDEX.md`, `03_PRODUCT_CHARTER_AND_SCOPE.md`, `06_SYSTEM_ARCHITECTURE.md`, `07_FLUTTER_APP_ARCHITECTURE_AND_MODULE_BOUNDARIES.md`
 - **Related files:** `09`, `10`, `11`, `12`, `16`, `17`, `18`–`25`, `27`, `28`
 
 ---
@@ -320,8 +320,17 @@ Feature code should use semantic text roles such as:
 - Dense secondary metadata must remain readable and not become tiny by default.
 - Text styles must scale correctly under larger text settings.
 
-## 8.5 Font-family rule
+## 8.5 Font-family and script-fallback rule
 The app may define a branded typography choice, but it must preserve multilingual readability and fallback safety.
+
+The design-system layer owns script-aware font-family stacks. At minimum:
+- Latin-script UI and Arabic-script UI must have verified fallback coverage appropriate to their scripts,
+- Arabic shaping, diacritics, punctuation, mixed Arabic/Latin runs, required weights, and large-text scaling must be verified before a font is promoted into the canonical stack,
+- a font observed in Figma or a local design export must not be assumed globally suitable for every supported script,
+- mixed-script content may fall back within the same semantic text role without changing information hierarchy,
+- feature modules must not hardcode font families or create feature-local fallback stacks.
+
+Exact font-family choices remain an implementation/design-system decision until verified; the contract here is coverage, readability, and centralized ownership.
 
 ## 8.6 Forbidden typography behaviors
 Forbidden:
@@ -668,7 +677,11 @@ The supplied approved Home visual reference establishes the following reusable c
 - **Planner schedule card** — date strip, vertical timeline/progress treatment, task title/time, and stateful action button.
 - **Bottom navigation shell with central floating action slot** — Home, Ibadah, Group, and Map destinations plus one visually prominent centered action slot.
 
-These patterns are visual/component contracts only. They do not create new feature semantics. In particular, the centered floating action slot must be mapped to an already-approved product action before implementation; agents must not infer scanner, camera, QR, or other behavior solely from its iconography in a mockup.
+These patterns are visual/component contracts only. They do not create new feature semantics.
+
+The prayer/context subcontent shown in the mockup does not establish prayer-time calculation or weather as runtime product capabilities. Until an approved owning contract defines source/calculation, timezone/location handling, freshness, offline/stale behavior, and privacy, those data-driven subfields must be omitted or remain clearly non-runtime visual reference content; agents must not synthesize or wire guessed values/providers.
+
+The centered floating action slot must be mapped to an already-approved canonical action before implementation; agents must not infer scanner, camera, QR, or other behavior solely from its iconography. The canonical app shell still contains Home, Rituals, Map, Group, and Tools as owned by files `10` and `11`; the visual slot does not remove or replace Tools.
 
 ### 18.11.1 Home composition styling rules
 - Large Home sections use generous rounded corners and soft elevation rather than thin card borders alone.
