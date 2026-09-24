@@ -144,6 +144,46 @@ If an active group snapshot exists, Home may surface latest regroup context, saf
 ## 6.5 Stale/protected-state honesty
 If group, entitlement, pack, or other remote/supportive data is stale, unavailable, or unverified, Home must reflect that honestly where it matters.
 
+## 6.6 Approved Home visual anatomy
+The supplied approved Home visual reference establishes the current standard Home anatomy without changing feature ownership:
+
+1. profile/greeting header,
+2. prayer/context hero,
+3. compact quick-action row,
+4. Umrah progress,
+5. Saved Gate + Jama’ah Group summaries,
+6. Plan & Schedule,
+7. persistent bottom navigation with a centered floating action slot.
+
+The prayer/context hero is contextual/ambient information, not a replacement for ritual recovery priority. Current ritual actions and urgent recovery must remain immediately discoverable even when the prayer hero is visually dominant.
+
+### Prayer/context hero
+The visual reference shows:
+- location context,
+- current prayer name,
+- countdown/current time context,
+- optional weather/context tile,
+- compact daily prayer-time chips.
+
+The design does not establish prayer-time calculation authority, weather provider, freshness rules, or online/offline truth. Those must be defined by their owning implementation/content contracts before runtime wiring.
+
+### Quick-action row
+The visual reference demonstrates five labeled tiles: `Bacaan`, `Save Gate`, `Tata Cara`, `Emergency`, and `Lainnya`.
+
+These are visual examples only. Final localized labels and destinations must map to canonical feature routes and terminology; agents must not create new top-level features solely to preserve screenshot text.
+
+### Ritual progress
+The visual reference demonstrates a percentage-complete summary, a compact time indicator, a progress bar, and named milestones such as Ihram, Thawaf, Sa’i, Tahallul, and completion. Ritual truth and milestone ordering remain owned by file `18`.
+
+### Saved Gate and Jama’ah Group summaries
+The visual reference demonstrates paired compact cards. Their status text must use real freshness/state truth from map/group domains and must not imply live tracking.
+
+### Plan & Schedule
+The visual reference demonstrates a date strip, vertical timeline, completed/upcoming state distinction, time range, and explicit stateful action button. Planner behavior remains owned by file `21`.
+
+### Bottom navigation
+The visual reference demonstrates Home, Ibadah, Group, and Map as visible destinations plus one centered floating action slot. The slot’s iconography does not itself define behavior. Before implementation, that action must be mapped to an approved canonical route/action and reflected in file `11` and traceability if it introduces any new screen or flow.
+
 ---
 
 # 7. Urgent shortcut architecture
@@ -245,6 +285,7 @@ Local preference authority lives in file `24`, and device-local persistence cate
 
 Representative local values:
 - onboarding completion state,
+- Appearance mode (`system | light | dark`),
 - onboarding version seen,
 - selected language/locale override,
 - Simple Mode enabled state,
