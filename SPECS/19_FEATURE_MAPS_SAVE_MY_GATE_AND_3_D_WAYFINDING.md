@@ -6,7 +6,7 @@
 - **Audience:** Founder, product lead, design lead, map engineers, Flutter engineers, backend engineers, QA, AI coding agents, reviewer agents, release agents
 - **Purpose:** Define the canonical feature contract for the Maps feature family, including Map Root behavior, Save My Gate and saved-anchor flows, destination search, route preview, active wayfinding, 2D and 3D interaction rules, regroup/map handoffs, offline behavior, monetization boundaries, analytics hooks, and release-readiness expectations.
 - **Authority level:** This file is the canonical source of truth for the Maps feature family. If implementation, UI, or tests diverge from this file, this file wins unless a higher-level normative contract or approved decision record explicitly changes it.
-- **Primary dependencies:** `01-README-AND-MASTER-INDEX.md`, `03-PRODUCT-CHARTER-AND-SCOPE.md`, `04-DECISIONS-GLOSSARY-AND-CHANGE-CONTROL.md`, `07-FLUTTER-APP-ARCHITECTURE-AND-MODULE-BOUNDARIES.md`, `08-DESIGN-SYSTEM-THEMES-TOKENS-AND-COMPONENTS.md`, `09-PLATFORM-SPEC-IOS-LIQUID-GLASS-ANDROID-ADAPTATION-AND-NATIVE-BRIDGES.md`, `10-PERSONAS-IA-USER-JOURNEYS-AND-TASK-FLOWS.md`, `11-SCREENS-STATES-NAVIGATION-AND-UI-BLUEPRINTS.md`, `12-COPY-LOCALIZATION-RTL-AND-ACCESSIBILITY.md`, `13-DATA-MODEL-RLS-INVARIANTS-AND-MIGRATIONS.md`, `14-API-REALTIME-AND-INTEGRATION-CONTRACTS.md`, `15-OFFLINE-PACKS-SYNC-ASSET-DELIVERY-AND-CACHE-POLICY.md`, `16-MAP-ARCHITECTURE-POSITIONING-ROUTING-3D-AND-OFFLINE-WAYFINDING.md`, `17-ANALYTICS-OBSERVABILITY-AND-PERFORMANCE-BUDGETS.md`
+- **Primary dependencies:** `01-README-AND-MASTER-INDEX.md`, `03-PRODUCT-CHARTER-AND-SCOPE.md`, `04-DECISIONS-GLOSSARY-AND-CHANGE-CONTROL.md`, `07-FLUTTER-APP-ARCHITECTURE-AND-MODULE-BOUNDARIES.md`, `08-DESIGN-SYSTEM-THEMES-TOKENS-AND-COMPONENTS.md`, `09-PLATFORM-ADAPTATION-IOS-ANDROID-AND-NATIVE-BRIDGES.md`, `10-PERSONAS-IA-USER-JOURNEYS-AND-TASK-FLOWS.md`, `11-SCREENS-STATES-NAVIGATION-AND-UI-BLUEPRINTS.md`, `12-COPY-LOCALIZATION-RTL-AND-ACCESSIBILITY.md`, `13-DATA-MODEL-RLS-INVARIANTS-AND-MIGRATIONS.md`, `14-API-REALTIME-AND-INTEGRATION-CONTRACTS.md`, `15-OFFLINE-PACKS-SYNC-ASSET-DELIVERY-AND-CACHE-POLICY.md`, `16-MAP-ARCHITECTURE-POSITIONING-ROUTING-3D-AND-OFFLINE-WAYFINDING.md`, `17-ANALYTICS-OBSERVABILITY-AND-PERFORMANCE-BUDGETS.md`
 - **Related files:** `20`, `23`, `24`, `25`, `27`, `28`, `29`, `30`
 
 ---
@@ -156,6 +156,8 @@ The feature must privilege large actions, obvious labels, short instructions, an
 ## 4.8 Platform adaptation rule
 The feature must inherit platform adaptation from the design system and platform spec.
 Map controls, overlays, and modal behavior may adapt by platform, but map semantics, states, and feature truth must remain consistent.
+
+Both platforms use the same Pilgrims Soft Surface map-overlay semantics. Appearance changes map overlay surface/text/boundary treatment, not route meaning or confidence truth.
 
 ---
 
@@ -617,7 +619,7 @@ The user must not need expert map-manipulation skill to understand a route.
 Decorative rendering must not crowd out the instruction layer.
 
 ## 16.8 Accessibility and transparency rule
-3D overlays, glass-like map controls, and floating chrome must degrade safely when contrast, reduced transparency, or reduced motion settings require it.
+3D overlays, Soft Surface map controls, and floating chrome must degrade safely when contrast, reduced transparency, or reduced motion settings require it. Light and Dark map overlays must preserve route, label, confidence, floor, and fallback clarity.
 
 ---
 
