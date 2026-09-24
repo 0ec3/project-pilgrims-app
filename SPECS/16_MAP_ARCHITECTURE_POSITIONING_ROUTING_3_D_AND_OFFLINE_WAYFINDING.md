@@ -6,7 +6,7 @@
 - **Audience:** Founder, mobile tech lead, Flutter engineers, backend engineers, map engineers, QA, AI coding agents, reviewer agents
 - **Purpose:** Define the canonical architecture of the map and wayfinding subsystem, including provider strategy, positioning model, routing graph, indoor/outdoor behavior, 2D and 3D rendering rules, offline fallback, saved-anchor behavior, map data ownership, performance budgets, legal constraints, and release verification requirements.
 - **Authority level:** This file is the canonical source of truth for all map and wayfinding system behavior. Feature files, provider integrations, Flutter modules, tests, and UI designs must not contradict this file.
-- **Primary dependencies:** `01-README-AND-MASTER-INDEX.md`, `03-PRODUCT-CHARTER-AND-SCOPE.md`, `04-DECISIONS-GLOSSARY-AND-CHANGE-CONTROL.md`, `06-SYSTEM-ARCHITECTURE.md`, `07-FLUTTER-APP-ARCHITECTURE-AND-MODULE-BOUNDARIES.md`, `08-DESIGN-SYSTEM-THEMES-TOKENS-AND-COMPONENTS.md`, `13-DATA-MODEL-RLS-INVARIANTS-AND-MIGRATIONS.md`, `14-API-REALTIME-AND-INTEGRATION-CONTRACTS.md`, `15-OFFLINE-PACKS-SYNC-ASSET-DELIVERY-AND-CACHE-POLICY.md`
+- **Primary dependencies:** `01_README_AND_MASTER_INDEX.md`, `03_PRODUCT_CHARTER_AND_SCOPE.md`, `04_DECISIONS_GLOSSARY_AND_CHANGE_CONTROL.md`, `06_SYSTEM_ARCHITECTURE.md`, `07_FLUTTER_APP_ARCHITECTURE_AND_MODULE_BOUNDARIES.md`, `08_DESIGN_SYSTEM_THEMES_TOKENS_AND_COMPONENTS.md`, `13_DATA_MODEL_RLS_INVARIANTS_AND_MIGRATIONS.md`, `14_API_REALTIME_AND_INTEGRATION_CONTRACTS.md`, `15_OFFLINE_PACKS_SYNC_ASSET_DELIVERY_AND_CACHE_POLICY.md`
 - **Related files:** `09`, `10`, `11`, `17`, `19`, `20`, `23`, `27`, `28`, `29`, `30`
 
 ---
