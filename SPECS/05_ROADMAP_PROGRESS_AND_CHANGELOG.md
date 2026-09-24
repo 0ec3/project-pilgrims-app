@@ -202,7 +202,7 @@ Current status:
 | Module | Related specs/contracts | Phase target | Priority | Spec status | Implementation status | Validation status | Next required action |
 |---|---|---:|---:|---|---|---|---|
 | Governance/source of truth | `01`, `02`, `04`, `05`, `31`, `CONTRACTS/README` | 0 | P0 | Done / monitor | Not started | Validator and CI wired where contract-backed | Keep outdated historical references archived and current references normalized. |
-| Contract validator | `tools/specs/validate_spec_contracts.py`, `CONTRACTS/*`, `.github/workflows/spec-contracts.yml` | 0 | P0 | Done / monitor | Script and workflow exist | Passed locally; CI workflow present | Confirm first green workflow run and expand checks as contracts evolve. |
+| Contract validator | `tools/specs/validate_spec_contracts.py`, `CONTRACTS/*`, `.github/workflows/spec-contracts.yml` | 0 | P0 | Done / monitor | Script and workflow exist | GitHub Actions green observed; validator also checks canonical spec filenames/design migration | Keep validation green and expand checks only when new machine-checkable invariants are introduced. |
 | Screen traceability | `11`, `screen_feature_traceability.yaml` | 0 | P0 | Done / monitor | Not started | Validator passed | Keep all 47 canonical screens mapped and evidence-owned. |
 | Entitlements/account | `24`, `entitlement_capability_policy.yaml` | 1 | P0 | Done / hardening | Not started | Validator passed | Implement free/auth/Supporter capability gates exactly from contract. |
 | API/privacy endpoints | `14`, `24`, `29`, `31` | 1 | P0 | Done / hardening | Not started | Spec-reviewed | Implement idempotency, rate-limit, audit, alert, and evidence rules from file `14`. |
@@ -219,14 +219,22 @@ Current status:
 | Blocker ID | Severity | Area | Description | Required resolution |
 |---|---|---|---|---|
 | B-001 | P0 | Implementation | No aligned Flutter/backend implementation baseline exists yet. | Bootstrap repo structure, packages, tokens, routes, schemas, and tests from specs. |
-| B-002 | P1 | CI validation | Contract validation workflow exists; first successful GitHub Actions run should be observed and kept required for contract-affecting changes. | Confirm the workflow run passes and keep it enabled for relevant paths. |
 | B-003 | P0 | Content correctness | Ritual/RIC implementation needs minimal governed fixture before correctness claims. | Add schema/fixture/review metadata under content governance. |
 | B-004 | P1 | Operations | Device-lab and release-evidence lane not operationalized. | Create release evidence templates, owner model, and device bucket execution path. |
-| B-005 | P2 | Prose cleanup | File `31` carry-forward checklist still uses a plain future-work list rather than a status table. | Convert file `31` checklist to a status table when connector constraints or local patching make it safe. |
 
 ---
 
 # 9. Changelog
+
+## 2026-09-24 — Final cross-spec quality audit hardening
+- Normalized remaining broken hyphenated spec filename references to canonical underscore filenames.
+- Removed residual active glass-specific platform/architecture wording so D-006 consistently governs one Pilgrims Soft Surface identity across iOS and Android.
+- Clarified that prayer-time/weather data and the centered Home floating slot are visual evidence only until an approved runtime owner/action exists; the mockup does not replace the canonical Tools section or authorize QR/scanner/camera behavior.
+- Made script-aware font fallback an explicit design-system/localization contract for Arabic, English, Indonesian, mixed-script, and large-text coverage.
+- Reconciled Notes/Bookmarks entitlement prose with file `24` and `CONTRACTS/entitlement_capability_policy.yaml`; `NOTES_BOOKMARKS_EXTENDED` is canonical.
+- Converted file `31` carry-forward items into truthful status, leaving implementation tests pending because Flutter/backend implementation has not started.
+- Expanded the validator to catch canonical filename/design-migration drift and made the CI workflow run for all `SPECS/**` changes.
+- Machine-readable product contracts were not changed because this audit found prose/reference drift rather than contract-semantic drift.
 
 ## 2026-09-24 — Figma-aligned Pilgrims Soft Surface and dual-appearance contract
 - Superseded the former Liquid-Glass-led visual doctrine while preserving D-004 as historical decision record.
