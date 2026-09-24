@@ -70,6 +70,8 @@ Screen behavior, IDs, navigation, and feature meaning come from this spec and ow
 
 Every implemented screen must support complete Light and Dark appearances through the file `08` design system. System appearance is an app-level preference that selects the OS-matched Light/Dark theme; it does not create a third visual contract.
 
+Where the current Figma reference has no verified Dark variant, screen blueprints must use the semantic Dark mappings from file `08` and must not invent or label unverified dark values as Figma-derived.
+
 ---
 
 # 3. Canonical navigation model
