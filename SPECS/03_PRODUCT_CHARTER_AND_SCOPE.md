@@ -277,16 +277,17 @@ The following feature areas are in the compact spec system and are considered ac
 
 ## 8.2 Included cross-cutting concerns
 The following are also explicitly in scope:
-- iOS-specific visual adaptation inspired by Liquid Glass where appropriate
-- Android adaptation without forced imitation
-- centralized theme and design-token architecture
-- localization and RTL
-- accessibility
-- analytics and observability
-- security and privacy
-- real-world release verification
+- one shared cross-platform visual identity called **Pilgrims Soft Surface**, grounded in the approved current Figma direction and governed textually by file `08`,
+- mandatory Light Mode and Dark Mode, plus a System appearance option that follows OS appearance,
+- platform-appropriate iOS and Android behavior without forking the product identity,
+- centralized theme, semantic-token, depth/effect, and component architecture,
+- localization and RTL,
+- accessibility,
+- offline-first behavior,
+- performance and observability,
+- real-world verification and release evidence.
 
----
+The approved Figma source is a visual reference, not a product/IA authority. Product scope, canonical feature names, navigation, screen IDs, entitlement behavior, religious meaning, and localization remain governed by their owning specs.
 
 # 9. Explicitly out of scope for the initial product
 
@@ -369,13 +370,18 @@ The product should not depend on a business model based on exploiting pilgrim da
 
 This section captures key improvements discussed earlier that should influence the product direction.
 
-## 11.1 Controlled platform styling
-The UI should support iOS-specific visual refinement inspired by Apple’s Liquid Glass direction, but only where readability and clarity remain strong.
+## 11.1 Figma-first Pilgrims Soft Surface styling
+The current approved visual direction is the project-owned **Pilgrims Soft Surface** language defined in file `08`.
 
-This means:
-- glass-like surfaces may be used for navigation chrome, overlays, and selected controls,
-- dense ritual text, emergency information, and critical route instructions should prefer clearer, stronger surfaces,
-- platform adaptation should feel intentional rather than decorative.
+The app should use:
+- mostly opaque, calm surfaces,
+- soft raised/inset depth and restrained ambient accent treatment,
+- rounded, touch-friendly geometry,
+- semantic surface roles instead of per-screen effect invention,
+- one coherent visual identity across iOS and Android,
+- mandatory Light and Dark appearances, with System as the recommended default.
+
+Decorative depth must never outrank readability, route clarity, ritual correctness, emergency clarity, large-text usability, or accessible boundaries. Exact Dark Mode values must be intentionally calibrated rather than claimed as Figma-derived unless a dark Figma source is explicitly verified.
 
 ## 11.2 3D map utility, not just 3D appearance
 The product’s mapping direction should aim for utility closer to an Al-Maqsad-like experience, not simply 3D visuals.
@@ -547,7 +553,7 @@ This file defines the product truth, but later files refine it.
 - `06-SYSTEM-ARCHITECTURE.md`
 - `07-FLUTTER-APP-ARCHITECTURE-AND-MODULE-BOUNDARIES.md`
 - `08-DESIGN-SYSTEM-THEMES-TOKENS-AND-COMPONENTS.md`
-- `09-PLATFORM-SPEC-IOS-LIQUID-GLASS-ANDROID-ADAPTATION-AND-NATIVE-BRIDGES.md`
+- `09-PLATFORM-ADAPTATION-IOS-ANDROID-AND-NATIVE-BRIDGES.md`
 - `13-DATA-MODEL-RLS-INVARIANTS-AND-MIGRATIONS.md`
 - `14-API-REALTIME-AND-INTEGRATION-CONTRACTS.md`
 - `15-OFFLINE-PACKS-SYNC-ASSET-DELIVERY-AND-CACHE-POLICY.md`
