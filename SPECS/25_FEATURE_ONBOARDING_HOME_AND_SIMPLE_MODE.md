@@ -165,7 +165,7 @@ The visual reference shows:
 - optional weather/context tile,
 - compact daily prayer-time chips.
 
-The design does not establish prayer-time calculation authority, weather provider, freshness rules, or online/offline truth. Those must be defined by their owning implementation/content contracts before runtime wiring.
+The design does not establish prayer-time calculation authority, weather provider, freshness rules, or online/offline truth. No current normative feature/API spec owns those runtime capabilities. Until approved change control establishes ownership and defines calculation/provider, timezone/location context, freshness, offline/stale behavior, privacy, analytics, and test/release evidence, Home must omit those data-driven subfields or treat them strictly as non-runtime visual reference content; implementation must not guess or synthesize values.
 
 ### Quick-action row
 The visual reference demonstrates five labeled tiles: `Bacaan`, `Save Gate`, `Tata Cara`, `Emergency`, and `Lainnya`.
@@ -182,7 +182,7 @@ The visual reference demonstrates paired compact cards. Their status text must u
 The visual reference demonstrates a date strip, vertical timeline, completed/upcoming state distinction, time range, and explicit stateful action button. Planner behavior remains owned by file `21`.
 
 ### Bottom navigation
-The visual reference demonstrates Home, Ibadah, Group, and Map as visible destinations plus one centered floating action slot. The slot’s iconography does not itself define behavior. Before implementation, that action must be mapped to an approved canonical route/action and reflected in file `11` and traceability if it introduces any new screen or flow.
+The visual reference demonstrates Home, Ibadah, Group, and Map as visible labels plus one centered floating action slot. This does not change the canonical five-section shell in files `10` and `11`: Home, Rituals, Map, Group, and Tools. The slot must not replace or silently hide Tools, and its iconography does not define behavior. It must not become QR/scanner/camera or another new action by inference. Before it is functional, it must map to an already-approved canonical route/action and be reflected in file `11` and traceability where applicable.
 
 ---
 
