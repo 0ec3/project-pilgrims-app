@@ -582,6 +582,67 @@ It ensures the product remains:
 - recoverable,
 - and safe for long-term AI-assisted implementation without UX drift.
 
+# 18. Hire a Guide IA and journeys
+
+## 18.1 Additional user contexts
+Guide Marketplace particularly serves:
+- independent/backpacker Umrah pilgrims,
+- first-time pilgrims without an agency Mutawef,
+- small families/private groups seeking human ritual accompaniment,
+- authenticated users applying to become eligible providers.
+
+These extend existing personas; they do not replace the stress, accessibility, privacy, or offline assumptions already defined here.
+
+## 18.2 Information architecture
+Default entry is:
+
+**Tools → Hire a Guide**
+
+Home may expose a low-priority contextual shortcut when relevant, but Hire a Guide must remain below current ritual/recovery, Emergency, Save My Gate/orientation recovery, and urgent Group coordination.
+
+The feature is not a sixth shell destination and is not part of the default Simple Mode urgent set.
+
+## 18.3 Pilgrim journey
+```text
+Tools
+-> Hire a Guide
+-> browse/search/filter
+-> Guide Profile
+-> understand service + pricing + fact-specific current trust
+-> Contact Guide
+-> explicitly choose approved external channel
+-> leave PILGRIMS for direct communication
+```
+
+If current trust cannot be established, contact handoff must not imply current eligibility.
+
+## 18.4 Provider journey
+```text
+Authenticate
+-> provider application
+-> submit minimum required eligibility information
+-> trusted review
+-> verification status
+-> profile/listing management
+-> listing review
+-> public discoverability only while eligibility remains current
+```
+
+Provider state is not a client role toggle.
+
+## 18.5 Recovery/failure journeys
+The journey must explicitly handle:
+- network unavailable,
+- cached/stale browse,
+- provider no longer eligible,
+- credential expired/revoked,
+- application rejected,
+- re-verification required,
+- external contact app unavailable,
+- feature legally/operationally disabled.
+
+Guide Marketplace failure must never block essential local-first or urgent recovery flows.
+
 ---
 
 End of file.
