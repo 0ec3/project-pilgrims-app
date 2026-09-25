@@ -612,3 +612,24 @@ Its purpose is to keep the app:
 - maintainable in Flutter
 - and safe for long-term AI-assisted development without hidden platform drift.
 
+
+
+# 19. External guide-contact handoff
+
+Hire a Guide uses an explicit user-controlled external handoff in V1 rather than an in-app messenger.
+
+Platform adaptation may use appropriate iOS/Android mechanisms for:
+- opening an approved WhatsApp/deep-link target,
+- initiating a phone handoff,
+- composing email through the user's chosen app,
+- falling back when the target app/channel is unavailable.
+
+Shared invariants on both platforms:
+- the user must explicitly choose the contact action/channel;
+- no automatic message or call may be sent/placed;
+- no contact import or social graph is created;
+- pilgrim phone/email is not silently disclosed;
+- provider eligibility must be re-checked online before a server-resolved contact target is returned;
+- failure to open an external app is shown honestly and must not create fake contact success.
+
+Native bridges expose only the minimum handoff capability. They do not own guide trust, eligibility, contact-policy, or analytics semantics.
