@@ -446,11 +446,11 @@ Before public release, evidence must include:
 - accountable legal/compliance resolution records for the legal blockers;
 - contract validation for guide trust and screen traceability;
 - API/RLS authorization test evidence;
-- provider lifecycle and expiry/revocation propagation evidence;
+- provider lifecycle, re-verification, idempotent application-submit retry, and expiry/revocation propagation evidence;
 - stale/offline honesty evidence;
 - privacy/logging redaction evidence;
 - moderation/urgent-delisting operational drill;
-- explicit contact-consent and real-device external-handoff evidence;
+- explicit contact-consent, contact-time current-eligibility re-check, channel-unavailable fallback, and real-device external-handoff evidence;
 - large-text, screen-reader, Arabic RTL, Light/Dark evidence;
 - weak-network and abuse/fraud scenarios;
 - regulatory disclosure review.
