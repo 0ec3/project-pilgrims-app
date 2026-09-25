@@ -540,6 +540,21 @@ Before editing content-related code or content data, an AI agent must:
 7. Never publish or activate unsigned remote governed artifacts.
 8. Update validation, fixtures, and release evidence together.
 
+# Guide Marketplace religious-claim boundary
+
+Guide Marketplace profile/listing content is not governed religious content merely because a provider discusses Umrah.
+
+The following distinctions are mandatory:
+- a provider-authored biography/service description is marketplace content, not scholar-reviewed Ritual/RIC content;
+- a provider's spoken/written advice is not automatically captured, normalized, published, or promoted into governed content;
+- a tourism licence does not establish religious qualification;
+- a separately verified religious credential, if approved later, is a provider trust fact and does not automatically authorize content publication or scholar-board participation;
+- claims such as scholar, sheikh, ustadh, mufti, certified religious guide, or equivalent require an explicitly defined verification policy before PILGRIMS presents them as verified facts.
+
+If a provider report alleges harmful religious misinformation, moderation may restrict/delist the provider/listing and escalate to the appropriate religious-governance reviewer. That operational review must not silently rewrite canonical content.
+
+No marketplace UGC or provider advice may bypass the draft/review/approved/published provenance workflow for governed religious content.
+
 ---
 
 End of file.
