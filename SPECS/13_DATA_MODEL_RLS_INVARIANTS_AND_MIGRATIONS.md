@@ -74,7 +74,8 @@ Canonical server domains:
 - regroup pins,
 - optional group itinerary content,
 - server-side purchase validation records,
-- minimal audit fields required for correctness and operations.
+- minimal audit fields required for correctness and operations,
+- Guide Marketplace provider, credential, listing, contact-channel, verification-audit, and report state where file `32` requires shared/server-trusted behavior.
 
 ## 3.2 Device-local persistent data
 The device stores local-first support data:
@@ -683,6 +684,102 @@ RLS policies for group data must enforce:
 
 ## D. Migration posture
 Adding `group_presence_events` is additive. Existing `group_checkins` and `group_regroup_pins` remain valid and must not be collapsed into one overloaded table.
+
+# 19. Guide Marketplace conceptual data and RLS amendment
+
+This section defines canonical relational intent for file `32`. It does **not** create a migration in this specification task.
+
+## 19.1 `guide_provider_profiles`
+Server-backed provider domain linked to the existing authenticated identity.
+
+Minimum conceptual ownership:
+- `user_id` references the existing authenticated user;
+- provider-editable public profile fields are self-owned;
+- lifecycle, moderation, public-eligibility, and verification fields are service-managed.
+
+A provider profile is not a second authentication identity and not a client-trusted role toggle.
+
+## 19.2 `guide_credentials`
+Stores normalized credential/authorization verification metadata.
+
+Conceptual fields include:
+- credential id and provider id,
+- credential type,
+- source authority,
+- masked/public reference where legally required,
+- verification method/state,
+- verified-at timestamp,
+- issue/expiry/re-check timestamp where applicable,
+- evidence disposition/reference only when retention is necessary,
+- suspension/revocation metadata.
+
+Raw credential or identity evidence is **restricted** and must not be placed in public rows or ordinary app-profile fields. Prefer authoritative verification plus retained result metadata over permanent document storage.
+
+## 19.3 `guide_listings`
+Stores narrowly scoped guide-service listings.
+
+Conceptual fields include:
+- provider/listing ids,
+- approved service type,
+- localized title/description,
+- service area,
+- languages,
+- group-size capability,
+- structured price/currency/pricing unit/fees,
+- inclusions/exclusions,
+- availability summary,
+- listing/moderation state,
+- timestamps/revision metadata.
+
+V1 must not model visa, hotel, transport, package, ticketing, or broad-tour inventory through this table.
+
+## 19.4 `guide_contact_channels`
+Stores approved provider contact-channel targets and visibility/resolution metadata.
+
+Raw contact targets must not be included in broad public browse/search payloads by default. A server-resolved handoff may reveal only the minimum current approved target after eligibility re-check.
+
+## 19.5 `guide_verification_events`
+Append-oriented service-managed audit history for verification, suspension, revocation, expiry, re-verification, and other trust-state transitions.
+
+Ordinary users/providers cannot mutate this history.
+
+## 19.6 `guide_reports`
+Restricted trust-and-safety reports.
+
+Report bodies and internal moderation notes are not public and are not ordinary analytics. RLS must prevent reporters/providers/public users from reading unrelated restricted report content.
+
+## 19.7 Optional `guide_contact_intents`
+May record minimal explicit contact-intent/audit/anti-abuse metadata if legal/privacy review demonstrates a real purpose.
+
+Do not create it merely to improve analytics, and never store external conversation bodies.
+
+## 19.8 Explicitly absent from V1
+Do not create guide-domain tables for:
+- bookings,
+- payments,
+- transactions,
+- escrow,
+- disputes,
+- chat messages,
+- ratings/reviews.
+
+## 19.9 Public eligibility invariant
+A public guide/listing query must be enforceable from server-trusted state. Public discoverability requires all applicable conditions from `CONTRACTS/guide_marketplace_trust_contract.yaml`, including current mandatory credentials, active approved listing, no suspension/revocation/expiry, enabled service type, and resolved legal release gates.
+
+Provider/client code cannot override public eligibility.
+
+## 19.10 RLS invariants
+RLS/authorization must prove:
+- providers edit only their own allowed self-service fields;
+- providers cannot self-set verification, credential validity, suspension/revocation, or public eligibility;
+- public reads expose only eligible records and explicitly public trust metadata;
+- restricted credential evidence is never public;
+- verification events are service-managed;
+- report details are restricted;
+- ineligible provider/listing rows cannot leak through alternate public queries;
+- service-role moderation/verification writes are auditable.
+
+The app must never rely on Flutter visibility as the enforcement boundary.
 
 ---
 
