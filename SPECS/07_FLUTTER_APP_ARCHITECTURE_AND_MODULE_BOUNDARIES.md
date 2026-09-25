@@ -1081,3 +1081,28 @@ This architecture is designed to keep the app:
 - offline-capable,
 - and safe for long-term AI-assisted development.
 
+
+
+# 27. Guide Marketplace module boundary
+
+If implemented, Hire a Guide belongs in a dedicated feature module such as `features/guide_marketplace/`, consuming shared domain/data/design-system abstractions without leaking provider logic into Account, Group, Rituals, or Tools.
+
+The module owns:
+- marketplace browse/search/filter presentation,
+- guide profile/detail presentation,
+- provider application/status UI,
+- listing editor UI,
+- contact/report orchestration through repositories/use cases.
+
+The module must not:
+- talk directly to Supabase/HTTP/storage from widgets,
+- define its own authentication system,
+- model provider verification as a local role toggle,
+- write verification/moderation fields,
+- store credential evidence in ordinary local feature storage,
+- create a reusable generic marketplace/chat/payment subsystem,
+- fork Ritual/RIC content logic.
+
+Account remains the identity/auth gate owner. File `32` owns feature behavior; files `13` and `14` own data/API truth; file `18` owns governed ritual truth.
+
+Shared components should move into core/design-system packages only when their semantics are genuinely reusable, for example fact-specific credential status presentation, not because the marketplace needs a one-off visual.
