@@ -48,6 +48,7 @@ EXPECTED_NORMATIVE_SPECS = [
     "29_SECURITY_PRIVACY_COMPLIANCE_AND_RISK_REGISTER.md",
     "30_DELIVERY_RUNBOOK_INCIDENTS_ROLLBACK_AND_OPERATIONS.md",
     "31_QUALITY_FIRST_HARDENING_AMENDMENTS.md",
+    "32_FEATURE_GUIDE_MARKETPLACE_MUTAWEF_DISCOVERY_AND_TRUST.md",
 ]
 
 OLD_FILE_09 = "09_PLATFORM_SPEC_IOS_LIQUID_GLASS_ANDROID_ADAPTATION_AND_NATIVE_BRIDGES.md"
@@ -69,6 +70,7 @@ REQUIRED = [
     "advisory_source_registry.schema.yaml",
     "release_gate_taxonomy.yaml",
     "screen_feature_traceability.yaml",
+    "guide_marketplace_trust_contract.yaml",
 ]
 
 BASELINE_SCREEN_IDS = {
@@ -84,6 +86,8 @@ BASELINE_SCREEN_IDS = {
     "emergency_card_detail", "pack_catalog", "pack_detail_install_flow", "settings_root",
     "privacy_data_flow", "simple_home", "simple_ritual_shortcut", "simple_map_shortcut",
     "simple_group_shortcut", "simple_emergency_shortcut",
+    "guide_marketplace_root", "guide_profile_detail", "guide_registration_flow",
+    "guide_verification_status", "guide_listing_editor",
 }
 
 MUST_STAY_FREE = {"correctness", "emergency", "emergency_assistive", "recovery", "offline_recovery"}
@@ -232,6 +236,60 @@ def validate_release_gate_taxonomy(data: dict) -> None:
             fail(f"release_gate_taxonomy.yaml missing term: {term}")
 
 
+
+def validate_guide_marketplace_trust(data: dict) -> None:
+    legal = mapping(data, "legal_release_gates", "guide_marketplace_trust_contract.yaml")
+    if legal.get("public_release_when_unresolved") is not False:
+        fail("Guide Marketplace public release must remain blocked while legal gates are unresolved")
+    blockers = mapping(legal, "blockers", "guide_marketplace_trust_contract.yaml")
+    for blocker in ("LEGAL-GUIDE-001", "LEGAL-GUIDE-002", "LEGAL-GUIDE-003"):
+        if blocker not in blockers:
+            fail(f"guide_marketplace_trust_contract.yaml missing blocker: {blocker}")
+        entry = blockers[blocker]
+        if not isinstance(entry, dict) or entry.get("required_resolution_before_public_release") is not True:
+            fail(f"Guide legal blocker must require resolution before release: {blocker}")
+
+    states = mapping(data, "provider_states", "guide_marketplace_trust_contract.yaml")
+    if states.get("client_may_set_trusted_states") is not False:
+        fail("Provider client must not be able to set trusted provider states")
+    values = set(states.get("values", []))
+    required_states = {"DRAFT", "SUBMITTED", "UNDER_REVIEW", "VERIFIED", "REJECTED", "SUSPENDED", "EXPIRED", "REVOKED"}
+    if not required_states.issubset(values):
+        fail("Guide Marketplace provider lifecycle is missing required states")
+
+    trust = mapping(data, "trust_model", "guide_marketplace_trust_contract.yaml")
+    if trust.get("generic_is_verified_boolean_sufficient") is not False:
+        fail("Generic is_verified boolean must not be sufficient for Guide Marketplace trust")
+    if trust.get("public_badges_must_be_fact_specific") is not True:
+        fail("Guide Marketplace public trust badges must be fact-specific")
+
+    eligibility = mapping(data, "public_eligibility", "guide_marketplace_trust_contract.yaml")
+    if eligibility.get("server_trust_required") is not True:
+        fail("Guide Marketplace public eligibility must be server-trusted")
+    if eligibility.get("provider_client_may_override") is not False:
+        fail("Provider client must not override public eligibility")
+    if eligibility.get("stale_cache_may_keep_publicly_current") is not False:
+        fail("Stale guide cache must not preserve current eligibility claims")
+
+    contact = mapping(data, "contact_handoff", "guide_marketplace_trust_contract.yaml")
+    if contact.get("explicit_user_action_required") is not True:
+        fail("Guide contact handoff must require explicit user action")
+    if contact.get("server_recheck_current_eligibility_before_resolution") is not True:
+        fail("Guide contact resolution must re-check current eligibility")
+    if contact.get("auto_message_allowed") is not False:
+        fail("Guide contact handoff must not auto-message")
+
+    religious = mapping(data, "religious_boundary", "guide_marketplace_trust_contract.yaml")
+    if religious.get("guide_advice_is_governed_ric_truth") is not False:
+        fail("Guide advice must not become governed RIC truth")
+    if religious.get("tourism_licence_implies_scholar_authority") is not False:
+        fail("Tourism licence must not imply scholar authority")
+
+    offline = mapping(data, "offline_behavior", "guide_marketplace_trust_contract.yaml")
+    if offline.get("hidden_trusted_write_queue_allowed") is not False:
+        fail("Guide Marketplace must not silently queue trusted writes offline")
+
+
 def validate_screen_traceability(data: dict, entitlements: dict) -> None:
     traceability = mapping(data, "traceability", "screen_feature_traceability.yaml")
     missing = sorted(BASELINE_SCREEN_IDS - set(traceability))
@@ -287,6 +345,7 @@ def main() -> int:
     validate_trust_chain(loaded["content_pack_trust_chain_contract.yaml"])
     validate_advisory_source_registry(loaded["advisory_source_registry.schema.yaml"])
     validate_release_gate_taxonomy(loaded["release_gate_taxonomy.yaml"])
+    validate_guide_marketplace_trust(loaded["guide_marketplace_trust_contract.yaml"])
     validate_screen_traceability(loaded["screen_feature_traceability.yaml"], loaded["entitlement_capability_policy.yaml"])
     print(f"Validated {len(loaded)} spec contract files.")
     return 0
