@@ -69,6 +69,7 @@ trust_model:
     - freshness_or_expiry
     - state
     - verifier_actor
+    - revocation_or_suspension_signal
   candidate_signals:
     - IDENTITY_MATCHED
     - PROFILE_REVIEWED
@@ -218,6 +219,8 @@ release:
   required_scenarios:
     - verification_success
     - verification_rejection
+    - reverification
+    - idempotent_application_submit
     - credential_expiry
     - credential_revocation
     - provider_suspension
@@ -228,7 +231,10 @@ release:
     - stale_browse_honesty
     - offline_trusted_write_failure
     - explicit_contact_consent
+    - contact_current_eligibility_recheck
+    - external_contact_channel_unavailable
     - report_abuse_rate_limits
+    - moderator_urgent_delisting
     - privacy_logging_redaction
     - large_text
     - screen_reader
