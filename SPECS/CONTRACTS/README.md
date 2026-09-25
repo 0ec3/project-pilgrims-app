@@ -57,6 +57,7 @@ Humans and AI agents must treat these files as follows:
 | `advisory_source_registry.schema.yaml` | `SPECS/22_FEATURE_PHRASEBOOK_EMERGENCY_SAFETY_AND_ASSISTIVE_TOOLS.md` | Drives safety/emergency advisory metadata checks, expiry checks, stale/fallback behavior tests, and content-governance release evidence. |
 | `release_gate_taxonomy.yaml` | `SPECS/28_REAL_WORLD_VERIFICATION_RELEASE_GATES_AND_EVIDENCE.md` | Drives release-risk classification, waiver object shape, no-waiver checks, release evidence templates, and release-agent review behavior. |
 | `screen_feature_traceability.yaml` | `SPECS/11_SCREENS_STATES_NAVIGATION_AND_UI_BLUEPRINTS.md` | Drives screen ownership checks, navigation coverage, critical-flow test mapping, and release evidence ownership. |
+| `guide_marketplace_trust_contract.yaml` | `SPECS/32_FEATURE_GUIDE_MARKETPLACE_MUTAWEF_DISCOVERY_AND_TRUST.md` | Drives provider-state, fact-specific trust, public-eligibility, legal-release-gate, contact-consent, religious-boundary, stale/offline, privacy, and Guide Marketplace release checks. |
 
 ---
 
@@ -74,7 +75,7 @@ Current validator scope:
 - confirms required contract files exist,
 - confirms YAML files parse as mappings,
 - confirms each contract has version metadata,
-- performs initial sanity checks for entitlement, group presence, and trust-chain contracts.
+- performs sanity checks for entitlement, group presence, trust-chain, Guide Marketplace trust, and screen-traceability contracts.
 
 Validator limitations:
 - it does not replace product review,
