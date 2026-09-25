@@ -611,6 +611,98 @@ Before editing API-related code, an AI agent must:
 7. Avoid adding new endpoints without spec approval.
 8. Document any breaking contract change.
 
+# 18. Guide Marketplace API contract amendment
+
+File `32` introduces a small online surface for a server-trusted optional feature. It does not change the local-first rule for essential pilgrimage value.
+
+## 18.1 Public/current reads
+
+### `GET /v1/guides`
+Purpose: return only currently public-eligible guide/listing summaries, with approved fact-specific trust metadata.
+
+Rules:
+- public/guest access is allowed only if final legal/security review permits;
+- response must not expose raw private contact targets or restricted credential evidence;
+- cache policy must carry freshness sufficient to prevent stale "currently verified" claims;
+- filters may cover approved language, service area, group-size, price, and precise trust types.
+
+### `GET /v1/guides/{guide_id}`
+Purpose: return current public profile/listing detail and approved trust/disclosure metadata.
+
+Rules:
+- ineligible/removed providers must not return as active due to stale application cache;
+- no restricted credential/report/moderation fields;
+- price/disclosure shape must support applicable Saudi requirements.
+
+## 18.2 Provider application/profile/listing endpoints
+
+### `POST /v1/guides/applications`
+- Auth required.
+- Network required.
+- `Idempotency-Key` required.
+- Strict abuse/rate limits.
+- Server creates trusted application state; client cannot choose verification outcome.
+
+### `GET /v1/guides/me/application`
+- Auth required.
+- Returns the caller's current trusted application/provider status with explicit freshness.
+
+### `PATCH /v1/guides/me/profile`
+- Auth required.
+- Updates only provider self-service fields.
+- Must reject attempts to write verification/moderation/public-eligibility fields.
+
+### `POST /v1/guides/me/listings`
+- Auth required.
+- `Idempotency-Key` required.
+- Creates a draft/reviewable listing only for approved service types.
+
+### `PATCH /v1/guides/me/listings/{listing_id}`
+- Auth required.
+- Provider must own the listing.
+- Must not bypass required re-review or reactivate an ineligible provider.
+
+## 18.3 Contact and report endpoints
+
+### `POST /v1/guides/{guide_id}/contact-intent`
+Purpose: resolve an explicit user-selected contact handoff without creating a booking.
+
+Rules:
+- rate-limited and abuse-sensitive;
+- auth policy must be finalized by privacy/abuse review;
+- must re-check current provider/listing eligibility at request time;
+- returns only an approved current channel/target or safe handoff payload;
+- does not auto-message, disclose pilgrim contact data, create a booking, or retain conversation content.
+
+### `POST /v1/guides/{guide_id}/reports`
+- Auth required unless an approved abuse-safe alternative is defined.
+- `Idempotency-Key` required where retry duplication matters.
+- Rate-limited.
+- Report body is restricted trust-and-safety data and must not enter ordinary analytics.
+
+## 18.4 Privileged verification/moderation
+Provider verification, credential approval/revocation, suspension, urgent delisting, and public-eligibility override are privileged service/admin operations.
+
+They must **not** be exposed as ordinary mobile-provider actions that allow self-verification.
+
+## 18.5 Error semantics
+Guide endpoints must distinguish at least:
+- `AUTH_REQUIRED`,
+- `NETWORK_REQUIRED`,
+- `RATE_LIMITED`,
+- `PROVIDER_NOT_ELIGIBLE`,
+- `CREDENTIAL_EXPIRED_OR_INVALID`,
+- `LISTING_NOT_PUBLIC`,
+- `SERVICE_TYPE_UNAVAILABLE`,
+- `FEATURE_LEGALLY_UNAVAILABLE`,
+- `CONTACT_CHANNEL_UNAVAILABLE`,
+- validation/conflict failures.
+
+Errors must not leak restricted moderation or credential evidence.
+
+## 18.6 Audit and legal gate
+No guide endpoint family may be enabled for public production while the applicable legal release gates in file `32` remain unresolved.
+
 ---
 
 End of file.
