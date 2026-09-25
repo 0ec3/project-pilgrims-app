@@ -827,3 +827,30 @@ Its purpose is to ensure that the product remains:
 - accessible
 - and safe for long-term AI-assisted implementation without content drift.
 
+
+
+# 24. Guide Marketplace copy, terminology, and accessibility
+
+The user-facing English feature name is **Hire a Guide**. The canonical English provider term in product/spec identifiers is **Mutawef**, aligned with current official Nusuk English usage. Legal/regulatory sources may use different terms or spellings and must not be rewritten to fit product terminology.
+
+Copy must distinguish:
+- Mutawef / Umrah ritual accompaniment,
+- Tourist Guide licensing,
+- separately verified religious credentials,
+- PILGRIMS verification of a specific fact.
+
+Trust copy must say what was verified and avoid ambiguous claims such as "official", "guaranteed", "certified scholar", or generic "verified guide" when the underlying fact is narrower.
+
+Until the competent Mutawef authorization model is legally resolved, public copy must not use **Verified Mutawef** or equivalent as a trust badge.
+
+Contact copy must make clear that:
+- the user is choosing an external contact channel,
+- PILGRIMS is not silently messaging on the user's behalf,
+- V1 contact does not mean PILGRIMS booked, paid for, or guaranteed the service.
+
+Accessibility requirements:
+- trust/credential state is announced in meaningful screen-reader text;
+- current/stale/expired/suspended/revoked cannot depend on color alone;
+- licence/credential labels, pricing, inclusions/exclusions, and contact/report actions remain usable at large text;
+- Arabic RTL ordering must preserve label/value, price/currency, status/freshness, and action meaning;
+- translated religious/service terminology requires human language review where ambiguity could affect trust or ritual meaning.
