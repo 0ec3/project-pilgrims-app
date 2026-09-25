@@ -467,6 +467,59 @@ Before editing security, privacy, account, group, pack/content, telemetry, or di
 7. Check deletion/export/disclosure impact.
 8. Never add hidden tracking, contact import, unsigned artifact activation, or broad private-data upload without approved spec changes.
 
+# Guide Marketplace security, privacy, compliance, and risk amendment
+
+Guide Marketplace adds a trust-sensitive provider domain. Its governing principle is:
+
+**Verify more; store less.**
+
+## Data classification
+Treat the following as restricted/high-sensitivity operational data:
+- raw identity evidence,
+- raw credential/licence evidence,
+- non-public credential references,
+- report bodies,
+- internal moderation notes,
+- private provider contact targets,
+- security/fraud signals.
+
+Public trust metadata must be a minimal approved projection of a verified fact, not the underlying evidence.
+
+## Privacy requirements
+- apply purpose limitation and data minimization to every provider/application field;
+- prefer authoritative source verification and retained result metadata over permanent document copies;
+- if document retention is unavoidable, define encryption, scoped access, retention/deletion, audit, breach response, and lawful processing basis before implementation;
+- do not put raw contact values or verification documents into analytics/logs;
+- do not silently disclose pilgrim contact information during external handoff;
+- do not retain external conversation bodies;
+- public browse/search responses should minimize scraping value.
+
+## Risk-register additions
+The following risks require explicit owners/controls before release:
+- **GUIDE-R01 Forged credential** — false document/source manipulation.
+- **GUIDE-R02 Expired/revoked credential** — stale eligibility remains public.
+- **GUIDE-R03 Wrong authority model** — PILGRIMS verifies the wrong credential for the advertised service.
+- **GUIDE-R04 Platform licensing exposure** — PILGRIMS operates a regulated arranging/intermediary activity without required authorization.
+- **GUIDE-R05 Misleading trust badge** — public copy overstates what was verified.
+- **GUIDE-R06 Unauthorized travel services** — listing drifts into visa/accommodation/transport/package/ticketing or other separately regulated activity.
+- **GUIDE-R07 Religious misrepresentation** — tourism/provider trust presented as scholarly/fiqh authority or misleading religious claim.
+- **GUIDE-R08 Off-platform payment scam** — provider/user payment occurs externally and user assumes PILGRIMS protection.
+- **GUIDE-R09 Harassment/personal safety** — contact handoff enables abusive conduct.
+- **GUIDE-R10 Contact scraping/enumeration** — provider private contact targets harvested at scale.
+- **GUIDE-R11 Verification-evidence leakage** — identity/licence documents exposed to public, logs, analytics, or unauthorized staff.
+- **GUIDE-R12 Report abuse/defamation** — reporting mechanism used maliciously or report content leaked.
+- **GUIDE-R13 Fake review/ranking pressure** — future review/sponsorship behavior falsely influences trust; V1 mitigates by deferring reviews/sponsored placement.
+- **GUIDE-R14 Stale verification** — cached or delayed state shown as current.
+- **GUIDE-R15 Moderation/support failure** — harmful provider cannot be investigated/delisted promptly.
+- **GUIDE-R16 Suspension/expiry propagation failure** — one surface remains active after ineligibility.
+- **GUIDE-R17 Provider account takeover** — attacker edits contact/listing content or attempts fraud.
+- **GUIDE-R18 Contact/report automation abuse** — mass requests, spam, or denial of service.
+
+## Compliance blockers
+`LEGAL-GUIDE-001`, `LEGAL-GUIDE-002`, and final applicable operator/disclosure obligations are open compliance risks and must remain blocker-level until resolved by accountable Saudi legal/compliance review.
+
+Do not downgrade these risks because the V1 design omits payment or in-app booking.
+
 ---
 
 End of file.

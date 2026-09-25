@@ -614,6 +614,32 @@ Before editing account, subscription, entitlement, or settings code, an AI agent
 5. Update affected feature specs and tests together.
 6. Never add monetization prompts to ritual-critical, emergency, medical, group recovery, or urgent map recovery flows.
 
+# Guide Marketplace account/provider/entitlement amendment
+
+Guide Marketplace uses the existing authentication identity.
+
+Rules:
+- `auth.users` remains the only app authentication identity source;
+- a normal authenticated user may apply to become a provider;
+- provider application/status is a separate server-trusted domain, not an auth role toggle;
+- the client must not write or infer provider verification/public eligibility;
+- provider application, profile/listing management, and other protected guide operations require authentication as defined by files `14` and `32`;
+- ordinary local-first app value remains available without sign-in.
+
+Initial pilgrim Guide Marketplace capabilities are **not Supporter gates**:
+- browse,
+- search/filter,
+- trust/credential information,
+- guide profile,
+- contact,
+- report.
+
+Provider monetization, if ever approved, is a distinct commercial policy and must not be represented through the pilgrim Supporter entitlement.
+
+Paying PILGRIMS must never strengthen a provider's verification badge, credential state, public eligibility, or apparent trustworthiness.
+
+Settings may expose provider-account management entry points only where useful; provider verification truth itself remains owned by file `32`, not Settings.
+
 ---
 
 End of file.

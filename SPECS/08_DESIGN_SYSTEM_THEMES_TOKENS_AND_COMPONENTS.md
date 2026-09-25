@@ -936,3 +936,26 @@ Its purpose is to make the app:
 - easy to restyle centrally,
 - and safe for long-term AI-assisted development without styling sprawl.
 
+
+
+# 24. Guide Marketplace trust and listing components
+
+Guide Marketplace may introduce reusable semantic component patterns only through the Pilgrims Soft Surface system.
+
+Required semantic patterns include:
+- provider/listing card,
+- fact-specific trust-status row or chip,
+- credential source/freshness detail,
+- structured price/inclusion/exclusion block,
+- stale/unavailable trust state,
+- report/contact action surfaces.
+
+Trust presentation rules:
+- do not use a generic green checkmark as the sole meaning of "verified";
+- the visible label must name the verified fact;
+- expiry/stale/suspended/revoked states must remain understandable without color;
+- stale trust must not retain the same visual semantics as current trust;
+- paid/sponsored treatment, if ever added through change control, must never visually resemble a stronger verification state;
+- Light/Dark and large-text behavior must preserve identical trust meaning.
+
+Credential and regulatory disclosure density should use progressive disclosure rather than tiny text or badge clutter. Legal/trust meaning outranks decorative depth.

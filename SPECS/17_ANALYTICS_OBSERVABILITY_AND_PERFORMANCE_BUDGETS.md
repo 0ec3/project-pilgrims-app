@@ -516,6 +516,46 @@ Before adding or changing telemetry, an AI agent must:
 5. Confirm release/incident dashboards are not broken.
 6. Never add sensitive user or protected operational payloads to analytics.
 
+# Guide Marketplace analytics and observability amendment
+
+Guide Marketplace uses the privacy-safe `guide_*` event family.
+
+Approved candidate event names:
+- `guide_marketplace_view`
+- `guide_search`
+- `guide_profile_view`
+- `guide_contact_intent`
+- `guide_application_start`
+- `guide_application_submit`
+- `guide_application_result`
+- `guide_listing_publish`
+- `guide_report_submit`
+- `guide_verification_state_change`
+
+Allowed properties must remain low-cardinality, non-sensitive operational dimensions such as normalized service type, normalized verification state/type, result class, broad locale, and broad feature state where justified.
+
+Ordinary analytics, logs, traces, crash breadcrumbs, and experiment payloads must not contain:
+- government identity values,
+- raw licence/credential numbers,
+- credential-document contents,
+- phone/WhatsApp/email,
+- private conversation content,
+- report body,
+- precise private location,
+- religious question/advice content.
+
+Operational monitoring should measure:
+- public-listing eligibility/filtering failures,
+- stale-data fallback rate,
+- contact-resolution errors,
+- application/listing write errors,
+- credential-expiry/revocation propagation latency,
+- report/moderation queue health,
+- rate-limit/abuse signals,
+- unexpected public visibility after ineligibility.
+
+No analytics signal may be treated as credential verification or legal eligibility truth.
+
 ---
 
 End of file.

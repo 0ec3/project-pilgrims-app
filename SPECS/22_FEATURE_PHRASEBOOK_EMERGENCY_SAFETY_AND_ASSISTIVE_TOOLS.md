@@ -1253,3 +1253,18 @@ Its purpose is to ensure these urgent-support tools become:
 - privacy-respecting,
 - and maintainable for long-term AI-assisted implementation.
 
+
+
+# Guide Marketplace safety boundary
+
+Hire a Guide is not an emergency or safety-response substitute.
+
+Emergency, phrase support, medical-profile basics, Save My Gate recovery, and Group safe/regroup actions remain higher-priority urgent support surfaces and must not be displaced by guide discovery/contact.
+
+Guide profiles/listings must not:
+- advertise automatic emergency dispatch,
+- imply official emergency authority without verified legal basis,
+- replace official emergency numbers or curated safety guidance,
+- receive hidden access to the user's medical profile, precise location, or emergency data.
+
+If a guide-related report concerns immediate safety, the report UX may direct the user toward appropriate emergency/official support, but report submission itself is not emergency dispatch.

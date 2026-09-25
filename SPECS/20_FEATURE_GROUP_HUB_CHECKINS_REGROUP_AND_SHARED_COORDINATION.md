@@ -813,6 +813,23 @@ Before editing Group-related code, an AI agent must:
 5. Never add hidden tracking, contact import, generic chat, or automatic social graph behavior.
 6. Update tests, fixtures, analytics, and docs together.
 
+# Guide Marketplace boundary
+
+Guide Marketplace is owned by file `32`, not Group.
+
+A family or private party may use Hire a Guide, but V1 must not turn Group into:
+- provider discovery,
+- provider chat,
+- provider presence tracking,
+- provider booking,
+- shared payment,
+- provider review,
+- automatic provider invitation.
+
+Guide Marketplace must not reuse Group presence, join codes, Live Board, or regroup semantics as a hidden provider-location/social graph.
+
+If a future approved flow lets a group leader share a guide profile or contact link with group members, that must remain an explicit lightweight share/handoff and must not change Group's privacy-light coordination contract without change control.
+
 ---
 
 End of file.

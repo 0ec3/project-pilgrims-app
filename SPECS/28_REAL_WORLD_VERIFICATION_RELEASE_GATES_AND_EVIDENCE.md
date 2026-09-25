@@ -422,6 +422,41 @@ Before preparing or reviewing release evidence, an AI agent must:
 5. Never classify screenshots, happy-path demos, or YAML parse success as complete release proof.
 6. Never waive a no-waiver-zone failure.
 
+# Guide Marketplace release-gate amendment
+
+Guide Marketplace provider trust, credentials, public eligibility, reports/moderation, contact handoff, and restricted verification data are classified **RC3** under the existing `release_gate_taxonomy.yaml`. No new release class is required.
+
+## Public-release blockers
+The feature is no-ship while any of the following is true:
+- `LEGAL-GUIDE-001` is unresolved: PILGRIMS' platform-facilitation/licensing classification is not established;
+- `LEGAL-GUIDE-002` is unresolved: the competent authorization/provider-relationship model for paid Mutawef ritual accompaniment is not established;
+- required operator/e-commerce/professional-disclosure/complaint/tax/record obligations for the chosen model are not finalized;
+- a known store/legal non-compliance condition exists;
+- provider can self-verify or bypass public-eligibility rules;
+- restricted credential evidence can be exposed publicly;
+- stale/expired/revoked/suspended provider state can remain publicly active;
+- moderation/suspension/urgent-delisting capability is not operationally owned;
+- RLS/auth evidence is missing;
+- trust-badge authority/freshness semantics are ambiguous.
+
+These conditions are blocker/no-ship evidence gaps and are not waivable where they amount to known legal non-compliance, religious-correctness risk, critical privacy failure, or authorization-boundary failure.
+
+## Required evidence bundle
+Before public release, evidence must include:
+- accountable legal/compliance resolution records for the legal blockers;
+- contract validation for guide trust and screen traceability;
+- API/RLS authorization test evidence;
+- provider lifecycle, re-verification, idempotent application-submit retry, and expiry/revocation propagation evidence;
+- stale/offline honesty evidence;
+- privacy/logging redaction evidence;
+- moderation/urgent-delisting operational drill;
+- explicit contact-consent, contact-time current-eligibility re-check, channel-unavailable fallback, and real-device external-handoff evidence;
+- large-text, screen-reader, Arabic RTL, Light/Dark evidence;
+- weak-network and abuse/fraud scenarios;
+- regulatory disclosure review.
+
+Documentation completeness alone is not release evidence.
+
 ---
 
 End of file.

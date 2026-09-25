@@ -4,7 +4,7 @@
 - **Type:** Normative amendment and cross-spec hardening patch
 - **Priority:** Highest for conflicts listed here
 - **Audience:** Founder, product lead, engineering lead, design lead, backend engineer, Flutter engineer, QA, AI coding agents, release agents
-- **Purpose:** Convert audit findings into implementation-safe amendments while keeping the current 01–31 normative spec system and machine-readable contracts coherent.
+- **Purpose:** Convert audit findings into implementation-safe amendments while keeping the current 01–32 normative spec system and machine-readable contracts coherent.
 - **Related files:** 03, 11, 13, 14, 15, 18–30, `SPECS/CONTRACTS/*`
 
 ---
@@ -35,6 +35,7 @@ The following files are now part of the normative specification system:
 - `SPECS/CONTRACTS/advisory_source_registry.schema.yaml`
 - `SPECS/CONTRACTS/release_gate_taxonomy.yaml`
 - `SPECS/CONTRACTS/screen_feature_traceability.yaml`
+- `SPECS/CONTRACTS/guide_marketplace_trust_contract.yaml`
 
 Markdown specs remain the human-readable authority. The contract artifacts exist so implementation, tests, release checks, and AI agents can validate critical truths without reinterpreting prose.
 
@@ -311,3 +312,23 @@ If a screen contract and feature-family contract diverge, implementation must st
 | Build implementation tests from contract artifacts | Pending implementation | Validator/test requirements are specified, but Flutter/backend implementation and runtime fixtures remain not started per file `05`. |
 
 This amendment is now a cross-spec hardening record, not a substitute for older prose sections. Current domain specs and contracts must remain synchronized directly through normal change control.
+
+
+# 16. Guide Marketplace trust hardening
+
+File `32` adds Hire a Guide as a narrow pilgrimage-specific exception without changing the general anti-sprawl rule.
+
+Quality-first Guide Marketplace requirements are:
+- public release is blocked while `LEGAL-GUIDE-001`, `LEGAL-GUIDE-002`, or required final operator/disclosure obligations remain unresolved;
+- provider verification and public eligibility are server-trusted and may not be self-declared by the provider/client;
+- a generic `is_verified` flag is insufficient; every public trust signal must identify the verified fact and have source/freshness semantics;
+- expired, revoked, suspended, legally disabled, or otherwise ineligible providers/listings must not remain publicly discoverable;
+- restricted credential evidence and report content must never become public or ordinary analytics;
+- trusted Guide Marketplace writes fail honestly offline and must not be silently queued;
+- explicit user action is required before any external contact handoff;
+- guide advice remains separate from governed Ritual/RIC/remedy truth;
+- a tourism credential does not imply scholarly/fiqh authority;
+- pilgrim discovery/contact/report access is not a Supporter gate;
+- provider payment or future sponsored placement must never strengthen or masquerade as verification/trust.
+
+The machine-readable implementation policy is `CONTRACTS/guide_marketplace_trust_contract.yaml`. Guide Marketplace trust behavior is RC3 under the existing release taxonomy; known legal non-compliance remains an unwaivable no-ship condition.

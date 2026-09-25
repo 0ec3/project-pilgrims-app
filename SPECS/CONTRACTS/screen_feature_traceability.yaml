@@ -1,4 +1,4 @@
-version: 2
+version: 3
 owner_spec: SPECS/11_SCREENS_STATES_NAVIGATION_AND_UI_BLUEPRINTS.md
 related_specs:
   - SPECS/18_FEATURE_RITUALS_RIC_AND_RELIGIOUS_CONTENT.md
@@ -9,6 +9,7 @@ related_specs:
   - SPECS/23_FEATURE_OFFLINE_PACKS_AUDIO_AND_CONTENT_DISTRIBUTION.md
   - SPECS/24_FEATURE_ACCOUNT_SUBSCRIPTIONS_ENTITLEMENTS_AND_SETTINGS.md
   - SPECS/25_FEATURE_ONBOARDING_HOME_AND_SIMPLE_MODE.md
+  - SPECS/32_FEATURE_GUIDE_MARKETPLACE_MUTAWEF_DISCOVERY_AND_TRUST.md
 rule: >-
   File 11 owns screen/state/navigation contracts. Feature-family files own business behavior.
   Every canonical screen listed in file 11 must appear here with a feature owner, critical flows,
@@ -327,6 +328,45 @@ traceability:
     critical_flows: [emergency_card, phrasebook, medical_profile]
     offline_behavior: baseline_assistive_content_local
     analytics_events: [simple_emergency_shortcut_view]
+  guide_marketplace_root:
+    feature_owner: SPEC_32
+    category: hub_screen
+    critical_flows: [browse_guides, search_filter, stale_browse, legal_unavailable]
+    offline_behavior: optional_cached_browse_with_explicit_stale_state
+    entitlement_dependencies: []
+    analytics_events: [guide_marketplace_view, guide_search]
+  guide_profile_detail:
+    feature_owner: SPEC_32
+    category: detail_screen
+    critical_flows: [service_and_price_disclosure, trust_details, explicit_contact, report, provider_ineligible]
+    offline_behavior: cached_read_only_with_stale_label_contact_requires_online_eligibility_recheck
+    entitlement_dependencies: []
+    analytics_events: [guide_profile_view, guide_contact_intent]
+  guide_registration_flow:
+    feature_owner: SPEC_32
+    category: flow_screen
+    critical_flows: [provider_auth, application_draft, application_submit, validation_failure, legal_program_unavailable]
+    offline_behavior: trusted_submit_unavailable_no_hidden_queue
+    permission_dependencies: [auth_required, network_required]
+    entitlement_dependencies: []
+    analytics_events: [guide_application_start, guide_application_submit]
+  guide_verification_status:
+    feature_owner: SPEC_32
+    category: detail_screen
+    critical_flows: [trusted_status, rejection, suspension, expiry, revocation, reverification]
+    offline_behavior: last_known_status_only_when_explicitly_stale_and_non_authoritative
+    permission_dependencies: [auth_required_for_provider_status]
+    entitlement_dependencies: []
+    analytics_events: [guide_application_result, guide_verification_state_change]
+  guide_listing_editor:
+    feature_owner: SPEC_32
+    category: flow_screen
+    critical_flows: [listing_create, listing_edit, review_state, publish_request, ineligible_provider]
+    offline_behavior: trusted_write_unavailable_no_hidden_queue
+    permission_dependencies: [auth_required, network_required]
+    entitlement_dependencies: []
+    analytics_events: [guide_listing_publish]
+
 validation_rules:
   - File 11 canonical screen inventory and this traceability map must stay in one-to-one sync unless a screen is explicitly marked deferred_with_rationale.
   - Every screen implementation must reference feature_owner, offline behavior, accessibility notes, analytics events, and release evidence owner from this file.

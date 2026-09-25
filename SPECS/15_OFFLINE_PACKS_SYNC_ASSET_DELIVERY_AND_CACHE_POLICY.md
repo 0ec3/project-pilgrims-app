@@ -510,6 +510,39 @@ Before editing offline, sync, cache, or pack code, an AI agent must:
 6. Never mark a pack installed without all required trust-chain checks.
 7. Update tests and release evidence for changed offline or pack behavior.
 
+# 18. Guide Marketplace offline/cache classification
+
+Guide Marketplace is optional server-trusted value and does not alter Tier A essential guarantees.
+
+## 18.1 Tier B — optional cached browse
+A last-good guide/listing snapshot may be cached for browsing only when:
+- the UI clearly marks it stale when freshness is insufficient,
+- cached credential/trust state is not presented as currently verified indefinitely,
+- the cache excludes restricted credential evidence and unnecessary raw contact targets,
+- public eligibility loss can invalidate/hide cached active treatment.
+
+## 18.2 Tier C — online-required trusted operations
+The following require network/server truth:
+- provider application submission,
+- authoritative application/verification status refresh,
+- listing publication or trusted listing writes,
+- credential verification/re-verification,
+- report submission,
+- contact-intent resolution,
+- current public-eligibility confirmation before contact handoff.
+
+## 18.3 No hidden queue
+Do not silently queue Guide Marketplace trusted writes for later execution. Offline submission/update/report/contact attempts must fail honestly and preserve local form input only where privacy policy permits.
+
+## 18.4 Stale-trust safety
+If the app cannot establish current credential/public eligibility:
+- cached profile information may remain readable only as stale context,
+- "currently verified" semantics must be removed,
+- Contact Guide must not resolve a new channel until current eligibility is re-checked.
+
+## 18.5 Independence rule
+Guide Marketplace unavailability must not degrade Rituals/RIC, Emergency, Phrasebook, Save My Gate, baseline map recovery, local personal tools, or baseline group coordination.
+
 ---
 
 End of file.

@@ -7,7 +7,7 @@
 - **Purpose:** Define exactly how AI agents must behave before, during, and after any task in this project.
 - **Authority level:** This file governs AI-agent execution behavior across the entire repository.
 - **Primary dependency:** `SPECS/01_README_AND_MASTER_INDEX.md`
-- **Related files:** All files, with strongest linkage to `SPECS/03_PRODUCT_CHARTER_AND_SCOPE.md`, `SPECS/04_DECISIONS_GLOSSARY_AND_CHANGE_CONTROL.md`, `SPECS/05_ROADMAP_PROGRESS_AND_CHANGELOG.md`, `SPECS/11_SCREENS_STATES_NAVIGATION_AND_UI_BLUEPRINTS.md`, `SPECS/13_DATA_MODEL_RLS_INVARIANTS_AND_MIGRATIONS.md`, `SPECS/14_API_REALTIME_AND_INTEGRATION_CONTRACTS.md`, `SPECS/27_TESTING_STRATEGY_TEST_MATRIX_AND_DEVICE_LAB.md`, `SPECS/28_REAL_WORLD_VERIFICATION_RELEASE_GATES_AND_EVIDENCE.md`, `SPECS/29_SECURITY_PRIVACY_COMPLIANCE_AND_RISK_REGISTER.md`, `SPECS/30_DELIVERY_RUNBOOK_INCIDENTS_ROLLBACK_AND_OPERATIONS.md`, `SPECS/31_QUALITY_FIRST_HARDENING_AMENDMENTS.md`, `SPECS/CONTRACTS/*`, and `tools/specs/validate_spec_contracts.py`.
+- **Related files:** All files, with strongest linkage to `SPECS/03_PRODUCT_CHARTER_AND_SCOPE.md`, `SPECS/04_DECISIONS_GLOSSARY_AND_CHANGE_CONTROL.md`, `SPECS/05_ROADMAP_PROGRESS_AND_CHANGELOG.md`, `SPECS/11_SCREENS_STATES_NAVIGATION_AND_UI_BLUEPRINTS.md`, `SPECS/13_DATA_MODEL_RLS_INVARIANTS_AND_MIGRATIONS.md`, `SPECS/14_API_REALTIME_AND_INTEGRATION_CONTRACTS.md`, `SPECS/27_TESTING_STRATEGY_TEST_MATRIX_AND_DEVICE_LAB.md`, `SPECS/28_REAL_WORLD_VERIFICATION_RELEASE_GATES_AND_EVIDENCE.md`, `SPECS/29_SECURITY_PRIVACY_COMPLIANCE_AND_RISK_REGISTER.md`, `SPECS/30_DELIVERY_RUNBOOK_INCIDENTS_ROLLBACK_AND_OPERATIONS.md`, `SPECS/31_QUALITY_FIRST_HARDENING_AMENDMENTS.md`, `SPECS/32_FEATURE_GUIDE_MARKETPLACE_MUTAWEF_DISCOVERY_AND_TRUST.md`, `SPECS/CONTRACTS/*`, and `tools/specs/validate_spec_contracts.py`.
 
 ---
 
@@ -587,3 +587,23 @@ This file defines how AI agents must operate in this project.
 Its purpose is to protect the project from hallucination, context loss, stale file references, bad assumptions, contract drift, fake-green test success, scattered styling, refactor debt, and undocumented changes.
 
 Any AI agent that works on this project must follow this file together with the root index, file `31` where applicable, relevant canonical specs, and affected contract artifacts before making changes.
+
+
+# 21. Guide Marketplace / provider-trust task workflow
+
+Any task that touches Hire a Guide, Mutawef/provider eligibility, provider credentials, guide listings, public trust badges, contact handoff, reports, moderation, suspension, expiry/revocation, or guide-marketplace release status must read, at minimum:
+
+- files `03`, `04`, `06`–`15`, `17`, `18`, `24`, `26`–`32`,
+- `CONTRACTS/guide_marketplace_trust_contract.yaml`,
+- `CONTRACTS/screen_feature_traceability.yaml`,
+- `CONTRACTS/release_gate_taxonomy.yaml`.
+
+The agent must not:
+- infer that no in-app payment means no Saudi licensing obligation,
+- treat a tourist-guide licence as proof of Mutawef or scholarly authority,
+- introduce a generic `is_verified` trust shortcut,
+- allow provider clients to self-authorize verification/public eligibility,
+- weaken the unresolved legal release gates in file `32`,
+- add bookings, payments, escrow, reviews, chat, or broader travel commerce without explicit change control.
+
+If the applicable Saudi licensing/authorization model is unresolved, the agent must preserve the blocker rather than inventing a legal conclusion.

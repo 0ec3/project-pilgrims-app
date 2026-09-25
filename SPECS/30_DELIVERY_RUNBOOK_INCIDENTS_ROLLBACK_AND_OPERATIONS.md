@@ -454,6 +454,60 @@ Before editing release/operations/runbook content or tooling, an AI agent must:
 5. Never propose unsigned activation, silent severity downgrade, or undocumented production change.
 6. Preserve human accountability for production actions.
 
+# Guide Marketplace operations and incident amendment
+
+Guide Marketplace requires operational containment independent of the mobile binary.
+
+## Required control surfaces
+Operations must be able to:
+- disable Guide Marketplace discovery,
+- disable a legally unsupported service type,
+- hide/delist a provider or listing urgently,
+- suspend contact handoff,
+- revoke a public trust signal,
+- force provider re-verification,
+- mark credential-source verification unavailable,
+- tighten contact/report abuse controls,
+- preserve audit history.
+
+These controls must not disable essential Ritual/RIC, Emergency, Phrasebook, Save My Gate, or baseline Group recovery.
+
+## Guide incident triggers
+Declare/escalate an incident when evidence suggests:
+- forged or wrong-authority credentials were accepted,
+- expired/revoked/suspended providers remain public,
+- a misleading official/religious trust claim is displayed,
+- restricted verification/report/contact data leaked,
+- provider/listing offers unauthorized regulated services,
+- fraud/scam/harassment creates material user-safety risk,
+- contact targets are being scraped,
+- moderation cannot promptly contain a harmful listing/provider,
+- the platform may be operating outside required licence/authorization scope.
+
+## Immediate containment
+Prefer:
+1. disable contact handoff or affected listing/provider,
+2. disable the affected service type/marketplace exposure if scope is uncertain,
+3. preserve evidence and verification history,
+4. notify product, security/privacy, compliance/legal, support, and religious-governance owners as applicable,
+5. communicate accurately to affected users where trust/safety is material.
+
+Do not keep a provider public merely to preserve marketplace availability.
+
+## Credential expiry/revocation operations
+Credential freshness/revocation checks must have a defined owner and cadence appropriate to the authoritative source. A failed authority lookup must degrade toward unavailable/review-required rather than indefinite optimistic verification where current status is required.
+
+## Support boundary
+Support must not promise that PILGRIMS:
+- guarantees a provider,
+- has verified scholarship unless that exact credential is defined,
+- protects external/off-platform payment,
+- booked the service,
+- can resolve legal disputes beyond the documented support process.
+
+## Reactivation
+A suspended/delisted provider or disabled service type may return only after the relevant eligibility, legal, moderation, and verification conditions are current and auditable.
+
 ---
 
 End of file.

@@ -1100,3 +1100,45 @@ This architecture is intentionally optimized for:
 - maintainability,
 - and safe AI-agent implementation over time.
 
+
+
+# 25. Guide Marketplace architecture amendment
+
+## 25.1 Architectural role
+Guide Marketplace is an optional server-trusted feature domain owned by file `32`. It must not become a dependency of essential offline pilgrimage value.
+
+Its runtime shape is:
+
+```text
+Flutter Guide Marketplace module
+  -> domain/repository boundary
+  -> Edge API
+  -> Supabase/PostgreSQL + RLS
+  -> restricted verification/moderation operations
+
+Explicit Contact Guide
+  -> online eligibility re-check
+  -> approved contact-channel resolution
+  -> user-controlled OS/external-app handoff
+```
+
+## 25.2 Trust boundary
+The backend is authoritative for:
+- provider lifecycle state,
+- credential verification/freshness,
+- listing moderation state,
+- suspension/revocation/expiry,
+- public eligibility,
+- contact-channel approval/resolution,
+- report and verification audit records.
+
+The client may render trusted state but may not create or extend it.
+
+## 25.3 Data-minimization boundary
+Verification should prefer authoritative lookups and retained verification metadata over long-lived copies of identity/credential documents. Restricted evidence, when temporarily necessary, requires explicit protected storage, retention, access, deletion, and audit rules before implementation.
+
+## 25.4 Failure-domain rule
+Guide Marketplace may be disabled, stale, legally unavailable, or under moderation containment without degrading Rituals/RIC, Emergency, Phrasebook, Save My Gate, baseline Map recovery, or baseline Group recovery.
+
+## 25.5 No architecture expansion by implication
+This amendment does not add payment processing, escrow, bookings, generic messaging, general travel inventory, or a new runtime zone.
