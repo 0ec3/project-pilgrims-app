@@ -552,6 +552,76 @@ Before editing tests or verification plans, an AI agent must:
 5. Do not treat YAML parsing, screenshots, or happy-path demos as sufficient proof.
 6. Update evidence and release-gate references with test changes.
 
+# Guide Marketplace verification matrix
+
+Guide Marketplace is a trust-critical server-backed feature and requires contract, RLS, abuse, accessibility, stale-state, and physical-device evidence before public release.
+
+Required test families include:
+
+## Provider lifecycle
+- application draft/submit,
+- idempotent retry,
+- under-review state,
+- verification success,
+- rejection,
+- re-verification,
+- suspension,
+- expiry,
+- revocation,
+- provider cannot self-set a trusted state.
+
+## Public eligibility and data isolation
+- only eligible approved listings are public,
+- mandatory credential expiry/revocation removes public eligibility,
+- provider/listing suspension propagates promptly,
+- alternate queries cannot bypass public-eligibility filtering,
+- public cannot read restricted credential evidence,
+- providers cannot read unrelated reports,
+- service-managed verification events cannot be user-edited,
+- RLS tests cover every guide user-scoped/restricted table.
+
+## Offline/stale
+- cached browse is visibly stale when required,
+- stale credential never appears as current indefinitely,
+- contact requires online eligibility re-check,
+- provider/listing/report trusted writes fail honestly offline,
+- no hidden trusted-write queue creates surprise side effects.
+
+## Contact/report abuse
+- explicit user contact consent,
+- no auto-message/call,
+- no silent pilgrim contact disclosure,
+- raw provider contact not leaked in bulk browse,
+- contact/report rate limits,
+- enumeration/scraping controls,
+- report duplicate/abuse behavior,
+- restricted report-body logging/analytics redaction.
+
+## Religious/trust semantics
+- tourism licence is not shown as scholarly authority,
+- guide advice does not mutate Ritual/RIC content/state,
+- fact-specific badge labels/source/freshness are correct,
+- forbidden ambiguous trust claims do not render.
+
+## Accessibility and localization
+- large text,
+- screen reader,
+- keyboard/switch interaction where applicable,
+- Arabic RTL,
+- English/Indonesian layout,
+- Light/Dark parity,
+- non-color status meaning.
+
+## Regulatory disclosure and field evidence
+- required licence/category/language/pricing/disclosure fields render when legally applicable,
+- legally unavailable state works,
+- real-device external WhatsApp/phone/email handoff tests,
+- weak-network tests,
+- fraud/abuse tabletop scenarios,
+- moderator urgent-delisting drill.
+
+Contract tests must consume `CONTRACTS/guide_marketplace_trust_contract.yaml` and screen tests must consume the updated screen traceability contract.
+
 ---
 
 End of file.
