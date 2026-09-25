@@ -492,7 +492,7 @@ Before editing UI or navigation code, an AI agent must:
 5. Confirm accessibility and localization requirements.
 6. Avoid adding untracked screens or modals without updating this file and traceability.
 
-# 21. Guide Marketplace canonical screen amendment
+# 13. Guide Marketplace canonical screen amendment
 
 File `32` adds five canonical screens. These are task/detail flows reached through Tools or an approved contextual shortcut; none is a sixth shell destination.
 
@@ -525,7 +525,7 @@ File `32` adds five canonical screens. These are task/detail flows reached throu
    - **States:** draft, validation failure, pending review, active, re-review required, suspended/unavailable, offline trusted-write failure.
    - **Offline:** no publish/update success may be invented or silently queued.
 
-## 21.1 Shared Guide Marketplace screen rules
+## 13.1 Shared Guide Marketplace screen rules
 - File `32` owns business behavior.
 - `CONTRACTS/screen_feature_traceability.yaml` must map all five IDs.
 - Trust state must be text/semantics-first, not color-only.
