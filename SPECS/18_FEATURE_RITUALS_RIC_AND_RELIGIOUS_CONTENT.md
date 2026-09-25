@@ -1230,3 +1230,18 @@ Its purpose is to ensure that this feature family remains:
 - ethically monetized,
 - and safe for long-term AI-assisted implementation without ritual-content drift.
 
+
+
+# Guide Marketplace religious-boundary amendment
+
+File `32` may connect a pilgrim to a human Mutawef/guide, but it does not change the authority model of this feature family.
+
+Non-negotiable rules:
+- advice spoken or written by a guide is external human advice, not canonical Ritual/RIC output;
+- guide advice must not mutate ritual session truth, RIC remedies, governed classifications, or published content;
+- a tourist-guide licence is not evidence of scholarly/fiqh authority;
+- a PILGRIMS provider trust badge is not scholar-board approval;
+- any future religious credential shown on a guide profile must be independently defined/verified and still does not grant automatic content-publishing authority;
+- disputes or reports about guide religious claims may trigger moderation/escalation, but the report itself is not a content-governance ruling.
+
+Ritual/RIC correctness remains available independently of Hire a Guide and must not be paywalled, degraded, or made network-dependent by this feature.
