@@ -491,6 +491,46 @@ Before editing UI or navigation code, an AI agent must:
 5. Confirm accessibility and localization requirements.
 6. Avoid adding untracked screens or modals without updating this file and traceability.
 
+# 21. Guide Marketplace canonical screen amendment
+
+File `32` adds five canonical screens. These are task/detail flows reached through Tools or an approved contextual shortcut; none is a sixth shell destination.
+
+48. Guide Marketplace Root — `guide_marketplace_root`
+   - **Purpose:** browse/search/filter currently eligible guide listings and understand cached/legal-unavailable states.
+   - **Entry:** Tools → Hire a Guide; approved low-priority contextual Home shortcut.
+   - **States:** loading, current content, no results, filtered results, error, cached/stale, feature legally/operationally unavailable.
+   - **Next:** guide profile detail; provider registration entry where appropriate.
+   - **Offline:** optional cached browse only with explicit stale treatment; must not imply old credentials are current.
+
+49. Guide Profile Detail — `guide_profile_detail`
+   - **Purpose:** show provider/listing scope, structured pricing, languages/service area/group size, fact-specific current trust signals, Contact Guide, and report action.
+   - **States:** current eligible, stale cached, ineligible/removed, contact unavailable/offline, trust-detail disclosure.
+   - **Next:** explicit contact handoff or report surface.
+   - **Offline:** cached reading may be allowed, but contact resolution requires an online eligibility re-check.
+
+50. Guide Registration Flow — `guide_registration_flow`
+   - **Purpose:** authenticated provider application using only required eligibility information.
+   - **States:** auth gate, draft, validation failure, submit, online failure, legal/credential program unavailable.
+   - **Next:** verification status.
+   - **Offline:** trusted submission unavailable; no hidden write queue.
+
+51. Guide Verification Status — `guide_verification_status`
+   - **Purpose:** show the provider's trusted application/eligibility lifecycle and re-verification needs.
+   - **States:** submitted, under review, verified, rejected, suspended, expired, revoked, re-verification required, stale/unavailable.
+   - **Offline:** last-known status may be displayed only as stale/non-authoritative where safe.
+
+52. Guide Listing Editor — `guide_listing_editor`
+   - **Purpose:** authenticated provider creation/editing of allowed listing fields.
+   - **States:** draft, validation failure, pending review, active, re-review required, suspended/unavailable, offline trusted-write failure.
+   - **Offline:** no publish/update success may be invented or silently queued.
+
+## 21.1 Shared Guide Marketplace screen rules
+- File `32` owns business behavior.
+- `CONTRACTS/screen_feature_traceability.yaml` must map all five IDs.
+- Trust state must be text/semantics-first, not color-only.
+- Large text, screen reader, Arabic RTL, Light/Dark, stale-state honesty, and legally unavailable state require release evidence.
+- Contact/report sheets are subordinate surfaces and are not separate canonical screens in V1.
+
 ---
 
 End of file.
