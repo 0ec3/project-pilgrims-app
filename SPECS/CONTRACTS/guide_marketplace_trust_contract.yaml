@@ -1,0 +1,239 @@
+version: 1
+owner_spec: SPECS/32_FEATURE_GUIDE_MARKETPLACE_MUTAWEF_DISCOVERY_AND_TRUST.md
+related_specs:
+  - SPECS/03_PRODUCT_CHARTER_AND_SCOPE.md
+  - SPECS/11_SCREENS_STATES_NAVIGATION_AND_UI_BLUEPRINTS.md
+  - SPECS/13_DATA_MODEL_RLS_INVARIANTS_AND_MIGRATIONS.md
+  - SPECS/14_API_REALTIME_AND_INTEGRATION_CONTRACTS.md
+  - SPECS/15_OFFLINE_PACKS_SYNC_ASSET_DELIVERY_AND_CACHE_POLICY.md
+  - SPECS/18_FEATURE_RITUALS_RIC_AND_RELIGIOUS_CONTENT.md
+  - SPECS/24_FEATURE_ACCOUNT_SUBSCRIPTIONS_ENTITLEMENTS_AND_SETTINGS.md
+  - SPECS/26_CONTENT_MODEL_SCHOLAR_REVIEW_AND_PUBLISHING_WORKFLOW.md
+  - SPECS/28_REAL_WORLD_VERIFICATION_RELEASE_GATES_AND_EVIDENCE.md
+  - SPECS/29_SECURITY_PRIVACY_COMPLIANCE_AND_RISK_REGISTER.md
+  - SPECS/30_DELIVERY_RUNBOOK_INCIDENTS_ROLLBACK_AND_OPERATIONS.md
+
+feature:
+  user_facing_name: Hire a Guide
+  internal_name: guide_marketplace
+  canonical_provider_term_en: Mutawef
+  initial_model: verified_discovery_plus_explicit_direct_contact
+  primary_entry: tools
+  sixth_primary_tab_allowed: false
+  simple_mode_urgent_default: false
+
+legal_release_gates:
+  public_release_when_unresolved: false
+  blockers:
+    LEGAL-GUIDE-001:
+      question: >-
+        Does PILGRIMS discovery/filter/profile/contact facilitation constitute arranging tourist
+        guiding services or another regulated activity requiring Saudi licensing/authorization?
+      status: unresolved
+      required_resolution_before_public_release: true
+    LEGAL-GUIDE-002:
+      question: >-
+        What competent authority, licence/authorization, or licensed-provider relationship lawfully
+        authorizes paid independent Mutawef ritual accompaniment for Umrah?
+      status: unresolved
+      required_resolution_before_public_release: true
+    LEGAL-GUIDE-003:
+      question: >-
+        What final platform/operator, e-commerce/intermediary, professional-disclosure, complaint,
+        tax, booking/consumer, and record duties apply to the approved V1 operating model?
+      status: unresolved
+      required_resolution_before_public_release: true
+
+provider_states:
+  values: [DRAFT, SUBMITTED, UNDER_REVIEW, VERIFIED, REJECTED, SUSPENDED, EXPIRED, REVOKED]
+  client_may_set_trusted_states: false
+  allowed_transitions:
+    DRAFT: [SUBMITTED]
+    SUBMITTED: [UNDER_REVIEW]
+    UNDER_REVIEW: [VERIFIED, REJECTED]
+    VERIFIED: [UNDER_REVIEW, SUSPENDED, EXPIRED, REVOKED]
+    SUSPENDED: [UNDER_REVIEW, REVOKED]
+    EXPIRED: [UNDER_REVIEW]
+    REJECTED: [DRAFT]
+    REVOKED: []
+
+trust_model:
+  generic_is_verified_boolean_sufficient: false
+  public_badges_must_be_fact_specific: true
+  required_internal_metadata:
+    - verification_type
+    - source_authority
+    - evidence_type
+    - verification_method
+    - verified_at
+    - freshness_or_expiry
+    - state
+    - verifier_actor
+  candidate_signals:
+    - IDENTITY_MATCHED
+    - PROFILE_REVIEWED
+    - TOUR_GUIDE_LICENSE_VERIFIED
+    - RELIGIOUS_CREDENTIAL_VERIFIED
+    - UMRAH_SERVICE_AUTHORIZATION_VERIFIED
+  forbidden_public_claims_until_supported:
+    - PILGRIMS_CERTIFIED_SCHOLAR
+    - OFFICIAL_MINISTRY_GUIDE
+    - GUARANTEED_MUTAWEF
+    - ONE_HUNDRED_PERCENT_TRUSTWORTHY
+    - VERIFIED_MUTAWEF
+
+public_eligibility:
+  server_trust_required: true
+  provider_required_state: VERIFIED
+  required_conditions:
+    - listing_approved_and_active
+    - mandatory_credentials_current
+    - no_active_suspension
+    - no_expired_or_revoked_mandatory_credential
+    - service_type_enabled_for_jurisdiction
+    - legal_release_gates_resolved
+    - freshness_policy_allows_current_claim
+  provider_client_may_override: false
+  stale_cache_may_keep_publicly_current: false
+
+service_scope:
+  initial_service_type: UMRAH_RITUAL_ACCOMPANIMENT
+  initial_service_type_release_blocked_until_legal_guide_002: true
+  forbidden_v1_services:
+    - visa_services
+    - accommodation
+    - transport_arrangement_or_sale
+    - travel_ticketing
+    - travel_packages
+    - broad_tours
+    - restaurant_booking
+    - unrelated_concierge_services
+
+commercial_scope:
+  pilgrim_browse_free: true
+  pilgrim_search_filter_free: true
+  pilgrim_trust_info_free: true
+  pilgrim_profile_view_free: true
+  pilgrim_contact_free: true
+  pilgrim_report_free: true
+  supporter_entitlement_required: false
+  in_app_booking: false
+  in_app_payment: false
+  escrow: false
+  marketplace_wallet: false
+  generic_chat: false
+  ratings_reviews_v1: false
+  sponsored_placement_v1: false
+  provider_payment_may_strengthen_trust_badge: false
+
+contact_handoff:
+  explicit_user_action_required: true
+  external_handoff: true
+  server_recheck_current_eligibility_before_resolution: true
+  auto_message_allowed: false
+  silent_user_contact_disclosure_allowed: false
+  contact_import_allowed: false
+  social_graph_allowed: false
+  conversation_body_storage_allowed: false
+  broad_raw_provider_contact_exposure_default: false
+
+data_domains:
+  server_side:
+    - guide_provider_profiles
+    - guide_credentials
+    - guide_listings
+    - guide_contact_channels
+    - guide_verification_events
+    - guide_reports
+  optional:
+    - guide_contact_intents
+  explicitly_absent_v1:
+    - guide_bookings
+    - guide_payments
+    - guide_transactions
+    - guide_escrow
+    - guide_disputes
+    - guide_chat_messages
+    - guide_reviews
+
+data_visibility:
+  restricted:
+    - raw_identity_evidence
+    - raw_credential_evidence
+    - report_body
+    - internal_moderation_notes
+    - private_contact_values
+  public:
+    - approved_public_profile_fields
+    - approved_active_listing_fields
+    - fact_specific_public_trust_metadata
+  verify_more_store_less: true
+
+authorization_invariants:
+  provider_edits_only_self_service_fields: true
+  provider_may_self_verify: false
+  provider_may_set_public_eligibility: false
+  public_reads_only_eligible_records: true
+  credential_evidence_never_public: true
+  verification_events_service_managed: true
+  report_details_restricted: true
+  rls_required_for_user_scoped_and_restricted_rows: true
+
+religious_boundary:
+  guide_advice_is_governed_ric_truth: false
+  tourism_licence_implies_scholar_authority: false
+  guide_advice_may_rewrite_governed_content: false
+  religious_credential_requires_separate_verification_type: true
+
+offline_behavior:
+  cached_public_browse_optional: true
+  cached_browse_requires_stale_label_when_not_current: true
+  cached_credential_may_claim_current_indefinitely: false
+  authoritative_provider_status_network_trusted: true
+  contact_resolution_network_required: true
+  provider_application_write_network_required: true
+  listing_trusted_write_network_required: true
+  report_write_network_required: true
+  hidden_trusted_write_queue_allowed: false
+
+analytics:
+  namespace_prefix: guide_
+  forbidden_values:
+    - government_id
+    - raw_licence_number
+    - raw_credential_number
+    - credential_document_content
+    - phone_number
+    - whatsapp_number
+    - email
+    - private_conversation_content
+    - report_body
+    - precise_private_location
+    - religious_question_or_advice_content
+
+release:
+  risk_class: RC3
+  known_legal_noncompliance_waiver_allowed: false
+  physical_device_evidence_required_where_applicable: true
+  required_scenarios:
+    - verification_success
+    - verification_rejection
+    - credential_expiry
+    - credential_revocation
+    - provider_suspension
+    - public_delisting_after_ineligibility
+    - provider_cannot_self_verify
+    - restricted_evidence_not_public
+    - rls_isolation
+    - stale_browse_honesty
+    - offline_trusted_write_failure
+    - explicit_contact_consent
+    - report_abuse_rate_limits
+    - privacy_logging_redaction
+    - large_text
+    - screen_reader
+    - arabic_rtl
+    - light_dark
+    - real_device
+    - fraud_abuse
+    - regulatory_disclosure_presence
