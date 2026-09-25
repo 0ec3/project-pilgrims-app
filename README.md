@@ -134,6 +134,7 @@ See files `15`, `23`, `26`, `29`, `30`, and [`SPECS/CONTRACTS/content_pack_trust
 | `23` | Offline packs, audio, and content distribution. |
 | `24` | Account, subscriptions, entitlements, Settings, Privacy & Data. |
 | `25` | Onboarding, Home, Simple Mode. |
+| `32` | Hire a Guide / Guide Marketplace, Mutawef discovery, provider trust, direct contact, and moderation. |
 
 ---
 
@@ -179,7 +180,7 @@ See files `14`, `24`, `29`, and [`SPECS/CONTRACTS/entitlement_capability_policy.
 
 ## Canonical screens
 
-The canonical screen inventory is currently **47 screens**.
+The canonical screen inventory is currently **52 screens**.
 
 The screen system includes first-class flows for:
 
@@ -237,6 +238,7 @@ The `SPECS/CONTRACTS/` directory contains implementation-facing contracts that m
 | `advisory_source_registry.schema.yaml` | Defines freshness/source metadata for safety advisories and emergency/official handoff content. |
 | `release_gate_taxonomy.yaml` | Defines release risk classes, blocker levels, no-waiver expectations, and waiver object fields. |
 | `screen_feature_traceability.yaml` | Maps critical screens to feature owners and release-evidence expectations. |
+| `guide_marketplace_trust_contract.yaml` | Defines provider lifecycle, fact-specific trust semantics, public eligibility, legal release gates, contact consent, and religious-boundary invariants for Hire a Guide. |
 
 Validation helper:
 
@@ -311,8 +313,15 @@ Current normative set:
 - `29_SECURITY_PRIVACY_COMPLIANCE_AND_RISK_REGISTER.md`
 - `30_DELIVERY_RUNBOOK_INCIDENTS_ROLLBACK_AND_OPERATIONS.md`
 - `31_QUALITY_FIRST_HARDENING_AMENDMENTS.md`
+- `32_FEATURE_GUIDE_MARKETPLACE_MUTAWEF_DISCOVERY_AND_TRUST.md`
 
 Contract artifacts live under [`SPECS/CONTRACTS/`](./SPECS/CONTRACTS/).
+
+## Hire a Guide scope note
+
+The normative system now includes a narrow pilgrimage-specific **Hire a Guide** exception owned by file `32`. Its initial product model is verified discovery plus explicit direct contact, not booking/payment/escrow/chat or general travel commerce. Public release remains blocked until the applicable Saudi platform-facilitation licensing model and paid Mutawef authorization model are resolved through accountable legal/compliance review.
+
+This feature does not alter the five-tab primary navigation, the Umrah-first posture, the local-first essential-value promise, or the separation between governed Ritual/RIC truth and advice from an individual guide.
 
 ---
 
