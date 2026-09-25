@@ -1,4 +1,4 @@
-# 32 — FEATURE: GUIDE MARKETPLACE, MUTAEWEF DISCOVERY, AND TRUST
+# 32 — FEATURE: GUIDE MARKETPLACE, MUTAWEF DISCOVERY, AND TRUST
 
 ## Document status
 - **Type:** Normative feature-family specification
