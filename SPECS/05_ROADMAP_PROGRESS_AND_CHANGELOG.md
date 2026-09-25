@@ -170,7 +170,7 @@ Expansion candidates must come from a healthy, evidenced base rather than unreso
 # 6. Current project snapshot
 
 ## 6.1 Current snapshot
-- **Current phase:** Phase 0 specification and contract hardening is materially complete; narrow Phase 1 bootstrap may begin for already-cleared domains. Guide Marketplace is specification-only and remains implementation-blocked by its P0 legal/compliance gates. The expanded 7-contract validator/CI result must be green before this branch is considered contract-clean.
+- **Current phase:** Phase 0 specification and contract hardening is materially complete; narrow Phase 1 bootstrap may begin for already-cleared domains. Guide Marketplace is specification-only and remains implementation-blocked by its P0 legal/compliance gates. The expanded 7-contract validator/CI result is green on draft PR #3 (workflow run 18).
 - **Overall delivery confidence:** high for documentation maturity, contract-file coherence, and baseline CI enforcement; medium for implementation readiness because no aligned codebase, environments, runtime tests, or release evidence exist yet.
 - **Active focus areas:** implementation bootstrap planning, release-evidence template planning, minimal governed ritual/RIC fixtures, explicit resolution of Home runtime decisions that the approved visual reference does not own, and authoritative resolution of `LEGAL-GUIDE-001` through `LEGAL-GUIDE-003` before any Guide Marketplace implementation.
 - **Most critical blockers:** no implementation baseline yet; no finalized production tooling stack; no operationalized content-review tooling; no device-lab or release-evidence execution lane yet; Guide Marketplace additionally has unresolved Saudi platform-facilitation and paid-Mutawef authorization blockers.
@@ -187,9 +187,9 @@ Broad Phase 1 feature development must not begin until:
 - implementation tasks reference the current 32-spec + contracts authority model.
 
 Current status:
-- validator pass for the expanded 7-contract set: pending/verify on this branch,
-- CI contract workflow: configured; expanded branch result pending/verify,
-- 52-screen traceability: defined in contract artifact; validator result pending/verify,
+- validator pass for the expanded 7-contract set: complete,
+- CI contract workflow: complete; green run observed on draft PR #3 / workflow run 18,
+- 52-screen traceability: complete in contract artifact and validator-checked,
 - entitlement and privacy/account server-write rules: complete in contract/API specs,
 - file `02` obsolete filename references: complete,
 - file `13` group-presence prose alignment: complete,
@@ -203,7 +203,7 @@ Current status:
 |---|---|---:|---:|---|---|---|---|
 | Governance/source of truth | `01`, `02`, `04`, `05`, `31`, `CONTRACTS/README` | 0 | P0 | Done / monitor | Not started | Validator and CI wired where contract-backed | Keep outdated historical references archived and current references normalized. |
 | Contract validator | `tools/specs/validate_spec_contracts.py`, `CONTRACTS/*`, `.github/workflows/spec-contracts.yml` | 0 | P0 | Done / monitor | Script and workflow exist | GitHub Actions green observed; validator also checks canonical spec filenames/design migration | Keep validation green and expand checks only when new machine-checkable invariants are introduced. |
-| Screen traceability | `11`, `screen_feature_traceability.yaml` | 0 | P0 | Done / monitor | Not started | Expanded validation pending | Keep all 52 canonical screens mapped and evidence-owned. |
+| Screen traceability | `11`, `screen_feature_traceability.yaml` | 0 | P0 | Done / monitor | Not started | Expanded validator green | Keep all 52 canonical screens mapped and evidence-owned. |
 | Entitlements/account | `24`, `entitlement_capability_policy.yaml` | 1 | P0 | Done / hardening | Not started | Validator passed | Implement free/auth/Supporter capability gates exactly from contract. |
 | API/privacy endpoints | `14`, `24`, `29`, `31` | 1 | P0 | Done / hardening | Not started | Spec-reviewed | Implement idempotency, rate-limit, audit, alert, and evidence rules from file `14`. |
 | Group coordination | `20`, `13`, `14`, `group_presence_privacy_contract.yaml` | 2 | P1 | Done / monitor | Not started | Validator passed; file `13` aligned | Implement create/join/check-in as server-trusted writes with contract-backed fixtures. |
@@ -211,7 +211,7 @@ Current status:
 | Offline packs | `15`, `23`, `content_pack_trust_chain_contract.yaml` | 1 | P0 | Done / contract-backed | Not started | Validator passed | Reflect signed manifest verification and LKG activation path in implementation and tests. |
 | Design system | `08`, `09`, `11`, `12` | 1 | P0 | Done / needs implementation tokens | Not started | Planned | Implement Figma-aligned Pilgrims Soft Surface semantic tokens, mandatory Light/Dark themes, and System/Light/Dark appearance handling in the Flutter design-system baseline. |
 | Release evidence | `27`, `28`, `29`, `30`, `release_gate_taxonomy.yaml` | 3 | P0 | Done / contract-backed | Not started | Validator passed | Create evidence templates and CI/device-lab lanes. |
-| Guide Marketplace | `32`, `13`, `14`, `28`, `29`, `guide_marketplace_trust_contract.yaml`, `screen_feature_traceability.yaml` | post-foundation / gated | P0 legal gate | Spec designed / public release blocked | Not started | Expanded validator pending; legal blockers unresolved | Resolve `LEGAL-GUIDE-001`–`003` before implementation, then re-audit contracts against the approved licensing model. |
+| Guide Marketplace | `32`, `13`, `14`, `28`, `29`, `guide_marketplace_trust_contract.yaml`, `screen_feature_traceability.yaml` | post-foundation / gated | P0 legal gate | Spec designed / public release blocked | Not started | Contract validator green; legal blockers unresolved | Resolve `LEGAL-GUIDE-001`–`003` before implementation, then re-audit contracts against the approved licensing model. |
 
 ---
 
