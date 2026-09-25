@@ -85,7 +85,7 @@ The app must feel:
 
 # 4. Normative spec map
 
-The documentation system is now organized as 31 normative markdown specs plus machine-readable contract artifacts under `SPECS/CONTRACTS/`.
+The documentation system is now organized as 32 normative markdown specs plus machine-readable contract artifacts under `SPECS/CONTRACTS/`.
 
 ## 4.1 Core and governance
 - `01_README_AND_MASTER_INDEX.md` — root entry point and master index.
@@ -121,6 +121,7 @@ The documentation system is now organized as 31 normative markdown specs plus ma
 - `23_FEATURE_OFFLINE_PACKS_AUDIO_AND_CONTENT_DISTRIBUTION.md` — pack catalog, install, purge, audio distribution.
 - `24_FEATURE_ACCOUNT_SUBSCRIPTIONS_ENTITLEMENTS_AND_SETTINGS.md` — account, subscriptions, entitlements, settings, privacy/data flow.
 - `25_FEATURE_ONBOARDING_HOME_AND_SIMPLE_MODE.md` — startup, onboarding, Home, Simple Mode.
+- `32_FEATURE_GUIDE_MARKETPLACE_MUTAWEF_DISCOVERY_AND_TRUST.md` — Hire a Guide, Mutawef discovery, provider verification/trust, listings, direct-contact handoff, moderation, and legal release gates.
 
 ## 4.6 Quality, security, delivery, and amendments
 - `26_CONTENT_MODEL_SCHOLAR_REVIEW_AND_PUBLISHING_WORKFLOW.md` — content governance, scholar review, publishing.
@@ -139,6 +140,7 @@ The following contract artifacts are normative implementation aids. They mirror 
 - `CONTRACTS/advisory_source_registry.schema.yaml`
 - `CONTRACTS/release_gate_taxonomy.yaml`
 - `CONTRACTS/screen_feature_traceability.yaml`
+- `CONTRACTS/guide_marketplace_trust_contract.yaml`
 
 Validation helper:
 - `tools/specs/validate_spec_contracts.py`
@@ -227,6 +229,12 @@ The following decisions are now active:
 6. Advisory/safety content requires source freshness metadata.
 7. File `28` owns release gate authority; file `27` owns verification mechanics; file `30` owns rollout/incident execution.
 8. Screen-to-feature traceability is mandatory for implementation and release evidence.
+
+# 8. Guide Marketplace governance note
+
+File `32` is a controlled pilgrimage-specific exception to the general marketplace exclusion. Any task touching guide provider eligibility, credential verification, guide listings, trust badges, contact handoff, moderation, reports, or guide-marketplace release status must read file `32`, `CONTRACTS/guide_marketplace_trust_contract.yaml`, and the affected data/API/security/release specs before implementation.
+
+The current normative set is files `01`–`32`, with the intentional numbering gap structure preserved from the existing system; existing files are not renumbered.
 
 ---
 
