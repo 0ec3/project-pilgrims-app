@@ -262,6 +262,18 @@ def validate_guide_marketplace_trust(data: dict) -> None:
         fail("Generic is_verified boolean must not be sufficient for Guide Marketplace trust")
     if trust.get("public_badges_must_be_fact_specific") is not True:
         fail("Guide Marketplace public trust badges must be fact-specific")
+    required_trust_metadata = {
+        "verification_type", "source_authority", "evidence_type", "verification_method",
+        "verified_at", "freshness_or_expiry", "state", "verifier_actor",
+        "revocation_or_suspension_signal",
+    }
+    actual_trust_metadata = set(trust.get("required_internal_metadata", []))
+    missing_trust_metadata = sorted(required_trust_metadata - actual_trust_metadata)
+    if missing_trust_metadata:
+        fail(
+            "Guide Marketplace trust metadata missing: "
+            + ", ".join(missing_trust_metadata)
+        )
 
     eligibility = mapping(data, "public_eligibility", "guide_marketplace_trust_contract.yaml")
     if eligibility.get("server_trust_required") is not True:
@@ -288,6 +300,27 @@ def validate_guide_marketplace_trust(data: dict) -> None:
     offline = mapping(data, "offline_behavior", "guide_marketplace_trust_contract.yaml")
     if offline.get("hidden_trusted_write_queue_allowed") is not False:
         fail("Guide Marketplace must not silently queue trusted writes offline")
+
+    release = mapping(data, "release", "guide_marketplace_trust_contract.yaml")
+    required_release_scenarios = {
+        "verification_success", "verification_rejection", "reverification",
+        "idempotent_application_submit", "credential_expiry", "credential_revocation",
+        "provider_suspension", "public_delisting_after_ineligibility",
+        "provider_cannot_self_verify", "restricted_evidence_not_public", "rls_isolation",
+        "stale_browse_honesty", "offline_trusted_write_failure",
+        "explicit_contact_consent", "contact_current_eligibility_recheck",
+        "external_contact_channel_unavailable", "report_abuse_rate_limits",
+        "moderator_urgent_delisting", "privacy_logging_redaction",
+        "large_text", "screen_reader", "arabic_rtl", "light_dark",
+        "real_device", "fraud_abuse", "regulatory_disclosure_presence",
+    }
+    actual_release_scenarios = set(release.get("required_scenarios", []))
+    missing_release_scenarios = sorted(required_release_scenarios - actual_release_scenarios)
+    if missing_release_scenarios:
+        fail(
+            "Guide Marketplace release scenarios missing: "
+            + ", ".join(missing_release_scenarios)
+        )
 
 
 def validate_screen_traceability(data: dict, entitlements: dict) -> None:
