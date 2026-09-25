@@ -463,14 +463,15 @@ Critical screen families include:
 - Group Creation / Join / Check-in / Regroup,
 - Pack Install / Verification,
 - Account / Entitlements / Restore,
-- Privacy & Data.
+- Privacy & Data,
+- Guide Marketplace provider trust / contact / provider application.
 
 ---
 
 # 11. Definition of done
 
 This screen system is ready when:
-- all 47 canonical screens have blueprint coverage or approved non-implementation rationale,
+- all 52 canonical screens have blueprint coverage or approved non-implementation rationale,
 - every screen maps to a feature owner,
 - critical screens define offline/degraded/stale/error states,
 - account and privacy flows return correctly after auth,
