@@ -281,6 +281,30 @@ Current status:
 
 ---
 
+## 2026-09-26 — Guide Marketplace specification architecture
+
+### Status
+**Specification architecture defined / implementation blocked**
+
+File `32` and `CONTRACTS/guide_marketplace_trust_contract.yaml` define the initial Hire a Guide product/trust model as verified discovery plus explicit direct contact.
+
+### Current blockers
+- `LEGAL-GUIDE-001`: determine whether PILGRIMS' discovery/filter/profile/contact facilitation is itself a regulated Saudi travel/tourism-service activity requiring licensing/authorization.
+- `LEGAL-GUIDE-002`: determine the competent authorization/provider-relationship model for paid Mutawef Umrah ritual accompaniment.
+- `LEGAL-GUIDE-003`: finalize operator/e-commerce/professional-disclosure/complaint/tax/record obligations for the approved business model.
+
+These are release blockers, not implementation assumptions.
+
+### Changes
+- Expanded normative governance from 31 to 32 Markdown specs.
+- Added narrow pilgrimage-specific Hire a Guide scope exception without removing the general travel-marketplace exclusion.
+- Added a fact-specific provider-trust model and public-eligibility contract.
+- Added five planned canonical guide-marketplace screens and corresponding traceability requirements.
+- Kept bookings, payments, escrow, chat, ratings/reviews, broader travel commerce, Maps integration, Planner appointments, and Packs out of V1.
+- Preserved all existing Ritual/RIC, emergency, map-recovery, privacy, accessibility, offline, and five-tab IA invariants.
+
+---
+
 # 10. Handoff context for next contributor or AI agent
 
 Before starting Phase 1 implementation:
@@ -304,27 +328,6 @@ This file is healthy when:
 - changelog entries preserve why changes happened,
 - next contributors can safely resume without relying on chat memory.
 
-# Guide Marketplace specification milestone — 2026-09-26
-
-## Status
-**Specification architecture defined / implementation blocked**
-
-File `32` and `CONTRACTS/guide_marketplace_trust_contract.yaml` define the initial Hire a Guide product/trust model as verified discovery plus explicit direct contact.
-
-## Current blockers
-- `LEGAL-GUIDE-001`: determine whether PILGRIMS' discovery/filter/profile/contact facilitation is itself a regulated Saudi travel/tourism-service activity requiring licensing/authorization.
-- `LEGAL-GUIDE-002`: determine the competent authorization/provider-relationship model for paid Mutawef Umrah ritual accompaniment.
-- `LEGAL-GUIDE-003`: finalize operator/e-commerce/professional-disclosure/complaint/tax/record obligations for the approved business model.
-
-These are release blockers, not implementation assumptions.
-
-## Changelog
-- Expanded normative governance from 31 to 32 Markdown specs.
-- Added narrow pilgrimage-specific Hire a Guide scope exception without removing the general travel-marketplace exclusion.
-- Added a fact-specific provider-trust model and public-eligibility contract.
-- Added five planned canonical guide-marketplace screens and corresponding traceability requirements.
-- Kept bookings, payments, escrow, chat, ratings/reviews, broader travel commerce, Maps integration, Planner appointments, and Packs out of V1.
-- Preserved all existing Ritual/RIC, emergency, map-recovery, privacy, accessibility, offline, and five-tab IA invariants.
 
 ---
 
