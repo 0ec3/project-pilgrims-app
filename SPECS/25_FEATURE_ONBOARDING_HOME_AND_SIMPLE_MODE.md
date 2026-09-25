@@ -360,6 +360,32 @@ Before editing onboarding/Home/Simple Mode code, an AI agent must:
 5. Confirm group create/join and Privacy & Data routing remain discoverable.
 6. Confirm urgent flows are not crowded by upsell or pack prompts.
 
+# Guide Marketplace entry-point amendment
+
+Hire a Guide is a Tools-owned discovery task, not an onboarding requirement or urgent recovery primitive.
+
+## Default entry
+**Tools → Hire a Guide**
+
+## Home
+Home may surface a low-priority contextual Hire a Guide entry when it is relevant to the user's pilgrimage context.
+
+It must remain lower priority than:
+1. current ritual/start or recovery,
+2. Emergency/Phrase support,
+3. Save My Gate/map recovery,
+4. urgent Group safe/regroup actions.
+
+Home must not become a marketplace dashboard and must not show provider advertising in ritual-critical or urgent-recovery priority areas.
+
+## Onboarding
+Do not ask new users to create an account, apply as a provider, choose a guide, or grant unrelated permissions during default onboarding.
+
+## Simple Mode
+Hire a Guide is not included in the default Simple Mode urgent shortcut set.
+
+If a future accessibility study demonstrates a need for an entry, that requires explicit Simple Mode design/release evidence rather than silently adding density.
+
 ---
 
 End of file.
