@@ -7,7 +7,7 @@
 - **Purpose:** Define what the product is, who it serves, what value it must deliver, what is in scope, what is out of scope, and what product rules must govern all future implementation decisions.
 - **Authority level:** If a proposed feature, screen, data model, API, or workflow conflicts with this file, this file wins unless an approved decision record changes it.
 - **Primary dependencies:** `01_README_AND_MASTER_INDEX.md`, `02_AI_AGENT_RULES_AND_WORKFLOW.md`
-- **Related files:** `04`, `05`, `10`, `11`, `18`–`26`, `28`, `29`
+- **Related files:** `04`, `05`, `10`, `11`, `18`–`26`, `28`, `29`, `32`
 
 ---
 
@@ -313,6 +313,20 @@ Out of scope:
 - tour marketplace,
 - ride-booking marketplace,
 - restaurant marketplace.
+
+## 9.2A Narrow pilgrimage-guide exception
+
+The general travel-marketplace exclusion remains active.
+
+A single controlled exception is approved for the file `32` **Hire a Guide** feature because human Umrah accompaniment can directly support the product's core pilgrimage mission. The approved initial boundary is **verified discovery + explicit direct contact** for narrowly defined guide/Mutawef services.
+
+This exception does **not** authorize PILGRIMS to become a general booking marketplace or to add hotels, flights, packages, transport sales/arrangement, visas, ticketing, restaurants, broad tours, in-app payments, escrow, generic chat, or other travel-agent services.
+
+Public release of the exception is blocked until:
+- the Saudi legal/compliance classification of PILGRIMS' discovery/contact facilitation is resolved, and
+- the competent authorization model for paid Mutawef/Umrah ritual accompaniment is resolved.
+
+The feature must remain subordinate to ritual correctness, urgent safety/recovery, privacy, accessibility, and the existing five-section information architecture.
 
 ## 9.3 General social network features
 Out of scope:
