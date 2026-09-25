@@ -170,7 +170,7 @@ Expansion candidates must come from a healthy, evidenced base rather than unreso
 # 6. Current project snapshot
 
 ## 6.1 Current snapshot
-- **Current phase:** Phase 0 specification and contract hardening is materially complete; narrow Phase 1 bootstrap may begin for already-cleared domains. Guide Marketplace is specification-only and remains implementation-blocked by its P0 legal/compliance gates. The expanded 7-contract validator/CI result is green on draft PR #3 (workflow run 18).
+- **Current phase:** Phase 0 specification and contract hardening is materially complete; narrow Phase 1 bootstrap may begin for already-cleared domains. Guide Marketplace is specification-only and remains implementation-blocked by its P0 legal/compliance gates. The expanded 7-contract validator/CI result is green on the audited draft PR #3 head.
 - **Overall delivery confidence:** high for documentation maturity, contract-file coherence, and baseline CI enforcement; medium for implementation readiness because no aligned codebase, environments, runtime tests, or release evidence exist yet.
 - **Active focus areas:** implementation bootstrap planning, release-evidence template planning, minimal governed ritual/RIC fixtures, explicit resolution of Home runtime decisions that the approved visual reference does not own, and authoritative resolution of `LEGAL-GUIDE-001` through `LEGAL-GUIDE-003` before any Guide Marketplace implementation.
 - **Most critical blockers:** no implementation baseline yet; no finalized production tooling stack; no operationalized content-review tooling; no device-lab or release-evidence execution lane yet; Guide Marketplace additionally has unresolved Saudi platform-facilitation and paid-Mutawef authorization blockers.
@@ -188,7 +188,7 @@ Broad Phase 1 feature development must not begin until:
 
 Current status:
 - validator pass for the expanded 7-contract set: complete,
-- CI contract workflow: complete; green run observed on draft PR #3 / workflow run 18,
+- CI contract workflow: complete; green run observed on the audited draft PR #3 head,
 - 52-screen traceability: complete in contract artifact and validator-checked,
 - entitlement and privacy/account server-write rules: complete in contract/API specs,
 - file `02` obsolete filename references: complete,
